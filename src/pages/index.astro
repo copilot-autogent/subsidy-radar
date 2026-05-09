@@ -1,18 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import subsidies from '../data/subsidies.json';
+import subsidiesRaw from '../data/subsidies.json';
 
-const categories = ['全部', ...new Set(subsidies.map(s => s.category))];
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean };
+const subsidies = subsidiesRaw as Subsidy[];
+const categories = ['全部', '⭐ 青年必看', ...new Set(subsidies.map(s => s.category))];
+const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
 ---
 
 <BaseLayout
   title="補助雷達 — 台灣政府補助一站查詢"
-  description="快速查詢台灣政府補助資訊，包含住宅租金補貼、購屋優惠貸款、育兒補助等，找到您符合資格的補助方案。"
+  description="快速查詢台灣政府補助資訊，包含就業、創業、住宅等補助，找到您符合資格的補助方案。"
 >
 
   <section class="hero">
     <h1>📡 補助雷達</h1>
-    <p>快速找到您符合資格的台灣政府補助，包含住宅、能源、教育及創業補助。</p>
+    <p>快速找到您符合資格的台灣政府補助，包含就業、創業、住宅及生活補助。</p>
+    <p class="hero-youth-hint">🎓 剛畢業？先看「<strong>青年必看</strong>」，{youthCount} 項補助等你領！</p>
   </section>
 
   <div class="controls">
@@ -29,7 +33,7 @@ const categories = ['全部', ...new Set(subsidies.map(s => s.category))];
     <div class="category-filters" role="group" aria-label="類別篩選">
       {categories.map(cat => (
         <button
-          class={`filter-btn ${cat === '全部' ? 'active' : ''}`}
+          class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''}`}
           data-category={cat}
           type="button"
         >
@@ -43,10 +47,18 @@ const categories = ['全部', ...new Set(subsidies.map(s => s.category))];
 
   <div class="grid" id="subsidyGrid">
     {subsidies.map(s => (
-      <article class="subsidy-card" data-category={s.category} data-search={`${s.title} ${s.summary} ${s.tags.join(' ')} ${s.agency}`}>
+      <article
+        class={`subsidy-card ${s.isYouthHighlight ? 'youth-highlight' : ''}`}
+        data-category={s.category}
+        data-youth={s.isYouthHighlight ? 'true' : 'false'}
+        data-search={`${s.title} ${s.summary} ${s.tags.join(' ')} ${s.agency}`}
+      >
         <div class="card-header">
           <h2 class="card-title">{s.title}</h2>
-          <span class="category-badge">{s.category}</span>
+          <div class="card-badges">
+            {s.isYouthHighlight && <span class="youth-badge">⭐ 青年必看</span>}
+            <span class="category-badge">{s.category}</span>
+          </div>
         </div>
         <p class="card-agency">📋 {s.agency}</p>
         <p class="card-summary">{s.summary}</p>
@@ -81,8 +93,10 @@ const categories = ['全部', ...new Set(subsidies.map(s => s.category))];
       let visible = 0;
       cards.forEach(card => {
         const cat = card.dataset.category ?? '';
+        const isYouth = card.dataset.youth === 'true';
         const search = (card.dataset.search ?? '').toLowerCase();
-        const matchCat = activeCategory === '全部' || cat === activeCategory;
+        const matchCat = activeCategory === '全部'
+          || activeCategory === '⭐ 青年必看' ? isYouth : cat === activeCategory;
         const matchSearch = searchQuery === '' || search.includes(searchQuery);
         const show = matchCat && matchSearch;
         card.style.display = show ? '' : 'none';

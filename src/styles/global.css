@@ -175,7 +175,54 @@ main {
   color: white;
 }
 
-.results-count {
+.filter-btn.youth-filter {
+  border-color: #d97706;
+  color: #92400e;
+  background: #fef3c7;
+  font-weight: 600;
+}
+
+.filter-btn.youth-filter:hover,
+.filter-btn.youth-filter.active {
+  background: #d97706;
+  border-color: #d97706;
+  color: white;
+}
+
+.subsidy-card.youth-highlight {
+  border-color: #fbbf24;
+  background: linear-gradient(to bottom right, #fffbeb, #ffffff);
+}
+
+.card-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.youth-badge {
+  padding: 0.2rem 0.6rem;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid #fbbf24;
+}
+
+.hero-youth-hint {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  color: #92400e;
+  background: #fef3c7;
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #fbbf24;
+}
   font-size: 0.9rem;
   color: var(--color-text-muted);
   margin-bottom: 1rem;
