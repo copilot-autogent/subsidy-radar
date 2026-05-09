@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 interface Props {
   title?: string;
   description?: string;
@@ -23,7 +25,6 @@ const base = import.meta.env.BASE_URL;
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
     <title>{title}</title>
-    <link rel="stylesheet" href={`${base}_astro/global.css`} />
   </head>
   <body>
     <header class="site-header">
