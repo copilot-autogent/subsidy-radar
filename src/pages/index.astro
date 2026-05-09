@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import subsidies from '../data/subsidies.json';
+
+const categories = ['全部', ...new Set(subsidies.map(s => s.category))];
+---
+
+<BaseLayout
+  title="補助雷達 — 台灣政府補助一站查詢"
+  description="快速查詢台灣政府補助資訊，包含住宅租金補貼、購屋優惠貸款、育兒補助等，找到您符合資格的補助方案。"
+>
+  <style is:global>
+    @import '../styles/global.css';
+  </style>
+
+  <section class="hero">
+    <h1>📡 補助雷達</h1>
+    <p>快速找到您符合資格的台灣政府補助，包含住宅、能源、教育及創業補助。</p>
+  </section>
+
+  <div class="controls">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="搜尋補助名稱、類別或關鍵字…"
+        aria-label="搜尋補助"
+        autocomplete="off"
+      />
+    </div>
+    <div class="category-filters" role="group" aria-label="類別篩選">
+      {categories.map(cat => (
+        <button
+          class={`filter-btn ${cat === '全部' ? 'active' : ''}`}
+          data-category={cat}
+          type="button"
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <p class="results-count" id="resultsCount">共 {subsidies.length} 項補助</p>
+
+  <div class="grid" id="subsidyGrid">
+    {subsidies.map(s => (
+      <article class="subsidy-card" data-category={s.category} data-search={`${s.title} ${s.summary} ${s.tags.join(' ')} ${s.agency}`}>
+        <div class="card-header">
+          <h2 class="card-title">{s.title}</h2>
+          <span class="category-badge">{s.category}</span>
+        </div>
+        <p class="card-agency">📋 {s.agency}</p>
+        <p class="card-summary">{s.summary}</p>
+        <div class="card-amount">💰 {s.amount}</div>
+        <div class="card-deadline">🗓️ {s.deadline}</div>
+        <details class="card-eligibility">
+          <summary>申請資格條件</summary>
+          <ul>
+            {s.eligibility.map(e => <li>{e}</li>)}
+          </ul>
+        </details>
+        <div class="card-tags">
+          {s.tags.map(tag => <span class="tag">{tag}</span>)}
+        </div>
+        <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">前往申請 →</a>
+      </article>
+    ))}
+    <div class="no-results" id="noResults" style="display:none">找不到符合條件的補助，請嘗試其他關鍵字。</div>
+  </div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
+    const resultsCount = document.getElementById('resultsCount')!;
+    const noResults = document.getElementById('noResults')!;
+
+    let activeCategory = '全部';
+    let searchQuery = '';
+
+    function updateDisplay() {
+      let visible = 0;
+      cards.forEach(card => {
+        const cat = card.dataset.category ?? '';
+        const search = (card.dataset.search ?? '').toLowerCase();
+        const matchCat = activeCategory === '全部' || cat === activeCategory;
+        const matchSearch = searchQuery === '' || search.includes(searchQuery);
+        const show = matchCat && matchSearch;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      resultsCount.textContent = `共 ${visible} 項補助`;
+      noResults.style.display = visible === 0 ? 'block' : 'none';
+    }
+
+    searchInput.addEventListener('input', () => {
+      searchQuery = searchInput.value.trim().toLowerCase();
+      updateDisplay();
+    });
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCategory = btn.dataset.category ?? '全部';
+        updateDisplay();
+      });
+    });
+  </script>
+</BaseLayout>

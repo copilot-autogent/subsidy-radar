@@ -1,0 +1,45 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = '補助雷達',
+  description = '台灣政府補助聚合平台，快速找到您符合資格的住宅、能源、教育及創業補助。'
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <title>{title}</title>
+    <link rel="stylesheet" href={`${base}_astro/global.css`} />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav-inner">
+        <a href={base} class="logo">📡 補助雷達</a>
+        <span class="tagline">台灣政府補助一站查詢</span>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>資料來源：內政部國土管理署、各縣市政府官方網站。本站僅供參考，請以官方公告為準。</p>
+        <p>由 <a href="https://github.com/copilot-autogent/subsidy-radar" target="_blank" rel="noopener">補助雷達</a> 提供 · 開放原始碼</p>
+      </div>
+    </footer>
+  </body>
+</html>
