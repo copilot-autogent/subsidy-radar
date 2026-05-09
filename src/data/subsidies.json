@@ -1,10 +1,65 @@
 [
   {
+    "id": "youth-job-support",
+    "title": "支援青年就業計畫",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "協助18～29歲初次尋職青年穩定就業，提供尋職津貼與就業獎勵，合計最高補助48,000元。應屆畢業生首選！",
+    "eligibility": [
+      "年齡18至29歲本國籍青年",
+      "未就業（尋職中或初次進入職場）",
+      "透過公立就業服務機構或線上登記"
+    ],
+    "amount": "尋職津貼最高 15,000 元 + 就業獎勵最高 33,000 元，合計最高 48,000 元",
+    "deadline": "114年常態受理（至114年12月31日）",
+    "applicationUrl": "https://special.taiwanjobs.gov.tw/internet/2025/YNGSRH/index.html",
+    "tags": ["青年", "應屆畢業生", "就業獎勵", "津貼"],
+    "isYouthHighlight": true,
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "id": "youth-vocational-training",
+    "title": "青年職業訓練補助",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "15～29歲未就學青年可免費或補助參加職業訓練課程，提升就業競爭力，包含數位、行銷、設計、科技等多元領域。",
+    "eligibility": [
+      "年齡15至29歲本國籍青年",
+      "未在學（非在校學生）",
+      "失業、待業或初次求職者優先"
+    ],
+    "amount": "訓練費用政府全額補助或高額補助（依課程不同），並提供訓練津貼",
+    "deadline": "全年常態受理，各地分署定期開班",
+    "applicationUrl": "https://kys.wda.gov.tw/News_Content.aspx?n=70&s=2548",
+    "tags": ["青年", "職業訓練", "免費", "技能提升"],
+    "isYouthHighlight": true,
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "id": "micro-phoenix-loan",
+    "title": "微型創業鳳凰貸款",
+    "category": "創業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "協助有創業意願的青年、婦女及中高齡者以低利率取得創業資金，最高200萬元，政府補貼利息，有提供免費創業輔導課程。",
+    "eligibility": [
+      "年齡20歲以上",
+      "有具體創業計畫並完成18小時政府創業研習課程",
+      "已完成事業登記或符合微型商業條件",
+      "青年（45歲以下）、婦女、中高齡者優先"
+    ],
+    "amount": "最高貸款額度 200 萬元（微型商業最高 50 萬元）；年利率按郵儲2年定期利率加 0.575%（政府補貼利差）",
+    "deadline": "常態受理（完成課程後可申請）",
+    "applicationUrl": "https://beboss.wda.gov.tw/Default.aspx",
+    "tags": ["青年", "創業", "低利貸款", "婦女", "中高齡"],
+    "isYouthHighlight": true,
+    "updatedAt": "2026-05-09"
+  },
+  {
     "id": "rent-subsidy",
-    "title": "住宅租金補貼",
+    "title": "300億元中央擴大租金補貼",
     "category": "住宅",
     "agency": "內政部國土管理署",
-    "summary": "協助中低收入家庭負擔租屋費用，每月最高可獲8,000元補貼（台北市/新北市）。",
+    "summary": "協助中低收入家庭負擔租屋費用，每月最高可獲8,000元補貼（台北市/新北市）。114年度已受理申請中。",
     "eligibility": [
       "家庭年收入50%分位點以下",
       "未擁有自有住宅",
@@ -12,28 +67,28 @@
       "家庭成員設籍於申請縣市"
     ],
     "amount": "每月 3,000～8,000 元（依縣市及家庭人口數而異）",
-    "deadline": "每年7月至8月申請（113年度已截止，114年度尚未公告）",
-    "applicationUrl": "https://hra.cpami.gov.tw/",
+    "deadline": "114年1月1日起至114年12月31日受理申請",
+    "applicationUrl": "https://has.nlma.gov.tw/house300e/",
     "tags": ["租屋", "中低收入", "家庭"],
-    "updatedAt": "2025-05-01"
+    "updatedAt": "2026-05-09"
   },
   {
     "id": "youth-home-loan",
     "title": "青年安心成家購屋優惠貸款",
     "category": "住宅",
-    "agency": "內政部國土管理署",
-    "summary": "45歲以下首次購屋者可獲最高800萬元優惠貸款，前兩年利率僅1.775%，政府補貼利差。",
+    "agency": "財政部國庫署（公股銀行辦理）",
+    "summary": "45歲以下首次購屋者可獲最高1,000萬元優惠房貸，貸款成數最高8成，最長期限40年，政府協調公股銀行提供優惠利率。",
     "eligibility": [
       "年齡45歲以下",
       "申請人及配偶未曾擁有自有住宅",
       "家庭年收入120萬元以下（雙薪）",
       "購買住宅為自住用途"
     ],
-    "amount": "最高貸款額度 800 萬元；第1-2年利率 1.775%（政府補貼 0.465 個百分點）",
-    "deadline": "常態辦理（可隨時申請）",
-    "applicationUrl": "https://www.cpami.gov.tw/",
+    "amount": "最高貸款額度 1,000 萬元；貸款成數最高 8 成；最長 40 年；享優惠利率",
+    "deadline": "常態辦理（可隨時向公股銀行申請）",
+    "applicationUrl": "https://www.nta.gov.tw/htmlList/71",
     "tags": ["購屋", "青年", "首購", "優惠貸款"],
-    "updatedAt": "2025-05-01"
+    "updatedAt": "2026-05-09"
   },
   {
     "id": "interest-subsidy",
@@ -48,10 +103,10 @@
       "申請人設籍於購屋縣市"
     ],
     "amount": "每年最高補貼 28,800 元（每月最高 2,400 元），最長補貼 20 年",
-    "deadline": "每年7月至8月申請（與租金補貼同期）",
-    "applicationUrl": "https://hra.cpami.gov.tw/",
+    "deadline": "每年9月受理申請（114年9月1日至9月30日）",
+    "applicationUrl": "https://has.nlma.gov.tw/subsidyOnline/",
     "tags": ["購屋", "中低收入", "利息補貼"],
-    "updatedAt": "2025-05-01"
+    "updatedAt": "2026-05-09"
   },
   {
     "id": "parenting-home-loan",
@@ -66,16 +121,16 @@
     ],
     "amount": "每生育一胎增加貸款額度 100 萬元（最多增加 300 萬元），並享有額外利率補貼",
     "deadline": "常態辦理（可隨時申請）",
-    "applicationUrl": "https://www.cpami.gov.tw/",
+    "applicationUrl": "https://www.nlma.gov.tw/",
     "tags": ["購屋", "育兒", "生育", "家庭"],
-    "updatedAt": "2025-05-01"
+    "updatedAt": "2026-05-09"
   },
   {
     "id": "social-housing",
     "title": "社會住宅申請",
     "category": "住宅",
     "agency": "國家住宅及都市更新中心 / 各縣市政府",
-    "summary": "政府提供低於市場租金的公共住宅，租金約為市場行情的70-90%，優先照顧弱勢族群與青年。",
+    "summary": "政府提供低於市場租金的公共住宅，租金約為市場行情的70-90%，優先照顧弱勢族群與青年。各地不定期開放抽籤申請。",
     "eligibility": [
       "設籍於申請縣市",
       "未擁有自有住宅",
@@ -84,8 +139,8 @@
     ],
     "amount": "月租金約為市場租金的 70～90%（依地點及坪數而異）",
     "deadline": "各縣市不定期公告開放申請，採抽籤方式",
-    "applicationUrl": "https://www.ura.gov.tw/",
+    "applicationUrl": "https://www.socialhousing.tw/Portal/BuildingApplyLanding",
     "tags": ["租屋", "公共住宅", "青年", "弱勢"],
-    "updatedAt": "2025-05-01"
+    "updatedAt": "2026-05-09"
   }
 ]
