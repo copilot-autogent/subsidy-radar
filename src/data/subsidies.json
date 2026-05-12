@@ -12,8 +12,10 @@
     ],
     "amount": "尋職津貼最高 15,000 元 + 就業獎勵最高 33,000 元，合計最高 48,000 元",
     "deadline": "114年常態受理（至114年12月31日）",
+    "deadlineStatus": "open",
     "applicationUrl": "https://special.taiwanjobs.gov.tw/internet/2025/YNGSRH/index.html",
     "tags": ["青年", "應屆畢業生", "就業獎勵", "津貼"],
+    "situations": ["fresh-grad", "entrepreneur"],
     "isYouthHighlight": true,
     "updatedAt": "2026-05-09"
   },
@@ -30,8 +32,10 @@
     ],
     "amount": "訓練費用政府全額補助或高額補助（依課程不同），並提供訓練津貼",
     "deadline": "全年常態受理，各地分署定期開班",
+    "deadlineStatus": "ongoing",
     "applicationUrl": "https://kys.wda.gov.tw/News_Content.aspx?n=70&s=2548",
     "tags": ["青年", "職業訓練", "免費", "技能提升"],
+    "situations": ["fresh-grad"],
     "isYouthHighlight": true,
     "updatedAt": "2026-05-09"
   },
@@ -49,8 +53,10 @@
     ],
     "amount": "最高貸款額度 200 萬元（微型商業最高 50 萬元）；年利率按郵儲2年定期利率加 0.575%（政府補貼利差）",
     "deadline": "常態受理（完成課程後可申請）",
+    "deadlineStatus": "ongoing",
     "applicationUrl": "https://beboss.wda.gov.tw/Default.aspx",
     "tags": ["青年", "創業", "低利貸款", "婦女", "中高齡"],
+    "situations": ["fresh-grad", "entrepreneur"],
     "isYouthHighlight": true,
     "updatedAt": "2026-05-09"
   },
@@ -68,8 +74,10 @@
     ],
     "amount": "每月 3,000～8,000 元（依縣市及家庭人口數而異）",
     "deadline": "114年1月1日起至114年12月31日受理申請",
+    "deadlineStatus": "open",
     "applicationUrl": "https://has.nlma.gov.tw/house300e/",
     "tags": ["租屋", "中低收入", "家庭"],
+    "situations": ["renter", "parent"],
     "updatedAt": "2026-05-09"
   },
   {
@@ -86,8 +94,10 @@
     ],
     "amount": "最高貸款額度 1,000 萬元；貸款成數最高 8 成；最長 40 年；享優惠利率",
     "deadline": "常態辦理（可隨時向公股銀行申請）",
+    "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.nta.gov.tw/htmlList/71",
     "tags": ["購屋", "青年", "首購", "優惠貸款"],
+    "situations": ["fresh-grad", "homebuyer"],
     "updatedAt": "2026-05-09"
   },
   {
@@ -104,8 +114,10 @@
     ],
     "amount": "每年最高補貼 28,800 元（每月最高 2,400 元），最長補貼 20 年",
     "deadline": "每年9月受理申請（114年9月1日至9月30日）",
+    "deadlineStatus": "periodic",
     "applicationUrl": "https://has.nlma.gov.tw/subsidyOnline/",
     "tags": ["購屋", "中低收入", "利息補貼"],
+    "situations": ["homebuyer"],
     "updatedAt": "2026-05-09"
   },
   {
@@ -121,8 +133,10 @@
     ],
     "amount": "每生育一胎增加貸款額度 100 萬元（最多增加 300 萬元），並享有額外利率補貼",
     "deadline": "常態辦理（可隨時申請）",
+    "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.nlma.gov.tw/",
     "tags": ["購屋", "育兒", "生育", "家庭"],
+    "situations": ["homebuyer", "parent"],
     "updatedAt": "2026-05-09"
   },
   {
@@ -139,8 +153,10 @@
     ],
     "amount": "月租金約為市場租金的 70～90%（依地點及坪數而異）",
     "deadline": "各縣市不定期公告開放申請，採抽籤方式",
+    "deadlineStatus": "periodic",
     "applicationUrl": "https://www.socialhousing.tw/Portal/BuildingApplyLanding",
     "tags": ["租屋", "公共住宅", "青年", "弱勢"],
+    "situations": ["renter", "parent"],
     "updatedAt": "2026-05-09"
   }
 ]

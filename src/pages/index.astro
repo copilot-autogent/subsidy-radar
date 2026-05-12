@@ -6,6 +6,20 @@ type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean };
 const subsidies = subsidiesRaw as Subsidy[];
 const categories = ['全部', '⭐ 青年必看', ...new Set(subsidies.map(s => s.category))];
 const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
+
+const deadlineLabel: Record<string, { text: string; cls: string }> = {
+  open:     { text: '✅ 開放申請中', cls: 'status-open' },
+  ongoing:  { text: '🔄 長期辦理',   cls: 'status-ongoing' },
+  periodic: { text: '📅 定期開放',   cls: 'status-periodic' },
+};
+
+const personas = [
+  { key: 'fresh-grad',  icon: '🎓', label: '應屆畢業生' },
+  { key: 'renter',      icon: '🏠', label: '找租屋' },
+  { key: 'homebuyer',   icon: '🏡', label: '想買房' },
+  { key: 'entrepreneur',icon: '💼', label: '想創業' },
+  { key: 'parent',      icon: '👶', label: '育兒家庭' },
+];
 ---
 
 <BaseLayout
@@ -17,6 +31,18 @@ const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
     <h1>📡 補助雷達</h1>
     <p>快速找到您符合資格的台灣政府補助，包含就業、創業、住宅及生活補助。</p>
     <p class="hero-youth-hint">🎓 剛畢業？先看「<strong>青年必看</strong>」，{youthCount} 項補助等你領！</p>
+  </section>
+
+  <section class="persona-section" aria-label="情況快速篩選">
+    <p class="persona-label">我目前的情況是…</p>
+    <div class="persona-buttons">
+      {personas.map(p => (
+        <button class="persona-btn" data-situation={p.key} type="button">
+          <span class="persona-icon">{p.icon}</span>
+          <span class="persona-text">{p.label}</span>
+        </button>
+      ))}
+    </div>
   </section>
 
   <div class="controls">
@@ -46,47 +72,56 @@ const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
   <p class="results-count" id="resultsCount">共 {subsidies.length} 項補助</p>
 
   <div class="grid" id="subsidyGrid">
-    {subsidies.map(s => (
-      <article
-        class={`subsidy-card ${s.isYouthHighlight ? 'youth-highlight' : ''}`}
-        data-category={s.category}
-        data-youth={s.isYouthHighlight ? 'true' : 'false'}
-        data-search={`${s.title} ${s.summary} ${s.tags.join(' ')} ${s.agency}`}
-      >
-        <div class="card-header">
-          <h2 class="card-title">{s.title}</h2>
-          <div class="card-badges">
-            {s.isYouthHighlight && <span class="youth-badge">⭐ 青年必看</span>}
-            <span class="category-badge">{s.category}</span>
+    {subsidies.map(s => {
+      const status = deadlineLabel[s.deadlineStatus] ?? deadlineLabel['ongoing'];
+      return (
+        <article
+          class={`subsidy-card ${s.isYouthHighlight ? 'youth-highlight' : ''}`}
+          data-category={s.category}
+          data-youth={s.isYouthHighlight ? 'true' : 'false'}
+          data-situations={JSON.stringify(s.situations ?? [])}
+          data-search={`${s.title} ${s.summary} ${s.tags.join(' ')} ${s.agency}`}
+        >
+          <div class="card-header">
+            <h2 class="card-title">{s.title}</h2>
+            <div class="card-badges">
+              {s.isYouthHighlight && <span class="youth-badge">⭐ 青年必看</span>}
+              <span class="category-badge">{s.category}</span>
+            </div>
           </div>
-        </div>
-        <p class="card-agency">📋 {s.agency}</p>
-        <p class="card-summary">{s.summary}</p>
-        <div class="card-amount">💰 {s.amount}</div>
-        <div class="card-deadline">🗓️ {s.deadline}</div>
-        <details class="card-eligibility">
-          <summary>申請資格條件</summary>
-          <ul>
-            {s.eligibility.map(e => <li>{e}</li>)}
-          </ul>
-        </details>
-        <div class="card-tags">
-          {s.tags.map(tag => <span class="tag">{tag}</span>)}
-        </div>
-        <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">前往申請 →</a>
-      </article>
-    ))}
+          <p class="card-agency">📋 {s.agency}</p>
+          <p class="card-summary">{s.summary}</p>
+          <div class="card-amount">💰 {s.amount}</div>
+          <div class="card-deadline">
+            <span class={`deadline-status ${status.cls}`}>{status.text}</span>
+            <span class="deadline-text">🗓️ {s.deadline}</span>
+          </div>
+          <details class="card-eligibility">
+            <summary>申請資格條件</summary>
+            <ul>
+              {s.eligibility.map(e => <li>{e}</li>)}
+            </ul>
+          </details>
+          <div class="card-tags">
+            {s.tags.map(tag => <span class="tag">{tag}</span>)}
+          </div>
+          <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">前往申請 →</a>
+        </article>
+      );
+    })}
     <div class="no-results" id="noResults" style="display:none">找不到符合條件的補助，請嘗試其他關鍵字。</div>
   </div>
 
   <script>
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
     const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const personaBtns = document.querySelectorAll<HTMLButtonElement>('.persona-btn');
     const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
     const resultsCount = document.getElementById('resultsCount')!;
     const noResults = document.getElementById('noResults')!;
 
     let activeCategory = '全部';
+    let activeSituation = '';
     let searchQuery = '';
 
     function updateDisplay() {
@@ -94,11 +129,19 @@ const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
       cards.forEach(card => {
         const cat = card.dataset.category ?? '';
         const isYouth = card.dataset.youth === 'true';
+        const situations: string[] = JSON.parse(card.dataset.situations ?? '[]');
         const search = (card.dataset.search ?? '').toLowerCase();
+
         const matchCat = activeCategory === '全部'
-          || activeCategory === '⭐ 青年必看' ? isYouth : cat === activeCategory;
+          ? true
+          : activeCategory === '⭐ 青年必看'
+          ? isYouth
+          : cat === activeCategory;
+
+        const matchSituation = activeSituation === '' || situations.includes(activeSituation);
         const matchSearch = searchQuery === '' || search.includes(searchQuery);
-        const show = matchCat && matchSearch;
+
+        const show = matchCat && matchSituation && matchSearch;
         card.style.display = show ? '' : 'none';
         if (show) visible++;
       });
@@ -116,6 +159,29 @@ const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activeCategory = btn.dataset.category ?? '全部';
+        // Clear persona when category filter is clicked
+        activeSituation = '';
+        personaBtns.forEach(b => b.classList.remove('active'));
+        updateDisplay();
+      });
+    });
+
+    personaBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const situation = btn.dataset.situation ?? '';
+        if (activeSituation === situation) {
+          // Toggle off
+          activeSituation = '';
+          btn.classList.remove('active');
+        } else {
+          activeSituation = situation;
+          personaBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          // Reset category filter to 全部
+          activeCategory = '全部';
+          filterBtns.forEach(b => b.classList.remove('active'));
+          filterBtns[0]?.classList.add('active');
+        }
         updateDisplay();
       });
     });

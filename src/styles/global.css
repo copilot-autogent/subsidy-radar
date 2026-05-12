@@ -223,6 +223,8 @@ main {
   border-radius: 999px;
   border: 1px solid #fbbf24;
 }
+
+.results-count {
   font-size: 0.9rem;
   color: var(--color-text-muted);
   margin-bottom: 1rem;
@@ -369,4 +371,108 @@ main {
   .hero h1 { font-size: 1.75rem; }
   .controls { flex-direction: column; }
   .search-box { min-width: unset; }
+}
+
+/* ── Persona quick-filter ── */
+.persona-section {
+  margin: 1.5rem 0 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #f8fafc;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.persona-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.persona-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.persona-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.7rem 1.2rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 90px;
+}
+
+.persona-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.persona-btn.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: white;
+}
+
+.persona-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.persona-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── Deadline status badges ── */
+.card-deadline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.deadline-status {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.status-open {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.status-ongoing {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+}
+
+.status-periodic {
+  background: #fef9c3;
+  color: #854d0e;
+  border: 1px solid #fde047;
+}
+
+.deadline-text {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 640px) {
+  .persona-btn { min-width: 70px; padding: 0.6rem 0.8rem; }
+  .persona-icon { font-size: 1.2rem; }
 }
