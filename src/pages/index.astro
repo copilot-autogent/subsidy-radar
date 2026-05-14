@@ -69,6 +69,11 @@ const personas = [
     </div>
   </div>
 
+  <div class="eligibility-banner" id="eligibilityBanner" style="display:none" role="status" aria-live="polite">
+    <span class="banner-emoji">🎯</span>
+    <span id="bannerText"></span>
+  </div>
+
   <p class="results-count" id="resultsCount">共 {subsidies.length} 項補助</p>
 
   <div class="grid" id="subsidyGrid">
@@ -119,10 +124,19 @@ const personas = [
     const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
     const resultsCount = document.getElementById('resultsCount')!;
     const noResults = document.getElementById('noResults')!;
+    const eligibilityBanner = document.getElementById('eligibilityBanner')!;
+    const bannerText = document.getElementById('bannerText')!;
 
     let activeCategory = '全部';
     let activeSituation = '';
     let searchQuery = '';
+
+    function countEligible(situation: string): number {
+      return Array.from(cards).filter(card => {
+        const situations: string[] = JSON.parse(card.dataset.situations ?? '[]');
+        return situations.includes(situation);
+      }).length;
+    }
 
     function updateDisplay() {
       let visible = 0;
@@ -147,6 +161,14 @@ const personas = [
       });
       resultsCount.textContent = `共 ${visible} 項補助`;
       noResults.style.display = visible === 0 ? 'block' : 'none';
+
+      if (activeSituation) {
+        const totalEligible = countEligible(activeSituation);
+        bannerText.textContent = `你可能有 ${totalEligible} 項補助符合你的情況！`;
+        eligibilityBanner.style.display = 'flex';
+      } else {
+        eligibilityBanner.style.display = 'none';
+      }
     }
 
     searchInput.addEventListener('input', () => {
