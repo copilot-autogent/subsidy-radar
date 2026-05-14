@@ -158,5 +158,89 @@
     "tags": ["租屋", "公共住宅", "青年", "弱勢"],
     "situations": ["renter", "parent"],
     "updatedAt": "2026-05-09"
+  },
+  {
+    "id": "student-loan-interest-relief",
+    "title": "就學貸款利息補貼",
+    "category": "教育",
+    "agency": "教育部學生事務及特殊教育司",
+    "summary": "具有就學貸款的畢業生可申請利息補貼，符合條件者在還款期間政府補貼全部或部分利息，大幅減輕還款壓力。年收入70萬元以下優先。",
+    "eligibility": [
+      "曾申辦就學貸款並已畢業或離校",
+      "家庭年所得符合規定（各縣市公告為準）",
+      "貸款期間仍在還款中",
+      "向原貸款金融機構申請"
+    ],
+    "amount": "依個人所得及還款狀況補貼全額或部分利息，年省數千至數萬元",
+    "deadline": "全年常態受理，每年審查",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://heloan.boe.moe.edu.tw/",
+    "tags": ["學貸", "畢業生", "利息補貼", "還款減壓"],
+    "situations": ["fresh-grad"],
+    "isYouthHighlight": true,
+    "updatedAt": "2026-05-14"
+  },
+  {
+    "id": "unemployment-benefit",
+    "title": "就業保險失業給付",
+    "category": "就業",
+    "agency": "勞動部勞工保險局",
+    "summary": "非自願離職或找不到工作的勞工，可領取失業給付，每月領平均投保薪資的60%，最長六個月，積極求職者加計10%。新鮮人第一份工作被裁員適用。",
+    "eligibility": [
+      "已參加就業保險滿一年",
+      "非自願離職（含契約到期未續約）",
+      "具工作能力且積極求職中",
+      "向公立就業服務機構辦理求職登記"
+    ],
+    "amount": "月平均投保薪資 60%，最長 6 個月；積極求職加發 10%（最高 70%）",
+    "deadline": "離職後2年內申請，隨時可申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.bli.gov.tw/0010097.html",
+    "tags": ["失業", "就業保險", "津貼", "非自願離職"],
+    "situations": ["fresh-grad", "renter"],
+    "isYouthHighlight": false,
+    "updatedAt": "2026-05-14"
+  },
+  {
+    "id": "childcare-allowance",
+    "title": "育兒津貼（準公共化托育補助）",
+    "category": "育兒",
+    "agency": "衛生福利部社會及家庭署",
+    "summary": "0至未滿5歲幼兒送托準公共化或私立托嬰中心、幼兒園，政府每月補助育兒津貼，大幅降低托育費用負擔。雙薪家庭也可申請！",
+    "eligibility": [
+      "幼兒年齡0至未滿5歲（依各方案略有不同）",
+      "家庭年所得合於規定",
+      "送托合格立案托嬰中心或幼兒園（準公共化機構）",
+      "未請領育嬰假津貼或不重複補助"
+    ],
+    "amount": "0-2歲每月最高 11,500 元；2-5歲每月最高 4,000 元（依縣市及家庭條件有所不同）",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383",
+    "tags": ["育兒", "托育", "幼兒", "托嬰"],
+    "situations": ["parent"],
+    "isYouthHighlight": false,
+    "updatedAt": "2026-05-14"
+  },
+  {
+    "id": "youth-startup-fund",
+    "title": "青年創業及啟動金貸款",
+    "category": "創業",
+    "agency": "經濟部中小企業處",
+    "summary": "18至45歲青年創業可申請最高200萬元低利創業貸款，利率約1.5%優惠，並提供免費創業輔導諮詢服務，適合創業初期需要資金的年輕人。",
+    "eligibility": [
+      "年齡18至45歲",
+      "事業登記負責人（或即將登記）",
+      "具體可行之創業計畫",
+      "完成政府認可之創業研習課程（8小時以上）"
+    ],
+    "amount": "最高貸款額度 200 萬元；年利率約 1.5%（優惠利率，政府補貼利差）",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.sba.gov.tw/",
+    "tags": ["創業", "青年", "貸款", "低利", "啟動金"],
+    "situations": ["fresh-grad", "entrepreneur"],
+    "isYouthHighlight": true,
+    "updatedAt": "2026-05-14"
   }
 ]
