@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string };
 const subsidies = subsidiesRaw as Subsidy[];
 const categories = ['全部', '⭐ 青年必看', ...new Set(subsidies.map(s => s.category))];
 const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
@@ -11,6 +11,12 @@ const deadlineLabel: Record<string, { text: string; cls: string }> = {
   open:     { text: '✅ 開放申請中', cls: 'status-open' },
   ongoing:  { text: '🔄 長期辦理',   cls: 'status-ongoing' },
   periodic: { text: '📅 定期開放',   cls: 'status-periodic' },
+};
+
+const difficultyLabel: Record<string, { text: string; cls: string }> = {
+  easy:   { text: '🟢 申請簡單', cls: 'diff-easy' },
+  medium: { text: '🟡 需備文件', cls: 'diff-medium' },
+  hard:   { text: '🔴 流程複雜', cls: 'diff-hard' },
 };
 
 const personas = [
@@ -79,6 +85,7 @@ const personas = [
   <div class="grid" id="subsidyGrid">
     {subsidies.map(s => {
       const status = deadlineLabel[s.deadlineStatus] ?? deadlineLabel['ongoing'];
+      const diff = difficultyLabel[s.difficulty ?? 'medium'];
       return (
         <article
           class={`subsidy-card ${s.isYouthHighlight ? 'youth-highlight' : ''}`}
@@ -97,9 +104,12 @@ const personas = [
           <p class="card-agency">📋 {s.agency}</p>
           <p class="card-summary">{s.summary}</p>
           <div class="card-amount">💰 {s.amount}</div>
-          <div class="card-deadline">
-            <span class={`deadline-status ${status.cls}`}>{status.text}</span>
-            <span class="deadline-text">🗓️ {s.deadline}</span>
+          <div class="card-meta-row">
+            <div class="card-deadline">
+              <span class={`deadline-status ${status.cls}`}>{status.text}</span>
+              <span class="deadline-text">🗓️ {s.deadline}</span>
+            </div>
+            <span class={`difficulty-badge ${diff.cls}`}>{diff.text}</span>
           </div>
           <details class="card-eligibility">
             <summary>申請資格條件</summary>
