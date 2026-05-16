@@ -17,6 +17,7 @@
     "tags": ["青年", "應屆畢業生", "就業獎勵", "津貼"],
     "situations": ["fresh-grad", "entrepreneur"],
     "isYouthHighlight": true,
+    "difficulty": "easy",
     "updatedAt": "2026-05-09"
   },
   {
@@ -37,6 +38,7 @@
     "tags": ["青年", "職業訓練", "免費", "技能提升"],
     "situations": ["fresh-grad"],
     "isYouthHighlight": true,
+    "difficulty": "easy",
     "updatedAt": "2026-05-09"
   },
   {
@@ -58,6 +60,7 @@
     "tags": ["青年", "創業", "低利貸款", "婦女", "中高齡"],
     "situations": ["fresh-grad", "entrepreneur"],
     "isYouthHighlight": true,
+    "difficulty": "hard",
     "updatedAt": "2026-05-09"
   },
   {
@@ -78,6 +81,7 @@
     "applicationUrl": "https://has.nlma.gov.tw/house300e/",
     "tags": ["租屋", "中低收入", "家庭"],
     "situations": ["renter", "parent"],
+    "difficulty": "medium",
     "updatedAt": "2026-05-09"
   },
   {
@@ -98,6 +102,7 @@
     "applicationUrl": "https://www.nta.gov.tw/htmlList/71",
     "tags": ["購屋", "青年", "首購", "優惠貸款"],
     "situations": ["fresh-grad", "homebuyer"],
+    "difficulty": "medium",
     "updatedAt": "2026-05-09"
   },
   {
@@ -118,6 +123,7 @@
     "applicationUrl": "https://has.nlma.gov.tw/subsidyOnline/",
     "tags": ["購屋", "中低收入", "利息補貼"],
     "situations": ["homebuyer"],
+    "difficulty": "medium",
     "updatedAt": "2026-05-09"
   },
   {
@@ -137,6 +143,7 @@
     "applicationUrl": "https://www.nlma.gov.tw/",
     "tags": ["購屋", "育兒", "生育", "家庭"],
     "situations": ["homebuyer", "parent"],
+    "difficulty": "medium",
     "updatedAt": "2026-05-09"
   },
   {
@@ -157,6 +164,7 @@
     "applicationUrl": "https://www.socialhousing.tw/Portal/BuildingApplyLanding",
     "tags": ["租屋", "公共住宅", "青年", "弱勢"],
     "situations": ["renter", "parent"],
+    "difficulty": "medium",
     "updatedAt": "2026-05-09"
   },
   {
@@ -178,6 +186,7 @@
     "tags": ["學貸", "畢業生", "利息補貼", "還款減壓"],
     "situations": ["fresh-grad"],
     "isYouthHighlight": true,
+    "difficulty": "easy",
     "updatedAt": "2026-05-14"
   },
   {
@@ -199,6 +208,7 @@
     "tags": ["失業", "就業保險", "津貼", "非自願離職"],
     "situations": ["fresh-grad", "renter"],
     "isYouthHighlight": false,
+    "difficulty": "medium",
     "updatedAt": "2026-05-14"
   },
   {
@@ -220,6 +230,7 @@
     "tags": ["育兒", "托育", "幼兒", "托嬰"],
     "situations": ["parent"],
     "isYouthHighlight": false,
+    "difficulty": "medium",
     "updatedAt": "2026-05-14"
   },
   {
@@ -241,6 +252,95 @@
     "tags": ["創業", "青年", "貸款", "低利", "啟動金"],
     "situations": ["fresh-grad", "entrepreneur"],
     "isYouthHighlight": true,
+    "difficulty": "hard",
     "updatedAt": "2026-05-14"
+  },
+  {
+    "id": "parental-leave-allowance",
+    "title": "育嬰留職停薪津貼",
+    "category": "育兒",
+    "agency": "勞動部勞工保險局",
+    "summary": "受雇勞工因照顧幼兒辦理留職停薪，可申請育嬰留職停薪津貼，每月領取投保薪資60%，最長6個月，雙薪家庭可各自申請。",
+    "eligibility": [
+      "子女未滿3歲",
+      "投保年資合計一年以上",
+      "辦理育嬰留職停薪（需雇主同意）",
+      "受雇於依法投保就業保險之事業單位"
+    ],
+    "amount": "每月投保薪資 60%，每人最長 6 個月；雙薪家庭各申請合計可達 12 個月",
+    "deadline": "全年常態受理（育嬰假期間隨時申請）",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.bli.gov.tw/0010097.html",
+    "tags": ["育嬰", "育兒", "留職停薪", "生育友善"],
+    "situations": ["parent"],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-05-16"
+  },
+  {
+    "id": "birth-subsidy",
+    "title": "生育補助（中央＋地方加碼）",
+    "category": "育兒",
+    "agency": "衛生福利部 / 各縣市政府",
+    "summary": "生育子女可領取中央政府補助，各縣市另有加碼補助，第一胎至第三胎依序遞增，最高可達數萬元。新生兒出生後儘快申請，勿錯過期限！",
+    "eligibility": [
+      "設籍台灣之本國籍或具永久居留身分",
+      "新生兒完成出生登記",
+      "父或母一方設籍於補助縣市（地方加碼適用）",
+      "申請期限：出生後6個月內（各縣市規定略有不同）"
+    ],
+    "amount": "中央 2,000 元；各縣市加碼 5,000～60,000 元（台北市第3胎以上最高 60,000 元）",
+    "deadline": "出生後6個月內申請（部分縣市為1年內）",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=357",
+    "tags": ["生育", "新生兒", "縣市補助", "育兒"],
+    "situations": ["parent"],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-05-16"
+  },
+  {
+    "id": "vocational-training-living-allowance",
+    "title": "職業訓練生活津貼",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "參加政府核准全日制職業訓練課程期間，可領取生活津貼，安心學習新技能。適合剛畢業想轉換跑道或學習第二專長的青年，邊學邊領錢！",
+    "eligibility": [
+      "非自願離職失業者或初次求職未就業青年",
+      "參加全日制政府核准職業訓練課程",
+      "訓練期間未支領薪資",
+      "向公立就業服務機構辦理求職登記"
+    ],
+    "amount": "每月 13,491 元（約基本工資 60%），訓練期間全程發放",
+    "deadline": "全年常態受理，依課程開班時間申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=1E3B11CF1C70A3EC",
+    "tags": ["職業訓練", "生活津貼", "技能轉換", "免費訓練"],
+    "situations": ["fresh-grad"],
+    "isYouthHighlight": true,
+    "difficulty": "easy",
+    "updatedAt": "2026-05-16"
+  },
+  {
+    "id": "disability-living-allowance",
+    "title": "身心障礙者生活補助",
+    "category": "生活",
+    "agency": "衛生福利部社會及家庭署 / 各縣市政府",
+    "summary": "領有身心障礙證明者可申請每月定期生活補助，中低收入戶補助金額更高，各縣市另有加碼。申請程序簡便，向戶籍地公所申請即可。",
+    "eligibility": [
+      "領有身心障礙證明（輕、中、重、極重度皆適用）",
+      "設籍台灣（本國籍或永久居留）",
+      "家庭年所得符合規定（中低收入戶優先，一般戶亦可申請）",
+      "向戶籍所在地鄉鎮市區公所社會課申請"
+    ],
+    "amount": "每月 4,350～11,605 元（依障礙等級及家庭收入級距而異）",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341",
+    "tags": ["身心障礙", "生活補助", "月給付", "公所申請"],
+    "situations": ["renter", "parent"],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-05-16"
   }
 ]
