@@ -157,6 +157,36 @@ main {
   gap: 0.5rem;
 }
 
+.sort-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sort-btn {
+  padding: 0.4rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.sort-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.sort-btn.active {
+  background: #f0fdf4;
+  border-color: #15803d;
+  color: #15803d;
+  font-weight: 600;
+}
+
 .filter-btn {
   padding: 0.45rem 1rem;
   border: 1.5px solid var(--color-border);
