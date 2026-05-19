@@ -73,6 +73,11 @@ const personas = [
         </button>
       ))}
     </div>
+    <div class="sort-row">
+      <button class="sort-btn" id="sortDifficulty" type="button" aria-pressed="false">
+        依申請難度排序
+      </button>
+    </div>
   </div>
 
   <div class="eligibility-banner" id="eligibilityBanner" style="display:none" role="status" aria-live="polite">
@@ -92,6 +97,7 @@ const personas = [
           data-category={s.category}
           data-youth={s.isYouthHighlight ? 'true' : 'false'}
           data-situations={JSON.stringify(s.situations ?? [])}
+          data-difficulty={s.difficulty ?? 'medium'}
           data-search={`${s.title} ${s.summary} ${s.tags.join(' ')} ${s.agency}`}
         >
           <div class="card-header">
@@ -136,10 +142,25 @@ const personas = [
     const noResults = document.getElementById('noResults')!;
     const eligibilityBanner = document.getElementById('eligibilityBanner')!;
     const bannerText = document.getElementById('bannerText')!;
+    const sortBtn = document.getElementById('sortDifficulty') as HTMLButtonElement;
 
     let activeCategory = '全部';
     let activeSituation = '';
     let searchQuery = '';
+    let sortByDifficulty = false;
+
+    const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
+
+    function applySort() {
+      cards.forEach(card => {
+        if (sortByDifficulty) {
+          const diff = card.dataset.difficulty ?? 'medium';
+          card.style.order = String(difficultyOrder[diff] ?? 2);
+        } else {
+          card.style.order = '';
+        }
+      });
+    }
 
     function countEligible(situation: string): number {
       return Array.from(cards).filter(card => {
@@ -216,6 +237,14 @@ const personas = [
         }
         updateDisplay();
       });
+    });
+
+    sortBtn.addEventListener('click', () => {
+      sortByDifficulty = !sortByDifficulty;
+      sortBtn.classList.toggle('active', sortByDifficulty);
+      sortBtn.setAttribute('aria-pressed', String(sortByDifficulty));
+      sortBtn.textContent = sortByDifficulty ? '✓ 🟢 簡單優先' : '依申請難度排序';
+      applySort();
     });
   </script>
 </BaseLayout>
