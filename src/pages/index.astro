@@ -13,10 +13,10 @@ const deadlineLabel: Record<string, { text: string; cls: string }> = {
   periodic: { text: '📅 定期開放',   cls: 'status-periodic' },
 };
 
-const difficultyLabel: Record<string, { text: string; cls: string }> = {
-  easy:   { text: '🟢 申請簡單', cls: 'diff-easy' },
-  medium: { text: '🟡 需備文件', cls: 'diff-medium' },
-  hard:   { text: '🔴 流程複雜', cls: 'diff-hard' },
+const difficultyLabel: Record<string, { text: string; cls: string; tooltip: string }> = {
+  easy:   { text: '🟢 申請簡單', cls: 'diff-easy',   tooltip: '線上申請，約5-10分鐘可完成' },
+  medium: { text: '🟡 需備文件', cls: 'diff-medium', tooltip: '需備齊紙本文件，約1-2週處理' },
+  hard:   { text: '🔴 流程複雜', cls: 'diff-hard',   tooltip: '多步驟審核流程，建議先電話諮詢' },
 };
 
 const personas = [
@@ -115,7 +115,7 @@ const personas = [
               <span class={`deadline-status ${status.cls}`}>{status.text}</span>
               <span class="deadline-text">🗓️ {s.deadline}</span>
             </div>
-            <span class={`difficulty-badge ${diff.cls}`}>{diff.text}</span>
+            <span class={`difficulty-badge ${diff.cls}`} data-tooltip={diff.tooltip}>{diff.text}</span>
           </div>
           <details class="card-eligibility">
             <summary>申請資格條件</summary>
@@ -126,7 +126,7 @@ const personas = [
           <div class="card-tags">
             {s.tags.map(tag => <span class="tag">{tag}</span>)}
           </div>
-          <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">前往申請 →</a>
+          <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">立即申請 →</a>
         </article>
       );
     })}
