@@ -345,14 +345,28 @@ main {
   line-height: 1.65;
 }
 
-.card-amount {
+.card-amount-highlight {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
   background: #f0fdf4;
-  border-left: 3px solid #22c55e;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0 6px 6px 0;
-  font-size: 0.88rem;
+  border-left: 4px solid #16a34a;
+  padding: 0.55rem 0.85rem;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
   color: #15803d;
-  font-weight: 600;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.amount-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.amount-text {
+  flex: 1;
 }
 
 .card-deadline {
@@ -481,6 +495,55 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+}
+
+/* ── Application steps expander ── */
+.card-steps {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0 0.85rem;
+}
+
+.card-steps[open] {
+  padding-bottom: 0.75rem;
+}
+
+.card-steps summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary);
+  user-select: none;
+  padding: 0.55rem 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.card-steps summary::-webkit-details-marker { display: none; }
+
+.card-steps summary::after {
+  content: ' ▸';
+  font-size: 0.75rem;
+  transition: transform 0.15s;
+  display: inline-block;
+}
+
+.card-steps[open] summary::after {
+  transform: rotate(90deg);
+}
+
+.steps-list {
+  margin-top: 0.4rem;
+  padding-left: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--color-text);
+  line-height: 1.55;
 }
 
 .no-results {

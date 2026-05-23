@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[] };
 const subsidies = subsidiesRaw as Subsidy[];
 const categories = ['全部', '⭐ 青年必看', ...new Set(subsidies.map(s => s.category))];
 const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
@@ -108,8 +108,11 @@ const personas = [
             </div>
           </div>
           <p class="card-agency">📋 {s.agency}</p>
+          <div class="card-amount-highlight">
+            <span class="amount-icon">💰</span>
+            <span class="amount-text">{s.amount}</span>
+          </div>
           <p class="card-summary">{s.summary}</p>
-          <div class="card-amount">💰 {s.amount}</div>
           <div class="card-meta-row">
             <div class="card-deadline">
               <span class={`deadline-status ${status.cls}`}>{status.text}</span>
@@ -126,6 +129,14 @@ const personas = [
           <div class="card-tags">
             {s.tags.map(tag => <span class="tag">{tag}</span>)}
           </div>
+          {s.steps && s.steps.length > 0 && (
+            <details class="card-steps">
+              <summary>📋 如何申請？（{s.steps.length} 個步驟）</summary>
+              <ol class="steps-list">
+                {s.steps.map(step => <li>{step}</li>)}
+              </ol>
+            </details>
+          )}
           <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">立即申請 →</a>
         </article>
       );
