@@ -14,11 +14,25 @@
     "deadline": "114年常態受理（至114年12月31日）",
     "deadlineStatus": "open",
     "applicationUrl": "https://special.taiwanjobs.gov.tw/internet/2025/YNGSRH/index.html",
-    "tags": ["青年", "應屆畢業生", "就業獎勵", "津貼"],
-    "situations": ["fresh-grad", "entrepreneur"],
+    "tags": [
+      "青年",
+      "應屆畢業生",
+      "就業獎勵",
+      "津貼"
+    ],
+    "situations": [
+      "fresh-grad",
+      "entrepreneur"
+    ],
     "isYouthHighlight": true,
     "difficulty": "easy",
-    "updatedAt": "2026-05-09"
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "至台灣就業通或公立就業服務站線上登記求職（免費）",
+      "填寫申請表，提供身分證、學歷證明、銀行帳戶資料",
+      "透過就業服務員媒合職缺，穩定就業後申請就業獎勵",
+      "尋職津貼每月匯入，就業獎勵於就業滿3/6個月分批撥款"
+    ]
   },
   {
     "id": "youth-vocational-training",
@@ -35,11 +49,24 @@
     "deadline": "全年常態受理，各地分署定期開班",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://kys.wda.gov.tw/News_Content.aspx?n=70&s=2548",
-    "tags": ["青年", "職業訓練", "免費", "技能提升"],
-    "situations": ["fresh-grad"],
+    "tags": [
+      "青年",
+      "職業訓練",
+      "免費",
+      "技能提升"
+    ],
+    "situations": [
+      "fresh-grad"
+    ],
     "isYouthHighlight": true,
     "difficulty": "easy",
-    "updatedAt": "2026-05-09"
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "至台灣就業通查詢「青年培力工作站」或補助課程清單",
+      "報名符合資格的訓練課程，保留報名確認與繳費收據",
+      "全程參與課程（出缺勤會影響補助核定）",
+      "完成課程後持收據申請費用補助，約 2-3 週匯入帳戶"
+    ]
   },
   {
     "id": "micro-phoenix-loan",
@@ -57,11 +84,26 @@
     "deadline": "常態受理（完成課程後可申請）",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://beboss.wda.gov.tw/Default.aspx",
-    "tags": ["青年", "創業", "低利貸款", "婦女", "中高齡"],
-    "situations": ["fresh-grad", "entrepreneur"],
+    "tags": [
+      "青年",
+      "創業",
+      "低利貸款",
+      "婦女",
+      "中高齡"
+    ],
+    "situations": [
+      "fresh-grad",
+      "entrepreneur"
+    ],
     "isYouthHighlight": true,
     "difficulty": "hard",
-    "updatedAt": "2026-05-09"
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "至「微型創業鳳凰」官網報名免費創業諮詢，確認申請資格",
+      "準備創業計畫書、個人信用報告、最近一年所得證明",
+      "參加至少 18 小時政府認可的創業研習課程並取得結業證書",
+      "向合作銀行提交申請，銀行信審通過後撥款（全程約 6-8 週）"
+    ]
   },
   {
     "id": "rent-subsidy",
@@ -79,10 +121,23 @@
     "deadline": "114年1月1日起至114年12月31日受理申請",
     "deadlineStatus": "open",
     "applicationUrl": "https://has.nlma.gov.tw/house300e/",
-    "tags": ["租屋", "中低收入", "家庭"],
-    "situations": ["renter", "parent"],
+    "tags": [
+      "租屋",
+      "中低收入",
+      "家庭"
+    ],
+    "situations": [
+      "renter",
+      "parent"
+    ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09"
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "確認符合資格：有合法租約（非親屬）、無自有住宅、符合收入限制",
+      "前往「300億元中央擴大租金補貼申請平台」建立帳號",
+      "上傳租賃契約、戶口名簿、薪資或稅務證明及銀行帳戶資料",
+      "審核通過後（約 2-4 週），每月補貼自動匯入指定帳戶"
+    ]
   },
   {
     "id": "youth-home-loan",
@@ -100,10 +155,24 @@
     "deadline": "常態辦理（可隨時向公股銀行申請）",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.nta.gov.tw/htmlList/71",
-    "tags": ["購屋", "青年", "首購", "優惠貸款"],
-    "situations": ["fresh-grad", "homebuyer"],
+    "tags": [
+      "購屋",
+      "青年",
+      "首購",
+      "優惠貸款"
+    ],
+    "situations": [
+      "fresh-grad",
+      "homebuyer"
+    ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09"
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "確認資格：年齡 45 歲以下、初次購屋、家庭年收入 120 萬以下",
+      "持買賣契約至台灣銀行、合庫銀行等合作公股銀行申請",
+      "銀行進行房屋估價與信用審查，確認貸款成數（最高 8 成）",
+      "核准後簽約，政府利率補貼直接計入優惠利率中"
+    ]
   },
   {
     "id": "interest-subsidy",
@@ -121,10 +190,22 @@
     "deadline": "每年9月受理申請（114年9月1日至9月30日）",
     "deadlineStatus": "periodic",
     "applicationUrl": "https://has.nlma.gov.tw/subsidyOnline/",
-    "tags": ["購屋", "中低收入", "利息補貼"],
-    "situations": ["homebuyer"],
+    "tags": [
+      "購屋",
+      "中低收入",
+      "利息補貼"
+    ],
+    "situations": [
+      "homebuyer"
+    ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09"
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "確認資格：已有房貸、家庭年收入符合標準、無其他住宅補貼",
+      "每年 9 月至內政部「自購住宅貸款利息補貼系統」線上申請",
+      "上傳房貸借款契約、最近一年所得證明及戶籍資料",
+      "審核通過後（約 4-6 週），補貼款每年一次匯入指定帳戶"
+    ]
   },
   {
     "id": "parenting-home-loan",
@@ -141,10 +222,24 @@
     "deadline": "常態辦理（可隨時申請）",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.nlma.gov.tw/",
-    "tags": ["購屋", "育兒", "生育", "家庭"],
-    "situations": ["homebuyer", "parent"],
+    "tags": [
+      "購屋",
+      "育兒",
+      "生育",
+      "家庭"
+    ],
+    "situations": [
+      "homebuyer",
+      "parent"
+    ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09"
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "確認資格：育有未滿 18 歲子女，計畫購置或已購置自住住宅",
+      "至台灣銀行等合作金融機構準備購屋資料及戶籍謄本",
+      "填寫申請表，附上出生證明確認子女數（每胎加碼 100 萬元）",
+      "銀行審核通過後，依子女數提高貸款額度並享優惠利率"
+    ]
   },
   {
     "id": "social-housing",
@@ -162,10 +257,24 @@
     "deadline": "各縣市不定期公告開放申請，採抽籤方式",
     "deadlineStatus": "periodic",
     "applicationUrl": "https://www.socialhousing.tw/Portal/BuildingApplyLanding",
-    "tags": ["租屋", "公共住宅", "青年", "弱勢"],
-    "situations": ["renter", "parent"],
+    "tags": [
+      "租屋",
+      "公共住宅",
+      "青年",
+      "弱勢"
+    ],
+    "situations": [
+      "renter",
+      "parent"
+    ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09"
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "至各縣市政府住宅處或「全國社會住宅資訊整合平臺」查詢開放公告",
+      "備妥身分證、戶籍資料、全家財產及所得證明（需最新年度）",
+      "線上填寫申請表，部分縣市採積分排序、部分採抽籤制",
+      "確認分配結果後選屋、簽約，繳押金及第一期租金（市價約 7-9 折）"
+    ]
   },
   {
     "id": "student-loan-interest-relief",
@@ -183,11 +292,24 @@
     "deadline": "全年常態受理，每年審查",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://heloan.boe.moe.edu.tw/",
-    "tags": ["學貸", "畢業生", "利息補貼", "還款減壓"],
-    "situations": ["fresh-grad"],
+    "tags": [
+      "學貸",
+      "畢業生",
+      "利息補貼",
+      "還款減壓"
+    ],
+    "situations": [
+      "fresh-grad"
+    ],
     "isYouthHighlight": true,
     "difficulty": "easy",
-    "updatedAt": "2026-05-14"
+    "updatedAt": "2026-05-14",
+    "steps": [
+      "確認資格：持有就學貸款、已畢業、家庭收入符合補貼標準",
+      "至「學生就學貸款資訊網」或向原貸款銀行索取申請表",
+      "附上貸款餘額證明、最近一年所得或稅務資料",
+      "審核通過後，補貼直接抵扣利息或匯入帳戶（每年審核一次）"
+    ]
   },
   {
     "id": "unemployment-benefit",
@@ -205,11 +327,25 @@
     "deadline": "離職後2年內申請，隨時可申請",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.bli.gov.tw/0010097.html",
-    "tags": ["失業", "就業保險", "津貼", "非自願離職"],
-    "situations": ["fresh-grad", "renter"],
+    "tags": [
+      "失業",
+      "就業保險",
+      "津貼",
+      "非自願離職"
+    ],
+    "situations": [
+      "fresh-grad",
+      "renter"
+    ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-05-14"
+    "updatedAt": "2026-05-14",
+    "steps": [
+      "非自願離職後 14 天內攜帶離職證明至公立就業服務站辦理",
+      "填寫「失業認定及給付申請書」，提供勞保資料、身分證、存摺",
+      "每 28 天回就業服務站辦理定期求職認定（需積極求職記錄）",
+      "通過認定後，失業給付每月匯入帳戶（最長 6 個月）"
+    ]
   },
   {
     "id": "childcare-allowance",
@@ -227,11 +363,24 @@
     "deadline": "全年常態受理",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383",
-    "tags": ["育兒", "托育", "幼兒", "托嬰"],
-    "situations": ["parent"],
+    "tags": [
+      "育兒",
+      "托育",
+      "幼兒",
+      "托嬰"
+    ],
+    "situations": [
+      "parent"
+    ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-05-14"
+    "updatedAt": "2026-05-14",
+    "steps": [
+      "確認子女就讀「準公共化托育機構」或使用登記居家保母",
+      "至戶籍地社會局或線上「育兒津貼申請系統」填寫申請表",
+      "附上托育合約、繳費收據、出生證明及家長銀行帳戶資料",
+      "審核通過後（約 2-3 週），補貼每月匯入申請家長帳戶"
+    ]
   },
   {
     "id": "youth-startup-fund",
@@ -249,11 +398,26 @@
     "deadline": "全年常態受理",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.sba.gov.tw/",
-    "tags": ["創業", "青年", "貸款", "低利", "啟動金"],
-    "situations": ["fresh-grad", "entrepreneur"],
+    "tags": [
+      "創業",
+      "青年",
+      "貸款",
+      "低利",
+      "啟動金"
+    ],
+    "situations": [
+      "fresh-grad",
+      "entrepreneur"
+    ],
     "isYouthHighlight": true,
     "difficulty": "hard",
-    "updatedAt": "2026-05-14"
+    "updatedAt": "2026-05-14",
+    "steps": [
+      "至青創基地或經濟部創業輔導窗口諮詢，確認計畫可行性",
+      "準備詳細創業計畫書、市場分析、預期財務報表（1-3 年）",
+      "完成 8 小時以上政府認可的創業培訓課程，取得結業證書",
+      "向合作銀行提交申請，審核通過後撥款（全程約 8-12 週）"
+    ]
   },
   {
     "id": "parental-leave-allowance",
@@ -271,11 +435,24 @@
     "deadline": "全年常態受理（育嬰假期間隨時申請）",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.bli.gov.tw/0010097.html",
-    "tags": ["育嬰", "育兒", "留職停薪", "生育友善"],
-    "situations": ["parent"],
+    "tags": [
+      "育嬰",
+      "育兒",
+      "留職停薪",
+      "生育友善"
+    ],
+    "situations": [
+      "parent"
+    ],
     "isYouthHighlight": false,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16"
+    "updatedAt": "2026-05-16",
+    "steps": [
+      "向雇主提出「育嬰留職停薪申請書」（至少提前 10 天通知）",
+      "留停期間至勞保局官網「e化服務」線上申請津貼",
+      "附上子女出生證明、勞保投保資料及銀行帳戶",
+      "審核後津貼每月匯入（每人最長 6 個月，夫妻可分開各請）"
+    ]
   },
   {
     "id": "birth-subsidy",
@@ -293,11 +470,24 @@
     "deadline": "出生後6個月內申請（部分縣市為1年內）",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=357",
-    "tags": ["生育", "新生兒", "縣市補助", "育兒"],
-    "situations": ["parent"],
+    "tags": [
+      "生育",
+      "新生兒",
+      "縣市補助",
+      "育兒"
+    ],
+    "situations": [
+      "parent"
+    ],
     "isYouthHighlight": false,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16"
+    "updatedAt": "2026-05-16",
+    "steps": [
+      "寶寶出生後儘速向戶政事務所辦理出生登記（60 天內）",
+      "同步填寫生育補助申請書（戶政辦理時可一併申請）",
+      "附上出生證明、父母雙方戶口名簿及指定銀行帳戶",
+      "核准後補助匯入帳戶：中央 2,000 元＋縣市加碼（台北最高 60,000 元）"
+    ]
   },
   {
     "id": "vocational-training-living-allowance",
@@ -315,11 +505,24 @@
     "deadline": "全年常態受理，依課程開班時間申請",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=1E3B11CF1C70A3EC",
-    "tags": ["職業訓練", "生活津貼", "技能轉換", "免費訓練"],
-    "situations": ["fresh-grad"],
+    "tags": [
+      "職業訓練",
+      "生活津貼",
+      "技能轉換",
+      "免費訓練"
+    ],
+    "situations": [
+      "fresh-grad"
+    ],
     "isYouthHighlight": true,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16"
+    "updatedAt": "2026-05-16",
+    "steps": [
+      "確認報名勞動部或合格訓練機構的全日制職訓課程",
+      "向戶籍地公立就業服務站辦理失業認定，同步申請生活津貼",
+      "附上職訓報名確認書、勞保被保險人證明、身分證及存摺",
+      "審核後津貼每月匯入帳戶，訓練全程均可領取"
+    ]
   },
   {
     "id": "disability-living-allowance",
@@ -337,10 +540,24 @@
     "deadline": "全年常態受理",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341",
-    "tags": ["身心障礙", "生活補助", "月給付", "公所申請"],
-    "situations": ["renter", "parent"],
+    "tags": [
+      "身心障礙",
+      "生活補助",
+      "月給付",
+      "公所申請"
+    ],
+    "situations": [
+      "renter",
+      "parent"
+    ],
     "isYouthHighlight": false,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16"
+    "updatedAt": "2026-05-16",
+    "steps": [
+      "確認持有縣市衛生局核發之有效身心障礙證明",
+      "至戶籍地鄉鎮市區公所社政課窗口填寫申請書（無需預約）",
+      "附上身心障礙證明、戶籍謄本、最近一年所得及財產資料、存摺",
+      "核准後補助每月定期匯入，每年需配合複查以維持資格"
+    ]
   }
 ]
