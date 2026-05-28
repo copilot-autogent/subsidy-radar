@@ -4,8 +4,16 @@ import subsidiesRaw from '../data/subsidies.json';
 
 type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[] };
 const subsidies = subsidiesRaw as Subsidy[];
+
+// Compute category counts for filter buttons
+const categoryCounts: Record<string, number> = {};
+subsidies.forEach(s => {
+  categoryCounts[s.category] = (categoryCounts[s.category] || 0) + 1;
+});
+const youthHighlightCount = subsidies.filter(s => s.isYouthHighlight).length;
+
 const categories = ['全部', '⭐ 青年必看', ...new Set(subsidies.map(s => s.category))];
-const youthCount = subsidies.filter(s => s.isYouthHighlight).length;
+const youthCount = youthHighlightCount;
 
 const deadlineLabel: Record<string, { text: string; cls: string }> = {
   open:     { text: '✅ 開放申請中', cls: 'status-open' },
@@ -63,15 +71,22 @@ const personas = [
       />
     </div>
     <div class="category-filters" role="group" aria-label="類別篩選">
-      {categories.map(cat => (
-        <button
-          class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''}`}
-          data-category={cat}
-          type="button"
-        >
-          {cat}
-        </button>
-      ))}
+      {categories.map(cat => {
+        const count = cat === '全部' 
+          ? subsidies.length 
+          : cat === '⭐ 青年必看' 
+          ? youthHighlightCount 
+          : categoryCounts[cat] || 0;
+        return (
+          <button
+            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''}`}
+            data-category={cat}
+            type="button"
+          >
+            {cat} <span class="count-badge">{count}</span>
+          </button>
+        );
+      })}
     </div>
     <div class="sort-row">
       <button class="sort-btn" id="sortDifficulty" type="button" aria-pressed="false">
@@ -280,7 +295,10 @@ const personas = [
       resultsCount.textContent = `共 ${visible} 項補助`;
       noResults.style.display = visible === 0 ? 'block' : 'none';
 
-      if (activeSituation) {
+      // Hide eligibility banner when tracker filter is active (BUG-A fix)
+      if (showTrackedOnly) {
+        eligibilityBanner.style.display = 'none';
+      } else if (activeSituation) {
         const totalEligible = countEligible(activeSituation);
         bannerText.textContent = `你可能有 ${totalEligible} 項補助符合你的情況！`;
         eligibilityBanner.style.display = 'flex';
