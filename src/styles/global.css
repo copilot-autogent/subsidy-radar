@@ -219,6 +219,31 @@ main {
   color: white;
 }
 
+/* ── Category count badge ── */
+.count-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+  margin-left: 0.3rem;
+}
+
+.filter-btn:hover .count-badge,
+.filter-btn.active .count-badge {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.filter-btn.youth-filter .count-badge {
+  background: rgba(217, 119, 6, 0.2);
+}
+
+.filter-btn.youth-filter:hover .count-badge,
+.filter-btn.youth-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .subsidy-card.youth-highlight {
   border-color: #fbbf24;
   background: linear-gradient(to bottom right, #fffbeb, #ffffff);
