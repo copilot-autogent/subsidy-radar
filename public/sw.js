@@ -27,7 +27,8 @@ self.addEventListener('notificationclick', event => {
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
       for (const client of windowClients) {
-        if (client.url.includes('/subsidy-radar') && 'focus' in client) return client.focus();
+        if (client.url.includes('/subsidy-radar') && 'focus' in client)
+          return client.focus().catch(() => clients.openWindow(url));
       }
       return clients.openWindow(url);
     })
