@@ -24,6 +24,9 @@ const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="manifest" href={`${base}manifest.json`} />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>{title}</title>
   </head>
   <body>
@@ -42,5 +45,13 @@ const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
         <p>由 <a href="https://github.com/copilot-autogent/subsidy-radar" target="_blank" rel="noopener">補助雷達</a> 提供 · 開放原始碼</p>
       </div>
     </footer>
+    <script define:vars={{ swUrl: `${base}sw.js`, swScope: base }}>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register(swUrl, { scope: swScope })
+            .catch(err => console.warn('[subsidy-radar] SW registration failed:', err));
+        });
+      }
+    </script>
   </body>
 </html>
