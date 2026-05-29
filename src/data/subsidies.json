@@ -11,7 +11,7 @@
       "透過公立就業服務機構或線上登記"
     ],
     "amount": "尋職津貼最高 15,000 元 + 就業獎勵最高 33,000 元，合計最高 48,000 元",
-    "deadline": "114年常態受理（至114年12月31日）",
+    "deadline": "115年常態受理（至115年12月31日）",
     "deadlineStatus": "open",
     "applicationUrl": "https://special.taiwanjobs.gov.tw/internet/2025/YNGSRH/index.html",
     "tags": [
@@ -32,7 +32,8 @@
       "填寫申請表，提供身分證、學歷證明、銀行帳戶資料",
       "透過就業服務員媒合職缺，穩定就業後申請就業獎勵",
       "尋職津貼每月匯入，就業獎勵於就業滿3/6個月分批撥款"
-    ]
+    ],
+    "deadlineDate": "2026-12-31"
   },
   {
     "id": "youth-vocational-training",
@@ -118,7 +119,7 @@
       "家庭成員設籍於申請縣市"
     ],
     "amount": "每月 3,000～8,000 元（依縣市及家庭人口數而異）",
-    "deadline": "114年1月1日起至114年12月31日受理申請",
+    "deadline": "115年1月1日起至115年12月31日受理申請",
     "deadlineStatus": "open",
     "applicationUrl": "https://has.nlma.gov.tw/house300e/",
     "tags": [
@@ -137,7 +138,8 @@
       "前往「300億元中央擴大租金補貼申請平台」建立帳號",
       "上傳租賃契約、戶口名簿、薪資或稅務證明及銀行帳戶資料",
       "審核通過後（約 2-4 週），每月補貼自動匯入指定帳戶"
-    ]
+    ],
+    "deadlineDate": "2026-12-31"
   },
   {
     "id": "youth-home-loan",
@@ -187,7 +189,7 @@
       "申請人設籍於購屋縣市"
     ],
     "amount": "每年最高補貼 28,800 元（每月最高 2,400 元），最長補貼 20 年",
-    "deadline": "每年9月受理申請（114年9月1日至9月30日）",
+    "deadline": "每年9月受理申請（115年9月1日至9月30日）",
     "deadlineStatus": "periodic",
     "applicationUrl": "https://has.nlma.gov.tw/subsidyOnline/",
     "tags": [
@@ -205,7 +207,8 @@
       "每年 9 月至內政部「自購住宅貸款利息補貼系統」線上申請",
       "上傳房貸借款契約、最近一年所得證明及戶籍資料",
       "審核通過後（約 4-6 週），補貼款每年一次匯入指定帳戶"
-    ]
+    ],
+    "deadlineDate": "2026-09-30"
   },
   {
     "id": "parenting-home-loan",
