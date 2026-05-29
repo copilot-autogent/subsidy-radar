@@ -5,26 +5,6 @@ import subsidiesRaw from '../data/subsidies.json';
 type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string };
 const subsidies = subsidiesRaw as Subsidy[];
 
-// Compute days until deadline (returns null if no deadline or past)
-function daysUntilDeadline(deadlineDate: string | undefined): number | null {
-  if (!deadlineDate) return null;
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  const deadline = new Date(deadlineDate);
-  const diff = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-  return diff < 0 ? null : diff;
-}
-
-function countdownBadge(deadlineDate: string | undefined): { text: string; cls: string } | null {
-  const days = daysUntilDeadline(deadlineDate);
-  if (days === null) return null;
-  if (days === 0) return { text: '⏰ 今天截止', cls: 'countdown-urgent' };
-  if (days === 1) return { text: '⏰ 明天截止', cls: 'countdown-urgent' };
-  if (days <= 7)  return { text: `🔥 剩 ${days} 天`, cls: 'countdown-urgent' };
-  if (days <= 30) return { text: `⏰ 剩 ${days} 天`, cls: 'countdown-soon' };
-  return { text: `📅 剩 ${days} 天`, cls: 'countdown-ok' };
-}
-
 // Compute category counts for filter buttons
 const categoryCounts: Record<string, number> = {};
 subsidies.forEach(s => {
@@ -164,11 +144,7 @@ const personas = [
             <div class="card-deadline">
               <span class={`deadline-status ${status.cls}`}>{status.text}</span>
               <span class="deadline-text">🗓️ {s.deadline}</span>
-              {countdownBadge(s.deadlineDate) && (
-                <span class={`countdown-badge ${countdownBadge(s.deadlineDate)!.cls}`}>
-                  {countdownBadge(s.deadlineDate)!.text}
-                </span>
-              )}
+              {s.deadlineDate && <span class="countdown-badge" data-deadline-badge></span>}
             </div>
             <span class={`difficulty-badge ${diff.cls}`} data-tooltip={diff.tooltip}>{diff.text}</span>
           </div>
@@ -389,6 +365,7 @@ const personas = [
     // ── Init ─────────────────────────────────────────────────────────────────
     initTracker();
     updateTrackerFilterLabel();
+    renderCountdownBadges();
 
     // ── Push Notifications ────────────────────────────────────────────────────
     const VAPID_PUBLIC_KEY = 'BDitVaTjSdzeqqxDnuXXeL2alIaj_WeYnXd-dc1BiZGYfpWIXws2aVPXCZnBw6wiJ2X-1ccptDe6Fqv3rukxj7E';
@@ -404,16 +381,41 @@ const personas = [
 
     function daysUntilDate(dateStr: string): number | null {
       if (!dateStr) return null;
+      // Parse as local date (YYYY-MM-DD) to avoid UTC-midnight vs local-midnight off-by-one
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return null;
+      const [y, m, d] = parts.map(Number);
+      if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
       const now = new Date(); now.setHours(0, 0, 0, 0);
-      const d = new Date(dateStr);
-      const diff = Math.ceil((d.getTime() - now.getTime()) / 86400000);
-      return diff < 0 ? null : diff;
+      const deadline = new Date(y, m - 1, d); // local midnight
+      const diff = Math.ceil((deadline.getTime() - now.getTime()) / 86400000);
+      return Number.isFinite(diff) && diff >= 0 ? diff : null;
+    }
+
+    function renderCountdownBadges() {
+      cards.forEach(card => {
+        const badge = card.querySelector<HTMLElement>('[data-deadline-badge]');
+        if (!badge) return;
+        const deadline = card.dataset.deadline ?? '';
+        const days = daysUntilDate(deadline);
+        if (days === null) { badge.style.display = 'none'; return; }
+        let text: string; let cls: string;
+        if (days === 0)      { text = '⏰ 今天截止'; cls = 'countdown-urgent'; }
+        else if (days === 1) { text = '⏰ 明天截止'; cls = 'countdown-urgent'; }
+        else if (days <= 7)  { text = `🔥 剩 ${days} 天`; cls = 'countdown-urgent'; }
+        else if (days <= 30) { text = `⏰ 剩 ${days} 天`; cls = 'countdown-soon'; }
+        else                 { text = `📅 剩 ${days} 天`; cls = 'countdown-ok'; }
+        badge.className = `countdown-badge ${cls}`;
+        badge.textContent = text;
+      });
     }
 
     // Check tracked subsidies with upcoming deadlines and show browser notification
     function checkDeadlineNotifications() {
       if (Notification.permission !== 'granted') return;
-      const today = new Date().toISOString().slice(0, 10);
+      const { getFullYear: fy, getMonth: fm, getDate: fd } = Date.prototype;
+      const ld = new Date();
+      const today = `${fy.call(ld)}-${String(fm.call(ld)+1).padStart(2,'0')}-${String(fd.call(ld)).padStart(2,'0')}`;
       if (localStorage.getItem(PUSH_NOTIFIED_KEY) === today) return; // already notified today
 
       const tracker = loadTracker();
@@ -450,7 +452,7 @@ const personas = [
       const updateBtnState = (subscribed: boolean) => {
         subscribeBtn.textContent = subscribed ? '🔕 關閉截止提醒' : '🔔 開啟截止提醒';
         subscribeBtn.classList.toggle('subscribed', subscribed);
-        pushStatus.textContent = subscribed ? '✅ 截止提醒已開啟，補助到期 7 天前提醒您' : '';
+        pushStatus.textContent = subscribed ? '✅ 截止提醒已開啟（瀏覽器本地通知，7 天前提醒）' : '';
       };
 
       // Reflect current permission state
