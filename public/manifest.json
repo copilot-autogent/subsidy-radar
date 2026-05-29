@@ -1,0 +1,17 @@
+{
+  "name": "補助雷達",
+  "short_name": "補助雷達",
+  "description": "台灣政府補助一站查詢",
+  "start_url": "/subsidy-radar/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/subsidy-radar/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
