@@ -51,15 +51,69 @@ const personas = [
     </div>
   </section>
 
-  <section class="persona-section" aria-label="情況快速篩選">
-    <p class="persona-label">我目前的情況是…</p>
-    <div class="persona-buttons">
-      {personas.map(p => (
-        <button class="persona-btn" data-situation={p.key} type="button">
-          <span class="persona-icon">{p.icon}</span>
-          <span class="persona-text">{p.label}</span>
+  <section class="quiz-section" aria-label="快速配對">
+    <h2 class="quiz-title">🎯 找出最適合你的補助（3 個問題）</h2>
+    
+    <div class="quiz-question" data-question="age">
+      <label class="quiz-label">1. 你的年齡是？</label>
+      <div class="quiz-options">
+        <button class="quiz-option" data-value="youth" type="button">
+          <span class="option-icon">🎓</span>
+          <span class="option-text">18-29 歲（青年）</span>
         </button>
-      ))}
+        <button class="quiz-option" data-value="adult" type="button">
+          <span class="option-icon">👤</span>
+          <span class="option-text">30 歲以上</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="quiz-question" data-question="employment" style="display:none">
+      <label class="quiz-label">2. 你的就業狀況是？</label>
+      <div class="quiz-options">
+        <button class="quiz-option" data-value="fresh-grad" type="button">
+          <span class="option-icon">🎓</span>
+          <span class="option-text">應屆畢業生／初次求職</span>
+        </button>
+        <button class="quiz-option" data-value="unemployed" type="button">
+          <span class="option-icon">🔍</span>
+          <span class="option-text">待業中</span>
+        </button>
+        <button class="quiz-option" data-value="employed" type="button">
+          <span class="option-icon">💼</span>
+          <span class="option-text">已就業</span>
+        </button>
+        <button class="quiz-option" data-value="entrepreneur" type="button">
+          <span class="option-icon">💡</span>
+          <span class="option-text">想創業</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="quiz-question" data-question="housing" style="display:none">
+      <label class="quiz-label">3. 你的居住狀況是？</label>
+      <div class="quiz-options">
+        <button class="quiz-option" data-value="renter" type="button">
+          <span class="option-icon">🏠</span>
+          <span class="option-text">租屋中</span>
+        </button>
+        <button class="quiz-option" data-value="homebuyer" type="button">
+          <span class="option-icon">🏡</span>
+          <span class="option-text">想買房</span>
+        </button>
+        <button class="quiz-option" data-value="parent" type="button">
+          <span class="option-icon">👶</span>
+          <span class="option-text">育兒家庭</span>
+        </button>
+        <button class="quiz-option" data-value="other" type="button">
+          <span class="option-icon">✓</span>
+          <span class="option-text">其他</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="quiz-reset" style="display:none">
+      <button class="reset-btn" id="quizReset" type="button">↺ 重新開始</button>
     </div>
   </section>
 
@@ -175,7 +229,6 @@ const personas = [
   <script>
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
     const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
-    const personaBtns = document.querySelectorAll<HTMLButtonElement>('.persona-btn');
     const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
     const resultsCount = document.getElementById('resultsCount')!;
     const noResults = document.getElementById('noResults')!;
@@ -191,6 +244,109 @@ const personas = [
     let showTrackedOnly = false;
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
+
+    // ── Quiz ─────────────────────────────────────────────────────────────────
+    const quizQuestions = document.querySelectorAll<HTMLElement>('.quiz-question');
+    const quizOptions = document.querySelectorAll<HTMLButtonElement>('.quiz-option');
+    const quizResetContainer = document.querySelector<HTMLElement>('.quiz-reset')!;
+    const quizResetBtn = document.getElementById('quizReset')!;
+
+    let quizAnswers: Record<string, string> = {};
+    let currentQuestionIndex = 0;
+
+    function showQuizQuestion(index: number) {
+      quizQuestions.forEach((q, i) => {
+        q.style.display = i === index ? 'block' : 'none';
+      });
+      quizResetContainer.style.display = index > 0 ? 'block' : 'none';
+    }
+
+    function matchQuizToSituations(): string[] {
+      const situations: string[] = [];
+      const { age, employment, housing } = quizAnswers;
+
+      // Map quiz answers to situations
+      if (employment === 'fresh-grad') situations.push('fresh-grad');
+      if (housing === 'renter') situations.push('renter');
+      if (housing === 'homebuyer') situations.push('homebuyer');
+      if (employment === 'entrepreneur' || housing === 'entrepreneur') situations.push('entrepreneur');
+      if (housing === 'parent') situations.push('parent');
+      
+      return situations;
+    }
+
+    function applyQuizFilter() {
+      const situations = matchQuizToSituations();
+      
+      // Reset category filter
+      activeCategory = '全部';
+      filterBtns.forEach(b => b.classList.remove('active'));
+      if (filterBtns[0]) filterBtns[0].classList.add('active');
+      
+      // Apply multi-situation filter
+      const isYouth = quizAnswers.age === 'youth';
+      let visible = 0;
+      
+      cards.forEach(card => {
+        const cardSituations: string[] = JSON.parse(card.dataset.situations ?? '[]');
+        const cardIsYouth = card.dataset.youth === 'true';
+        
+        // Match if: (youth-eligible OR situation-match) AND category/search/tracker
+        const matchSituation = situations.length === 0 
+          || situations.some(s => cardSituations.includes(s));
+        const matchYouth = !isYouth || cardIsYouth;
+        const matchOverall = matchSituation && matchYouth;
+        
+        card.style.display = matchOverall ? '' : 'none';
+        if (matchOverall) visible++;
+      });
+      
+      resultsCount.textContent = `共 ${visible} 項補助符合你的情況`;
+      eligibilityBanner.style.display = 'none';
+    }
+
+    quizOptions.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const question = btn.closest<HTMLElement>('.quiz-question')!;
+        const questionType = question.dataset.question!;
+        const value = btn.dataset.value!;
+        
+        // Save answer
+        quizAnswers[questionType] = value;
+        
+        // Visual feedback
+        question.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+        btn.classList.add('selected');
+        
+        // Advance to next question
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizQuestions.length) {
+          setTimeout(() => showQuizQuestion(currentQuestionIndex), 300);
+        } else {
+          // Quiz complete — apply filter
+          setTimeout(() => {
+            applyQuizFilter();
+          }, 300);
+        }
+      });
+    });
+
+    quizResetBtn.addEventListener('click', () => {
+      quizAnswers = {};
+      currentQuestionIndex = 0;
+      quizOptions.forEach(opt => opt.classList.remove('selected'));
+      showQuizQuestion(0);
+      
+      // Reset filters
+      activeCategory = '全部';
+      activeSituation = '';
+      searchQuery = '';
+      filterBtns.forEach(b => b.classList.remove('active'));
+      if (filterBtns[0]) filterBtns[0].classList.add('active');
+      cards.forEach(card => card.style.display = '');
+      resultsCount.textContent = `共 ${cards.length} 項補助`;
+      eligibilityBanner.style.display = 'none';
+    });
 
     // ── Tracker ──────────────────────────────────────────────────────────────
     const TRACKER_KEY = 'subsidy-tracker-v1';
@@ -325,25 +481,6 @@ const personas = [
         btn.classList.add('active');
         activeCategory = btn.dataset.category ?? '全部';
         activeSituation = '';
-        personaBtns.forEach(b => b.classList.remove('active'));
-        updateDisplay();
-      });
-    });
-
-    personaBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const situation = btn.dataset.situation ?? '';
-        if (activeSituation === situation) {
-          activeSituation = '';
-          btn.classList.remove('active');
-        } else {
-          activeSituation = situation;
-          personaBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          activeCategory = '全部';
-          filterBtns.forEach(b => b.classList.remove('active'));
-          filterBtns[0]?.classList.add('active');
-        }
         updateDisplay();
       });
     });
