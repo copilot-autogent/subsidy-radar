@@ -219,7 +219,13 @@ const personas = [
               </ol>
             </details>
           )}
-          <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">立即申請 →</a>
+          <div class="card-actions">
+            <button class="share-link-btn" data-id={s.id} title="複製此補助的連結" type="button">
+              <span class="share-icon">🔗</span>
+              <span class="share-text">複製連結</span>
+            </button>
+            <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">立即申請 →</a>
+          </div>
         </article>
       );
     })}
@@ -410,6 +416,49 @@ const personas = [
       trackerFilterBtn.setAttribute('aria-pressed', String(showTrackedOnly));
     }
 
+    // ── Share Link ───────────────────────────────────────────────────────────
+    function initShareLinks() {
+      document.querySelectorAll<HTMLButtonElement>('.share-link-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = btn.dataset.id!;
+          const url = `${window.location.origin}${window.location.pathname}#${id}`;
+          
+          try {
+            await navigator.clipboard.writeText(url);
+            const originalText = btn.querySelector('.share-text')!.textContent;
+            btn.querySelector('.share-text')!.textContent = '✓ 已複製';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.querySelector('.share-text')!.textContent = originalText!;
+              btn.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+              document.execCommand('copy');
+              btn.querySelector('.share-text')!.textContent = '✓ 已複製';
+              btn.classList.add('copied');
+              setTimeout(() => {
+                btn.querySelector('.share-text')!.textContent = '複製連結';
+                btn.classList.remove('copied');
+              }, 2000);
+            } catch {
+              alert('無法複製連結，請手動複製網址列');
+            }
+            document.body.removeChild(textArea);
+          }
+        });
+      });
+    }
+
     // ── Sort ─────────────────────────────────────────────────────────────────
     function applySort() {
       cards.forEach(card => {
@@ -503,6 +552,7 @@ const personas = [
     initTracker();
     updateTrackerFilterLabel();
     renderCountdownBadges();
+    initShareLinks();
 
     // ── Push Notifications ────────────────────────────────────────────────────
     const VAPID_PUBLIC_KEY = 'BDitVaTjSdzeqqxDnuXXeL2alIaj_WeYnXd-dc1BiZGYfpWIXws2aVPXCZnBw6wiJ2X-1ccptDe6Fqv3rukxj7E';
