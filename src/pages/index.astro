@@ -50,10 +50,10 @@ const personas = [
       <span id="pushStatus" class="push-status"></span>
     </div>
     <div class="calendar-subscribe-row">
-      <a href="/calendar.ics" class="calendar-link" download="補助雷達-截止日曆.ics">
+      <a href="/calendar.ics" id="calendarSubscribeLink" class="calendar-link" rel="nofollow">
         📅 訂閱截止日曆
       </a>
-      <span class="calendar-hint">加入你的日曆 App，不錯過申請期限</span>
+      <span class="calendar-hint">加入你的日曆 App，不錯過申請期限（自動更新）</span>
     </div>
   </section>
 
@@ -509,6 +509,15 @@ const personas = [
     initTracker();
     updateTrackerFilterLabel();
     renderCountdownBadges();
+
+    // ── Calendar Subscribe Link ───────────────────────────────────────────────
+    // Rewrite /calendar.ics to webcal:// so the user's calendar app prompts to
+    // subscribe (live updates) instead of downloading a one-shot snapshot.
+    const calLink = document.getElementById('calendarSubscribeLink') as HTMLAnchorElement | null;
+    if (calLink) {
+      const absolute = new URL('/calendar.ics', window.location.origin).toString();
+      calLink.href = absolute.replace(/^https?:\/\//, 'webcal://');
+    }
 
     // ── Push Notifications ────────────────────────────────────────────────────
     const VAPID_PUBLIC_KEY = 'BDitVaTjSdzeqqxDnuXXeL2alIaj_WeYnXd-dc1BiZGYfpWIXws2aVPXCZnBw6wiJ2X-1ccptDe6Fqv3rukxj7E';
