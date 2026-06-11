@@ -26,7 +26,7 @@
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-09",
     "steps": [
       "至台灣就業通或公立就業服務站線上登記求職（免費）",
       "填寫申請表，提供身分證、學歷證明、銀行帳戶資料",
@@ -61,7 +61,7 @@
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-09",
     "steps": [
       "至台灣就業通查詢「青年培力工作站」或補助課程清單",
       "報名符合資格的訓練課程，保留報名確認與繳費收據",
@@ -98,7 +98,7 @@
     ],
     "isYouthHighlight": true,
     "difficulty": "hard",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-09",
     "steps": [
       "至「微型創業鳳凰」官網報名免費創業諮詢，確認申請資格",
       "準備創業計畫書、個人信用報告、最近一年所得證明",
@@ -132,7 +132,7 @@
       "parent"
     ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-09",
     "steps": [
       "確認符合資格：有合法租約（非親屬）、無自有住宅、符合收入限制",
       "前往「300億元中央擴大租金補貼申請平台」建立帳號",
@@ -168,7 +168,7 @@
       "homebuyer"
     ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-09",
     "steps": [
       "確認資格：年齡 45 歲以下、初次購屋、家庭年收入 120 萬以下",
       "持買賣契約至台灣銀行、合庫銀行等合作公股銀行申請",
@@ -201,7 +201,7 @@
       "homebuyer"
     ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-09",
     "steps": [
       "確認資格：已有房貸、家庭年收入符合標準、無其他住宅補貼",
       "每年 9 月至內政部「自購住宅貸款利息補貼系統」線上申請",
@@ -236,7 +236,7 @@
       "parent"
     ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-09",
     "steps": [
       "確認資格：育有未滿 18 歲子女，計畫購置或已購置自住住宅",
       "至台灣銀行等合作金融機構準備購屋資料及戶籍謄本",
@@ -271,7 +271,7 @@
       "parent"
     ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-09",
     "steps": [
       "至各縣市政府住宅處或「全國社會住宅資訊整合平臺」查詢開放公告",
       "備妥身分證、戶籍資料、全家財產及所得證明（需最新年度）",
@@ -306,7 +306,7 @@
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
-    "updatedAt": "2026-05-14",
+    "updatedAt": "2026-06-09",
     "steps": [
       "確認資格：持有就學貸款、已畢業、家庭收入符合補貼標準",
       "至「學生就學貸款資訊網」或向原貸款銀行索取申請表",
@@ -329,7 +329,7 @@
     "amount": "月平均投保薪資 60%，最長 6 個月；積極求職加發 10%（最高 70%）",
     "deadline": "離職後2年內申請，隨時可申請",
     "deadlineStatus": "ongoing",
-    "applicationUrl": "https://www.bli.gov.tw/0010097.html",
+    "applicationUrl": "https://www.bli.gov.tw/0000100.html",
     "tags": [
       "失業",
       "就業保險",
@@ -342,7 +342,7 @@
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-05-14",
+    "updatedAt": "2026-06-09",
     "steps": [
       "非自願離職後 14 天內攜帶離職證明至公立就業服務站辦理",
       "填寫「失業認定及給付申請書」，提供勞保資料、身分證、存摺",
@@ -377,7 +377,7 @@
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-05-14",
+    "updatedAt": "2026-06-09",
     "steps": [
       "確認子女就讀「準公共化托育機構」或使用登記居家保母",
       "至戶籍地社會局或線上「育兒津貼申請系統」填寫申請表",
@@ -414,7 +414,7 @@
     ],
     "isYouthHighlight": true,
     "difficulty": "hard",
-    "updatedAt": "2026-05-14",
+    "updatedAt": "2026-06-09",
     "steps": [
       "至青創基地或經濟部創業輔導窗口諮詢，確認計畫可行性",
       "準備詳細創業計畫書、市場分析、預期財務報表（1-3 年）",
@@ -437,7 +437,7 @@
     "amount": "每月投保薪資 60%，每人最長 6 個月；雙薪家庭各申請合計可達 12 個月",
     "deadline": "全年常態受理（育嬰假期間隨時申請）",
     "deadlineStatus": "ongoing",
-    "applicationUrl": "https://www.bli.gov.tw/0010097.html",
+    "applicationUrl": "https://www.bli.gov.tw/0005521.html",
     "tags": [
       "育嬰",
       "育兒",
@@ -449,7 +449,7 @@
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16",
+    "updatedAt": "2026-06-09",
     "steps": [
       "向雇主提出「育嬰留職停薪申請書」（至少提前 10 天通知）",
       "留停期間至勞保局官網「e化服務」線上申請津貼",
@@ -484,7 +484,7 @@
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16",
+    "updatedAt": "2026-06-09",
     "steps": [
       "寶寶出生後儘速向戶政事務所辦理出生登記（60 天內）",
       "同步填寫生育補助申請書（戶政辦理時可一併申請）",
@@ -519,7 +519,7 @@
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16",
+    "updatedAt": "2026-06-09",
     "steps": [
       "確認報名勞動部或合格訓練機構的全日制職訓課程",
       "向戶籍地公立就業服務站辦理失業認定，同步申請生活津貼",
@@ -555,7 +555,7 @@
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16",
+    "updatedAt": "2026-06-09",
     "steps": [
       "確認持有縣市衛生局核發之有效身心障礙證明",
       "至戶籍地鄉鎮市區公所社政課窗口填寫申請書（無需預約）",

@@ -33,7 +33,10 @@ Subsidy data lives in `src/data/subsidies.json`. Each entry has:
 - `deadline` — 申請截止日期
 - `applicationUrl` — official application link
 - `tags` — search tags
-- `updatedAt` — last verified date
+- `steps` — application steps (array) — see `STEPS_VERIFICATION.md` for verification status
+- `updatedAt` — last content update date
+
+**Data Quality**: See `STEPS_VERIFICATION.md` for the verification status of application steps against official government sources. Steps are currently authored from general knowledge and require manual verification.
 
 ## Phases
 
