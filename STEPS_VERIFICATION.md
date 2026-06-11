@@ -21,10 +21,10 @@ This document tracks the verification status of application steps for each subsi
 | parenting-home-loan | 🔄 | Never | https://www.nlma.gov.tw/ | Steps authored from general knowledge. Eligibility criteria need verification. |
 | social-housing | 🔄 | Never | https://www.socialhousing.tw/Portal/BuildingApplyLanding | Steps authored from general knowledge. Process varies by county/city. |
 | student-loan-interest-relief | 🔄 | Never | https://heloan.boe.moe.edu.tw/ | Steps authored from general knowledge. Ministry of Education process. |
-| unemployment-benefit | 🔄 | Never | https://www.bli.gov.tw/0010097.html | Steps authored from general knowledge. BLI process verification needed. |
+| unemployment-benefit | 🔄 | Never | https://www.bli.gov.tw/0000100.html | Steps authored from general knowledge. BLI 就業保險 hub; deep-link to 失業給付 申請流程 needs manual verification. |
 | childcare-allowance | 🔄 | Never | https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383 | Steps authored from general knowledge. Local gov variations exist. |
 | youth-startup-fund | 🔄 | Never | https://www.sba.gov.tw/ | Steps authored from general knowledge. SBA application process. |
-| parental-leave-allowance | 🔄 | Never | https://www.bli.gov.tw/0010097.html | Steps authored from general knowledge. Labor insurance process. |
+| parental-leave-allowance | 🔄 | Never | https://www.bli.gov.tw/0005521.html | Steps authored from general knowledge. BLI 給付業務(含育嬰津貼) hub; deep-link to 育嬰留職停薪津貼 申請流程 needs manual verification. |
 | birth-subsidy | 🔄 | Never | https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=357 | Steps authored from general knowledge. Local variations exist. |
 | vocational-training-living-allowance | 🔄 | Never | https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=1E3B11CF1C70A3EC | Steps authored from general knowledge. WDA process. |
 | disability-living-allowance | 🔄 | Never | https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341 | Steps authored from general knowledge. Social welfare process. |
