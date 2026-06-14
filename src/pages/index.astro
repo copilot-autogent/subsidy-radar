@@ -49,6 +49,12 @@ const personas = [
       <button id="subscribeBtn" class="push-btn" type="button">🔔 開啟截止提醒</button>
       <span id="pushStatus" class="push-status"></span>
     </div>
+    <div class="calendar-subscribe-row">
+      <a href={import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'calendar.ics'} id="calendarSubscribeLink" class="calendar-link" rel="nofollow">
+        📅 訂閱截止日曆
+      </a>
+      <span class="calendar-hint">加入你的日曆 App，不錯過申請期限（自動更新）</span>
+    </div>
   </section>
 
   <section class="quiz-section" aria-label="快速配對">
@@ -584,6 +590,15 @@ const personas = [
     updateTrackerFilterLabel();
     renderCountdownBadges();
     initShareLinks();
+
+    // ── Calendar Subscribe Link ───────────────────────────────────────────────
+    // Rewrite to webcal:// so the user's calendar app prompts to subscribe
+    // (live updates) instead of downloading a one-shot snapshot.
+    // calLink.href (DOM property) is already the fully resolved absolute URL.
+    const calLink = document.getElementById('calendarSubscribeLink') as HTMLAnchorElement | null;
+    if (calLink) {
+      calLink.href = calLink.href.replace(/^https?:\/\//, 'webcal://');
+    }
 
     // ── Push Notifications ────────────────────────────────────────────────────
     const VAPID_PUBLIC_KEY = 'BDitVaTjSdzeqqxDnuXXeL2alIaj_WeYnXd-dc1BiZGYfpWIXws2aVPXCZnBw6wiJ2X-1ccptDe6Fqv3rukxj7E';
