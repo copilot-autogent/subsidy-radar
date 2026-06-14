@@ -329,7 +329,7 @@
     "amount": "月平均投保薪資 60%，最長 6 個月；積極求職加發 10%（最高 70%）",
     "deadline": "離職後2年內申請，隨時可申請",
     "deadlineStatus": "ongoing",
-    "applicationUrl": "https://www.bli.gov.tw/0010097.html",
+    "applicationUrl": "https://www.bli.gov.tw/0006445.html",
     "tags": [
       "失業",
       "就業保險",
@@ -344,7 +344,7 @@
     "difficulty": "medium",
     "updatedAt": "2026-05-14",
     "steps": [
-      "非自願離職後 14 天內攜帶離職證明至公立就業服務站辦理",
+      "非自願離職後攜帶離職證明至公立就業服務站辦理求職登記（申請期限為離職退保後2年內，盡早申請可提早起算給付）",
       "填寫「失業認定及給付申請書」，提供勞保資料、身分證、存摺",
       "每 28 天回就業服務站辦理定期求職認定（需積極求職記錄）",
       "通過認定後，失業給付每月匯入帳戶（最長 6 個月）"
@@ -389,7 +389,7 @@
     "id": "youth-startup-fund",
     "title": "青年創業及啟動金貸款",
     "category": "創業",
-    "agency": "經濟部中小企業處",
+    "agency": "經濟部中小及新創企業署",
     "summary": "18至45歲青年創業可申請最高200萬元低利創業貸款，利率約1.5%優惠，並提供免費創業輔導諮詢服務，適合創業初期需要資金的年輕人。",
     "eligibility": [
       "年齡18至45歲",
@@ -400,7 +400,7 @@
     "amount": "最高貸款額度 200 萬元；年利率約 1.5%（優惠利率，政府補貼利差）",
     "deadline": "全年常態受理",
     "deadlineStatus": "ongoing",
-    "applicationUrl": "https://www.sba.gov.tw/",
+    "applicationUrl": "https://startup.sme.gov.tw/home/modules/funding/detail/index.php?sId=15",
     "tags": [
       "創業",
       "青年",
@@ -437,7 +437,7 @@
     "amount": "每月投保薪資 60%，每人最長 6 個月；雙薪家庭各申請合計可達 12 個月",
     "deadline": "全年常態受理（育嬰假期間隨時申請）",
     "deadlineStatus": "ongoing",
-    "applicationUrl": "https://www.bli.gov.tw/0010097.html",
+    "applicationUrl": "https://www.bli.gov.tw/0015003.html",
     "tags": [
       "育嬰",
       "育兒",
@@ -452,7 +452,7 @@
     "updatedAt": "2026-05-16",
     "steps": [
       "向雇主提出「育嬰留職停薪申請書」（至少提前 10 天通知）",
-      "留停期間至勞保局官網「e化服務」線上申請津貼",
+      "留停期間至勞保局官網「e化服務系統」線上申請津貼，或委託投保單位代辦（115年3月起支援批次申辦）",
       "附上子女出生證明、勞保投保資料及銀行帳戶",
       "審核後津貼每月匯入（每人最長 6 個月，夫妻可分開各請）"
     ]
