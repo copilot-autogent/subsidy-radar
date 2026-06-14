@@ -43,7 +43,9 @@ function foldLine(line: string): string {
   while (offset < bytes.length) {
     let end = Math.min(offset + limit, bytes.length);
     // Avoid splitting a multi-byte UTF-8 sequence: walk back to a valid boundary.
+    // Safety floor: if all bytes in the window are continuation bytes, advance past them.
     while (end < bytes.length && (bytes[end] & 0xc0) === 0x80) end--;
+    if (end <= offset) end = Math.min(offset + limit, bytes.length);
     parts.push(dec.decode(bytes.slice(offset, end)));
     offset = end;
     limit = 74; // continuation lines reserve 1 octet for the leading space
@@ -100,7 +102,7 @@ export async function GET() {
     const description = escapeText(descBody);
     const location = escapeText(subsidy.agency ?? '');
     const url = escapeUri(subsidy.applicationUrl ?? '');
-    const uid = `subsidy-${subsidy.id}@subsidy-radar.copilot-autogent.github.io`;
+    const uid = escapeText(`subsidy-${subsidy.id}@subsidy-radar.copilot-autogent.github.io`);
 
     const lines = [
       'BEGIN:VEVENT',
@@ -144,7 +146,8 @@ export async function GET() {
     headers: {
       'Content-Type': 'text/calendar; charset=utf-8',
       'Content-Disposition': 'inline; filename="subsidies-deadlines.ics"',
-      'Cache-Control': 'public, max-age=3600',
+      // Static build: Cache-Control without max-age since the content is frozen until next deploy.
+      'Cache-Control': 'public',
     },
   });
 }

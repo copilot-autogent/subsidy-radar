@@ -50,7 +50,7 @@ const personas = [
       <span id="pushStatus" class="push-status"></span>
     </div>
     <div class="calendar-subscribe-row">
-      <a href="/calendar.ics" id="calendarSubscribeLink" class="calendar-link" rel="nofollow">
+      <a href={import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'calendar.ics'} id="calendarSubscribeLink" class="calendar-link" rel="nofollow">
         📅 訂閱截止日曆
       </a>
       <span class="calendar-hint">加入你的日曆 App，不錯過申請期限（自動更新）</span>
@@ -511,12 +511,12 @@ const personas = [
     renderCountdownBadges();
 
     // ── Calendar Subscribe Link ───────────────────────────────────────────────
-    // Rewrite /calendar.ics to webcal:// so the user's calendar app prompts to
-    // subscribe (live updates) instead of downloading a one-shot snapshot.
+    // Rewrite to webcal:// so the user's calendar app prompts to subscribe
+    // (live updates) instead of downloading a one-shot snapshot.
+    // calLink.href (DOM property) is already the fully resolved absolute URL.
     const calLink = document.getElementById('calendarSubscribeLink') as HTMLAnchorElement | null;
     if (calLink) {
-      const absolute = new URL('/calendar.ics', window.location.origin).toString();
-      calLink.href = absolute.replace(/^https?:\/\//, 'webcal://');
+      calLink.href = calLink.href.replace(/^https?:\/\//, 'webcal://');
     }
 
     // ── Push Notifications ────────────────────────────────────────────────────
