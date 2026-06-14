@@ -79,7 +79,7 @@ export async function GET() {
   const dtstamp = formatUtcStamp(now);
   const prodId = '-//補助雷達//Subsidy Deadlines//ZH';
 
-  const withDeadlines = subsidies.filter(s => typeof s.deadlineDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.deadlineDate));
+  const withDeadlines = subsidies.filter(s => typeof s.deadlineDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s.deadlineDate) && s.deadlineStatus !== 'closed');
 
   const eventLines: string[] = [];
   for (const subsidy of withDeadlines) {
