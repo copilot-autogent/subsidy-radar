@@ -721,6 +721,38 @@ main {
   }
 }
 
+@media (max-width: 400px) {
+  .quiz-section {
+    padding: 1.25rem 1rem;
+  }
+  .quiz-title {
+    font-size: 1rem;
+  }
+  .quiz-options {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  .quiz-option {
+    min-height: 44px;
+    padding: 0.85rem 1rem;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.75rem;
+  }
+  .option-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .option-text {
+    text-align: left;
+    font-size: 0.9rem;
+    min-width: 0;
+  }
+  .quiz-label {
+    font-size: 0.95rem;
+  }
+}
+
 /* ── Deadline status badges ── */
 .card-deadline {
   display: flex;
