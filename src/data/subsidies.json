@@ -588,7 +588,8 @@
       "住宅安全"
     ],
     "situations": [
-      "homebuyer"
+      "homebuyer",
+      "parent"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -691,7 +692,7 @@
     ],
     "amount": "補助金額 150 萬元至 550 萬元（不需償還）；自籌款需符合規定比例；同一企業及代表人3年內累計不超過2案",
     "deadline": "每年2–5月受理申請，8月前完成審查（依官方公告為準）",
-    "deadlineStatus": "open",
+    "deadlineStatus": "closed",
     "applicationUrl": "https://gcis.nat.gov.tw/neo-s/",
     "tags": [
       "服務業",
@@ -729,7 +730,7 @@
     ],
     "amount": "補助業務費（研究人力費、耗材、專利申請費、調查分析費）、研究設備費、國外差旅費；管理費上限為計畫總經費15%；具體金額依計畫規模與核定結果而定",
     "deadline": "每年3–5月開放申請，11月公告審核結果（依國科會年度公告為準）",
-    "deadlineStatus": "open",
+    "deadlineStatus": "closed",
     "applicationUrl": "https://www.nstc.gov.tw",
     "tags": [
       "科研創業",
