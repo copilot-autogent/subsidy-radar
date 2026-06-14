@@ -733,7 +733,7 @@ main {
     gap: 0.6rem;
   }
   .quiz-option {
-    min-height: auto;
+    min-height: 44px;
     padding: 0.85rem 1rem;
     flex-direction: row;
     justify-content: flex-start;
@@ -746,6 +746,7 @@ main {
   .option-text {
     text-align: left;
     font-size: 0.9rem;
+    min-width: 0;
   }
   .quiz-label {
     font-size: 0.95rem;
