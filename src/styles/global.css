@@ -508,8 +508,49 @@ main {
   color: var(--color-text-muted);
 }
 
-.card-link {
+.card-actions {
   margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.share-link-btn {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--color-tag);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.share-link-btn:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.share-link-btn.copied {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.share-icon {
+  font-size: 1rem;
+}
+
+.card-link {
+  flex: 1;
+  margin-top: 0;
   display: block;
   background: #16a34a;
   color: white;

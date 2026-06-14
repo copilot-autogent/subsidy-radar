@@ -169,6 +169,7 @@ const personas = [
       const diff = difficultyLabel[s.difficulty ?? 'medium'];
       return (
         <article
+          id={s.id}
           class={`subsidy-card ${s.isYouthHighlight ? 'youth-highlight' : ''}`}
           data-category={s.category}
           data-youth={s.isYouthHighlight ? 'true' : 'false'}
@@ -219,7 +220,13 @@ const personas = [
               </ol>
             </details>
           )}
-          <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">立即申請 →</a>
+          <div class="card-actions">
+            <button class="share-link-btn" data-id={s.id} title="複製此補助的連結" type="button">
+              <span class="share-icon">🔗</span>
+              <span class="share-text">複製連結</span>
+            </button>
+            <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">立即申請 →</a>
+          </div>
         </article>
       );
     })}
@@ -410,6 +417,79 @@ const personas = [
       trackerFilterBtn.setAttribute('aria-pressed', String(showTrackedOnly));
     }
 
+    // ── Share Link ───────────────────────────────────────────────────────────
+    const shareResetTimers = new WeakMap<HTMLButtonElement, number>();
+    const shareOriginalText = new WeakMap<HTMLButtonElement, string>();
+
+    function showCopied(btn: HTMLButtonElement, label: HTMLElement) {
+      // Capture original text only on first invocation per button (before any "✓ 已複製" swap).
+      if (!shareOriginalText.has(btn)) {
+        shareOriginalText.set(btn, label.textContent ?? '複製連結');
+      }
+      const originalText = shareOriginalText.get(btn)!;
+      label.textContent = '✓ 已複製';
+      btn.classList.add('copied');
+      const existing = shareResetTimers.get(btn);
+      if (existing !== undefined) clearTimeout(existing);
+      const id = window.setTimeout(() => {
+        label.textContent = originalText;
+        btn.classList.remove('copied');
+        shareResetTimers.delete(btn);
+      }, 2000);
+      shareResetTimers.set(btn, id);
+    }
+
+    function fallbackCopy(url: string): boolean {
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      let ok = false;
+      try {
+        ok = document.execCommand('copy');
+      } catch {
+        ok = false;
+      } finally {
+        document.body.removeChild(textArea);
+      }
+      return ok;
+    }
+
+    function initShareLinks() {
+      document.querySelectorAll<HTMLButtonElement>('.share-link-btn').forEach(btn => {
+        if (btn.dataset.shareBound === '1') return;
+        btn.dataset.shareBound = '1';
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = btn.dataset.id!;
+          const url = `${window.location.origin}${window.location.pathname}#${id}`;
+          const label = btn.querySelector<HTMLElement>('.share-text');
+          if (!label) return;
+
+          let copied = false;
+          if (navigator.clipboard && window.isSecureContext) {
+            try {
+              await navigator.clipboard.writeText(url);
+              copied = true;
+            } catch {
+              copied = false;
+            }
+          }
+          if (!copied) {
+            copied = fallbackCopy(url);
+          }
+          if (copied) {
+            showCopied(btn, label);
+          } else {
+            alert('無法複製連結，請手動複製網址列');
+          }
+        });
+      });
+    }
+
     // ── Sort ─────────────────────────────────────────────────────────────────
     function applySort() {
       cards.forEach(card => {
@@ -503,6 +583,7 @@ const personas = [
     initTracker();
     updateTrackerFilterLabel();
     renderCountdownBadges();
+    initShareLinks();
 
     // ── Push Notifications ────────────────────────────────────────────────────
     const VAPID_PUBLIC_KEY = 'BDitVaTjSdzeqqxDnuXXeL2alIaj_WeYnXd-dc1BiZGYfpWIXws2aVPXCZnBw6wiJ2X-1ccptDe6Fqv3rukxj7E';
