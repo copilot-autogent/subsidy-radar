@@ -805,7 +805,7 @@
     "amount": "一般助學金每學期 3,000～15,000 元（依家庭收入級距）；優秀獎學金每學期 5,000～30,000 元",
     "deadline": "每學年開學後一個月內受理，約每年10月（上學期）及3月（下學期）各一次",
     "deadlineStatus": "seasonal",
-    "applicationUrl": "https://cipgrant.fju.edu.tw/",
+    "applicationUrl": "https://www.gov.tw/News_Content_2_370175",
     "tags": [
       "原住民",
       "獎學金",
@@ -821,7 +821,7 @@
     "updatedAt": "2026-06-17",
     "steps": [
       "確認資格：持有原住民族身分、就讀大專校院正式學籍",
-      "至「原住民族委員會大專校院獎助學金申請系統」（cipgrant.fju.edu.tw）完成帳號驗證並登入",
+      "至「我的e政府」原住民族學生就學獎助學金申請頁（gov.tw/News_Content_2_370175）或原民會專屬申請系統，完成帳號驗證並登入",
       "依系統提示上傳原住民族身分證明、在學證明及前一學期成績單（優秀獎學金需達成績門檻）",
       "每學年依學校公告期間提出申請，逾期不補申請；核准後補助於學期中匯入"
     ]
@@ -830,7 +830,7 @@
     "id": "low-income-elderly-allowance",
     "title": "中低收入老人生活津貼",
     "category": "生活",
-    "agency": "衛生福利部社家署 / 各縣市政府",
+    "agency": "衛生福利部社會及家庭署 / 各縣市政府",
     "summary": "65歲以上且家庭收入屬中低收入的長者，可每月申請定期生活津貼，最高每月補助8,329元。全年常態受理，向戶籍地公所申請即可，是照顧無固定收入長者的重要基礎補助。",
     "eligibility": [
       "年齡65歲（含）以上",
@@ -875,7 +875,7 @@
     "amount": "每月補助 3,000～8,000 元（依地區、家庭規模及特殊身分，各縣市另有加碼）",
     "deadline": "115年全年1月1日至12月31日，隨到隨審",
     "deadlineStatus": "open",
-    "applicationUrl": "https://www.gov.tw/News_Content_37_561179",
+    "applicationUrl": "https://www.nlma.gov.tw/ch/titlelist/news/15999",
     "tags": [
       "租金補貼",
       "租屋",
