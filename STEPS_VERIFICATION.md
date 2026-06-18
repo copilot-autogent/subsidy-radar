@@ -1,18 +1,21 @@
 # Steps Data Verification Report
 
-**Verified:** 2026-06-14  
-**Method:** Web scraping / browser navigation against official gov.tw pages  
-**Issue:** #15
+**Initial audit:** 2026-06-14 (Issue #15, PR #26 — 15/21 subsidies)  
+**Follow-up audit:** 2026-06-18 (Issue #28 — remaining 6 unverified + 4 new subsidies from PR #30)  
+**Method:** `verify_deploy` HTTP checks, `web_fetch` content inspection, `web_search` cross-reference against official gov.tw pages  
+**Issue:** #15, #28
 
 ---
 
 ## Summary
 
-All 21 subsidies were audited for:
+All 21 original subsidies were audited for:
 - `applicationUrl` reachability
 - Step accuracy against official government pages
 
-**Bugs fixed in this pass:**
+The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student-scholarship, low-income-elderly-allowance, expanded-rent-subsidy) have been audited in the 2026-06-18 follow-up pass.
+
+**Bugs fixed in initial pass (PR #26):**
 | Subsidy ID | Issue | Fix Applied |
 |---|---|---|
 | `unemployment-benefit` | `applicationUrl` returned 404 | Updated to `https://www.bli.gov.tw/0006445.html` |
@@ -21,6 +24,12 @@ All 21 subsidies were audited for:
 | `parental-leave-allowance` | Step 2 omitted 2026 batch-application option | Updated to mention employer batch-apply (effective 2026-03-30) |
 | `youth-startup-fund` | `applicationUrl` domain (`sba.gov.tw`) not found | Updated to `https://startup.sme.gov.tw/home/modules/funding/detail/index.php?sId=15` |
 | `youth-startup-fund` | Agency name outdated (中小企業處 renamed 2023) | Updated to `經濟部中小及新創企業署` |
+
+**Bugs fixed in follow-up pass (Issue #28):**
+| Subsidy ID | Issue | Fix Applied |
+|---|---|---|
+| `youth-home-loan` | `eligibility` and `steps[0]` listed "年齡45歲以下" and "家庭年收入120萬以下" which are wrong for 新青安精進方案 | Removed age cap and income limit; updated to reflect current 新青安 1.0 criteria |
+| `youth-home-loan` | `deadlineStatus: "ongoing"` with no deadline; program expires 2026-07-31 | Changed to `deadlineStatus: "open"` + `deadlineDate: "2026-07-31"` |
 
 ---
 
@@ -46,10 +55,11 @@ All 21 subsidies were audited for:
 - **Steps:** Consistent with 內政部國土管理署 platform flow
 - **Deadline:** 115年1月1日–12月31日 — confirmed by gov.tw announcement
 
-### ⚠️ youth-home-loan (minor note)
-- **URL verified:** `https://www.nta.gov.tw/htmlList/71` — domain responsive (JS-heavy)
-- **Steps:** Broadly accurate (財政部版; distinct from 內政部版 which is now closed)
-- **Note:** The 內政部版「青年安心成家」at pip.moi.gov.tw is marked "已不再受理新申請案". The data correctly links to the 財政部國庫署 version — verify NTA program status before next review cycle.
+### ✅ youth-home-loan *(fixed — 2026-06-18)*
+- **URL verified:** `https://www.nta.gov.tw/htmlList/71` — HTTP 200 ✅
+- **NTA status confirmed:** 新青安貸款精進方案 is active, running until **115年7月31日（2026-07-31）**. Source: Executive Yuan policy page (ey.gov.tw) + yda.gov.tw confirms "展延至115年7月31日止". A 2.0 version is in draft (expected August 2026).
+- **Steps corrected:** Previous steps[0] incorrectly stated "年齡45歲以下、初次購屋、家庭年收入120萬以下" — these conditions are from the pre-2023 original program. The 新青安精進方案 (effective 2023-08) has NO age cap and NO income limit. Fixed to reflect current 新青安 1.0 criteria.
+- **Deadline updated:** Added `deadlineDate: "2026-07-31"` and `deadlineStatus: "open"` to reflect program expiry.
 
 ### ✅ interest-subsidy
 - **URL verified:** `https://has.nlma.gov.tw/subsidyOnline/` — live
@@ -107,10 +117,10 @@ All 21 subsidies were audited for:
 - **URL verified:** `https://www.etax.nat.gov.tw/etwmain/front/ETW158W1` — live (財政部電子申報繳稅服務網)
 - **Steps:** Confirmed key dates: 地價稅 9月22日截止申請; 房屋稅 設籍後可申請
 
-### ✅ sbir-sme-innovation
-- **URL noted:** `https://www.sbir.org.tw/` — fetch timeout (DNS resolves but content may be behind WAF)
-- **Steps:** Consistent with annual Phase 1/2 application cycle from 中小及新創企業署
-- **Alternative reference:** `https://startup.sme.gov.tw/home/modules/funding/detail/index.php?sId=2` confirmed
+### ✅ sbir-sme-innovation *(re-verified 2026-06-18)*
+- **URL:** `https://www.sbir.org.tw/` — HTTP check fails from server environment (WAF/geo-block), but **confirmed valid via multiple sources**: sme.gov.tw directly links to sbir.org.tw; web search shows 2026-05-15 announcement on sbir.org.tw; MOEA confirms "隨到隨受理" (rolling). URL is correct.
+- **Steps:** Confirmed accurate against sme.gov.tw SBIR programme page (updated 2025-12-29) and MOEA application guidance.
+- **Deadline:** `deadlineStatus: "open"` is correct — program accepts applications on a rolling basis (隨到隨受理).
 
 ### ✅ siir-service-innovation
 - **URL verified:** `https://gcis.nat.gov.tw/neo-s/` — live (商業發展署 SIIR)
@@ -122,9 +132,35 @@ All 21 subsidies were audited for:
 
 ---
 
+---
+
+## New Subsidies Verified (PR #30, audited 2026-06-18)
+
+### ✅ labor-child-education-grant *(new — verified 2026-06-18)*
+- **URL verified:** `https://www.mol.gov.tw/topic/3075/6074/` — HTTP 200 ✅
+- **Content confirmed:** MOL page updated 2026-02-03 confirms 114學年度第2學期 deadline 115年3月22日; 115年2月3日 onwards accepted online via uwes.mol.gov.tw
+- **Steps:** Accurate. Step 3 references `uwes.mol.gov.tw` which is live (HTTP 200 ✅). Application windows (每年2月 and 9月) are consistent with academic semester calendar.
+- **Deadline:** `deadlineStatus: "seasonal"` ✅ — two windows per year (February semester 2, September semester 1).
+
+### ✅ indigenous-student-scholarship *(new — verified 2026-06-18)*
+- **URL verified:** `https://cipgrant.fju.edu.tw/` — HTTP 200 ✅
+- **Steps:** Consistent with the 原住民族委員會 scholarship application process via cipgrant.fju.edu.tw.
+- **Deadline:** `deadlineStatus: "seasonal"` ✅ — per-semester applications.
+
+### ✅ low-income-elderly-allowance *(new — verified 2026-06-18)*
+- **URL verified:** `https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=386` — HTTP 200 ✅
+- **Steps:** Accurate — public-office window application with annual review to maintain eligibility.
+- **Deadline:** `deadlineStatus: "ongoing"` ✅ — rolling applications accepted at local district office year-round.
+
+### ✅ expanded-rent-subsidy *(new — verified 2026-06-18)*
+- **URL verified:** `https://www.nlma.gov.tw/ch/titlelist/news/15999` — HTTP 200 ✅
+- **Steps:** Accurate — consistent with 國土管理署 expanded rent subsidy (擴大租金補貼) flow; "115年全年受理" confirmed.
+- **Deadline:** `deadlineStatus: "open"` ✅
+
+---
+
 ## Next Review Recommended
 
-- **youth-home-loan**: Confirm 財政部版「青年安心成家」program is still open for applications (last check 2026-06-14)
+- **youth-home-loan**: 新青安 2.0 expected August 2026 — re-verify eligibility (proposed: 50歲以下, income ≤200萬) and update data when official 2.0 announcement is published.
 - **interest-subsidy**: Confirm 115年 September application window opens as expected
-- **home-renovation-loan-subsidy**: Confirm 115年 September application window announcement
-- **sbir-sme-innovation**: Confirm 115年 application timeline via `sbir.org.tw` or `sme.gov.tw`
+- **home-renovation-loan-subsidy**: Confirm 115年 September application window announcement; current `deadlineDate: "2025-09-30"` is stale (closed), update when 115年 window is announced.
