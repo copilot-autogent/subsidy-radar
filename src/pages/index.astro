@@ -45,7 +45,7 @@ const personas = [
   <section class="hero">
     <h1>📡 補助雷達</h1>
     <p>快速找到您符合資格的台灣政府補助，包含就業、創業、住宅及生活補助。</p>
-    <p class="hero-youth-hint">🎓 剛畢業？先看「<strong>青年必看</strong>」，{youthCount} 項補助等你領！</p>
+    <div class="hero-youth-hint">🎓 剛畢業？先看「<button id="heroYouthLink" class="hero-youth-link" type="button"><strong>青年必看</strong></button>」，{youthCount} 項補助等你領！</div>
     <div id="pushNotifContainer" class="push-notif-row" style="display:none">
       <button id="subscribeBtn" class="push-btn" type="button">🔔 開啟截止提醒</button>
       <span id="pushStatus" class="push-status"></span>
@@ -584,6 +584,21 @@ const personas = [
       showTrackedOnly = !showTrackedOnly;
       updateTrackerFilterLabel();
       updateDisplay();
+    });
+
+    // ── Hero youth link ───────────────────────────────────────────────────────
+    const heroYouthLink = document.getElementById('heroYouthLink');
+    heroYouthLink?.addEventListener('click', () => {
+      const youthBtn = [...filterBtns].find(b => b.dataset.category === '⭐ 青年必看');
+      if (!youthBtn) {
+        console.warn('[heroYouthLink] Could not find ⭐ 青年必看 filter button');
+        return;
+      }
+      // Delegate to the filter button's own click handler to avoid state drift
+      youthBtn.click();
+      // Additional UX: clear quiz chip visuals (activeSituation was reset by the click)
+      quizOptions.forEach(opt => opt.classList.remove('selected'));
+      youthBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
     // ── Init ─────────────────────────────────────────────────────────────────
