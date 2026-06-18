@@ -471,10 +471,10 @@ const personas = [
       textArea.style.cssText =
         'position:fixed;top:0;left:0;width:2em;height:2em;' +
         'padding:0;border:none;outline:none;box-shadow:none;background:transparent;';
-      textArea.setAttribute('readonly', '');
       document.body.appendChild(textArea);
       textArea.focus();
-      // setSelectionRange is the correct cross-browser path (incl. iOS Safari).
+      // select() for cross-browser desktop; setSelectionRange for iOS Safari.
+      textArea.select();
       textArea.setSelectionRange(0, textArea.value.length);
       let ok = false;
       try {
