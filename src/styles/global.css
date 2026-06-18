@@ -10,6 +10,7 @@
   --radius: 12px;
   --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
+  --header-height: 4rem;
 }
 
 * {
@@ -377,6 +378,7 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  scroll-margin-top: var(--header-height);
 }
 
 .subsidy-card:hover {

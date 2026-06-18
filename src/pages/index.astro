@@ -454,17 +454,29 @@ const personas = [
         label.textContent = originalText;
         btn.classList.remove('copied');
         shareResetTimers.delete(btn);
+        // Restore focus only if the user hasn't moved to a meaningful element.
+        const active = document.activeElement;
+        if (active === btn || active == null) {
+          btn.focus();
+        }
       }, 2000);
       shareResetTimers.set(btn, id);
     }
 
     function fallbackCopy(url: string): boolean {
+      const prevFocus = document.activeElement as HTMLElement | null;
       const textArea = document.createElement('textarea');
       textArea.value = url;
-      textArea.style.position = 'fixed';
-      textArea.style.opacity = '0';
+      // Position in-viewport (not off-screen) — iOS Safari requires the element
+      // to be visible and focusable; opacity:0 alone can block clipboard access.
+      textArea.style.cssText =
+        'position:fixed;top:0;left:0;width:2em;height:2em;' +
+        'padding:0;border:none;outline:none;box-shadow:none;background:transparent;';
       document.body.appendChild(textArea);
+      textArea.focus();
+      // select() for cross-browser desktop; setSelectionRange for iOS Safari.
       textArea.select();
+      textArea.setSelectionRange(0, textArea.value.length);
       let ok = false;
       try {
         ok = document.execCommand('copy');
@@ -472,6 +484,10 @@ const personas = [
         ok = false;
       } finally {
         document.body.removeChild(textArea);
+        // Restore focus to the element that had it before the copy (a11y).
+        if (prevFocus && typeof prevFocus.focus === 'function') {
+          prevFocus.focus();
+        }
       }
       return ok;
     }
