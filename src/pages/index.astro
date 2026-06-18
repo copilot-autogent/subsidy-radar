@@ -594,13 +594,10 @@ const personas = [
         console.warn('[heroYouthLink] Could not find ⭐ 青年必看 filter button');
         return;
       }
-      filterBtns.forEach(b => b.classList.remove('active'));
-      youthBtn.classList.add('active');
-      activeCategory = '⭐ 青年必看';
-      activeSituation = '';
-      // Clear any visually selected quiz options so UI matches reset state
+      // Delegate to the filter button's own click handler to avoid state drift
+      youthBtn.click();
+      // Additional UX: clear quiz chip visuals (activeSituation was reset by the click)
       quizOptions.forEach(opt => opt.classList.remove('selected'));
-      updateDisplay();
       youthBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
