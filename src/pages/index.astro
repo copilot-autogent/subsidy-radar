@@ -454,6 +454,8 @@ const personas = [
         label.textContent = originalText;
         btn.classList.remove('copied');
         shareResetTimers.delete(btn);
+        // Restore focus to the button after feedback clears (a11y).
+        btn.focus();
       }, 2000);
       shareResetTimers.set(btn, id);
     }
@@ -464,7 +466,16 @@ const personas = [
       textArea.style.position = 'fixed';
       textArea.style.opacity = '0';
       document.body.appendChild(textArea);
-      textArea.select();
+      // iOS Safari ignores textarea.select() — use range-based selection instead.
+      textArea.focus();
+      const range = document.createRange();
+      range.selectNodeContents(textArea);
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      textArea.setSelectionRange(0, textArea.value.length);
       let ok = false;
       try {
         ok = document.execCommand('copy');
