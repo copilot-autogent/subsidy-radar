@@ -196,6 +196,7 @@ const personas = [
           data-search={`${s.title} ${s.summary} ${s.tags.join(' ')} ${s.agency}`}
           data-id={s.id}
           data-deadline={s.deadlineDate ?? ''}
+          data-deadline-status={s.deadlineStatus ?? ''}
         >
           <div class="card-header">
             <h2 class="card-title">{s.title}</h2>
@@ -767,27 +768,27 @@ const personas = [
     // ── Deadline Timeline Panel ───────────────────────────────────────────────
     (function initDeadlinePanel() {
       const COLLAPSE_LIMIT = 5;
-      const panelSection   = document.getElementById('deadlinePanelSection')!;
-      const panelToggle    = document.getElementById('deadlinePanelToggle') as HTMLButtonElement;
-      const panelBody      = document.getElementById('deadlinePanelBody')!;
-      const timeline       = document.getElementById('deadlineTimeline')!;
-      const showAllBtn     = document.getElementById('deadlineShowAll') as HTMLButtonElement;
+      const panelSection = document.getElementById('deadlinePanelSection');
+      const panelToggle  = document.getElementById('deadlinePanelToggle') as HTMLButtonElement | null;
+      const panelBody    = document.getElementById('deadlinePanelBody');
+      const timeline     = document.getElementById('deadlineTimeline');
+      const showAllBtn   = document.getElementById('deadlineShowAll') as HTMLButtonElement | null;
+      if (!panelSection || !panelToggle || !panelBody || !timeline || !showAllBtn) return;
 
-      // Gather data from cards; exclude periodic (data-deadline-status set below).
-      // We read deadlineDate and title directly from existing card DOM attributes.
+      // Gather data from cards; exclude periodic via data-deadline-status attribute.
       type TimelineItem = { id: string; title: string; deadlineDate: string; days: number };
       const items: TimelineItem[] = [];
 
       cards.forEach(card => {
         const deadlineDate = card.dataset.deadline ?? '';
         if (!deadlineDate) return;
-        // Exclude periodic: check the deadline-status badge class
-        const statusBadge = card.querySelector<HTMLElement>('.deadline-status');
-        if (statusBadge?.classList.contains('status-periodic')) return;
+        if (card.dataset.deadlineStatus === 'periodic') return;
         const days = daysUntilDate(deadlineDate);
         if (days === null) return; // past or invalid
-        const title = card.querySelector('.card-title')?.textContent?.trim() ?? card.dataset.id ?? '';
-        items.push({ id: card.dataset.id ?? '', title, deadlineDate, days });
+        const id    = card.dataset.id ?? '';
+        if (!id) return;
+        const title = card.querySelector('.card-title')?.textContent?.trim() ?? id;
+        items.push({ id, title, deadlineDate, days });
       });
 
       // Sort ascending by days (soonest first)
@@ -814,29 +815,37 @@ const personas = [
 
       function renderItems(limit: number) {
         timeline.innerHTML = '';
-        const visible = items.slice(0, limit);
-        visible.forEach(item => {
-          const li = document.createElement('li');
+        items.slice(0, limit).forEach(item => {
+          const li   = document.createElement('li');
           li.className = 'deadline-timeline-item';
-          const dot = colourDot(item.days);
-          const cls = colourClass(item.days);
-          const label = dayLabel(item.days);
-          li.innerHTML = `
-            <span class="dl-dot">${dot}</span>
-            <a class="dl-title" href="#${item.id}">${item.title}</a>
-            <span class="dl-badge countdown-badge ${cls}">${label}</span>
-            <span class="dl-date">${item.deadlineDate}</span>`;
+
+          const dot  = document.createElement('span');
+          dot.className = 'dl-dot';
+          dot.textContent = colourDot(item.days);
+
+          const link = document.createElement('a');
+          link.className = 'dl-title';
+          link.setAttribute('href', `#${encodeURIComponent(item.id)}`);
+          link.textContent = item.title;
+
+          const badge = document.createElement('span');
+          badge.className = `dl-badge countdown-badge ${colourClass(item.days)}`;
+          badge.textContent = dayLabel(item.days);
+
+          const date = document.createElement('span');
+          date.className = 'dl-date';
+          date.textContent = item.deadlineDate;
+
+          li.append(dot, link, badge, date);
           timeline.appendChild(li);
         });
       }
 
-      let expanded = false;
       renderItems(COLLAPSE_LIMIT);
       showAllBtn.style.display = items.length > COLLAPSE_LIMIT ? '' : 'none';
       showAllBtn.textContent = `查看全部（${items.length} 項）`;
 
       showAllBtn.addEventListener('click', () => {
-        expanded = true;
         renderItems(items.length);
         showAllBtn.style.display = 'none';
       });
