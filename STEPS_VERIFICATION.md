@@ -56,10 +56,10 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 - **Deadline:** 115年1月1日–12月31日 — confirmed by gov.tw announcement
 
 ### ✅ youth-home-loan *(fixed — 2026-06-18)*
-- **URL verified:** `https://www.nta.gov.tw/htmlList/71` — HTTP 200 ✅
-- **NTA status confirmed:** 新青安貸款精進方案 is active, running until **115年7月31日（2026-07-31）**. Source: Executive Yuan policy page (ey.gov.tw) + yda.gov.tw confirms "展延至115年7月31日止". A 2.0 version is in draft (expected August 2026).
-- **Steps corrected:** Previous steps[0] incorrectly stated "年齡45歲以下、初次購屋、家庭年收入120萬以下" — these conditions are from the pre-2023 original program. The 新青安精進方案 (effective 2023-08) has NO age cap and NO income limit. Fixed to reflect current 新青安 1.0 criteria.
-- **Deadline updated:** Added `deadlineDate: "2026-07-31"` and `deadlineStatus: "open"` to reflect program expiry.
+- **URL verified:** `https://www.nta.gov.tw/htmlList/71` — HTTP 200 ✅ (NTA application landing page is live)
+- **NTA program status confirmed active:** 新青安貸款精進方案 runs until **115年7月31日（2026-07-31）**. Sources: (1) EY policy page ey.gov.tw — "實施至115年7月31日"; (2) yda.gov.tw — "展延至115年7月31日止". The NTA URL (`nta.gov.tw/htmlList/71`) is the correct user-facing application entry point for the 財政部版 program.
+- **Eligibility criteria corrected:** Previous `eligibility[]` and `steps[0]` listed "年齡45歲以下" and "家庭年收入120萬以下" — these are conditions from the original pre-2023 program. The 新青安精進方案 (effective 2023-08) has NO age cap and NO income limit (confirmed: money168.com/blog/youth-housing-loan-eligibility: "新青安年齡限制18歲以上即可申請，新青安條件年收入不限"). Fixed to reflect 新青安 1.0 criteria.
+- **Deadline updated:** Added `deadlineDate: "2026-07-31"` and `deadlineStatus: "open"` to reflect program expiry. `deadline` text updated to mention 2.0 succession so entry stays informative after July 31.
 
 ### ✅ interest-subsidy
 - **URL verified:** `https://has.nlma.gov.tw/subsidyOnline/` — live
@@ -132,8 +132,6 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 
 ---
 
----
-
 ## New Subsidies Verified (PR #30, audited 2026-06-18)
 
 ### ✅ labor-child-education-grant *(new — verified 2026-06-18)*
@@ -161,6 +159,6 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 
 ## Next Review Recommended
 
-- **youth-home-loan**: 新青安 2.0 expected August 2026 — re-verify eligibility (proposed: 50歲以下, income ≤200萬) and update data when official 2.0 announcement is published.
+- **youth-home-loan**: 新青安 2.0 announcement expected ~June/August 2026 — re-verify eligibility and update data when official 2.0 notice is published (draft proposal in circulation as of 2026-06, details not yet enacted).
 - **interest-subsidy**: Confirm 115年 September application window opens as expected
 - **home-renovation-loan-subsidy**: Confirm 115年 September application window announcement; current `deadlineDate: "2025-09-30"` is stale (closed), update when 115年 window is announced.
