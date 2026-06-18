@@ -168,6 +168,17 @@ const personas = [
     <span id="bannerText"></span>
   </div>
 
+  <section class="deadline-panel" id="deadlinePanelSection" style="display:none" aria-label="即將截止補助">
+    <div class="deadline-panel-header">
+      <h2 class="deadline-panel-title">📅 即將截止</h2>
+      <button class="deadline-panel-toggle" id="deadlinePanelToggle" type="button" aria-expanded="true">隱藏</button>
+    </div>
+    <div class="deadline-panel-body" id="deadlinePanelBody">
+      <ol class="deadline-timeline" id="deadlineTimeline" aria-label="截止日期排行"></ol>
+      <button class="deadline-show-all-btn" id="deadlineShowAll" type="button" style="display:none">查看全部</button>
+    </div>
+  </section>
+
   <p class="results-count" id="resultsCount">共 {subsidies.length} 項補助</p>
 
   <div class="grid" id="subsidyGrid">
@@ -752,5 +763,91 @@ const personas = [
     }
 
     setupPushNotifications();
+
+    // ── Deadline Timeline Panel ───────────────────────────────────────────────
+    (function initDeadlinePanel() {
+      const COLLAPSE_LIMIT = 5;
+      const panelSection   = document.getElementById('deadlinePanelSection')!;
+      const panelToggle    = document.getElementById('deadlinePanelToggle') as HTMLButtonElement;
+      const panelBody      = document.getElementById('deadlinePanelBody')!;
+      const timeline       = document.getElementById('deadlineTimeline')!;
+      const showAllBtn     = document.getElementById('deadlineShowAll') as HTMLButtonElement;
+
+      // Gather data from cards; exclude periodic (data-deadline-status set below).
+      // We read deadlineDate and title directly from existing card DOM attributes.
+      type TimelineItem = { id: string; title: string; deadlineDate: string; days: number };
+      const items: TimelineItem[] = [];
+
+      cards.forEach(card => {
+        const deadlineDate = card.dataset.deadline ?? '';
+        if (!deadlineDate) return;
+        // Exclude periodic: check the deadline-status badge class
+        const statusBadge = card.querySelector<HTMLElement>('.deadline-status');
+        if (statusBadge?.classList.contains('status-periodic')) return;
+        const days = daysUntilDate(deadlineDate);
+        if (days === null) return; // past or invalid
+        const title = card.querySelector('.card-title')?.textContent?.trim() ?? card.dataset.id ?? '';
+        items.push({ id: card.dataset.id ?? '', title, deadlineDate, days });
+      });
+
+      // Sort ascending by days (soonest first)
+      items.sort((a, b) => a.days - b.days);
+
+      if (items.length === 0) return; // auto-hide
+      panelSection.style.display = '';
+
+      function colourClass(days: number): string {
+        if (days <= 7)  return 'countdown-urgent';
+        if (days <= 30) return 'countdown-soon';
+        return 'countdown-ok';
+      }
+      function colourDot(days: number): string {
+        if (days <= 7)  return '🔴';
+        if (days <= 30) return '🟡';
+        return '🟢';
+      }
+      function dayLabel(days: number): string {
+        if (days === 0) return '今天截止';
+        if (days === 1) return '明天截止';
+        return `剩 ${days} 天`;
+      }
+
+      function renderItems(limit: number) {
+        timeline.innerHTML = '';
+        const visible = items.slice(0, limit);
+        visible.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'deadline-timeline-item';
+          const dot = colourDot(item.days);
+          const cls = colourClass(item.days);
+          const label = dayLabel(item.days);
+          li.innerHTML = `
+            <span class="dl-dot">${dot}</span>
+            <a class="dl-title" href="#${item.id}">${item.title}</a>
+            <span class="dl-badge countdown-badge ${cls}">${label}</span>
+            <span class="dl-date">${item.deadlineDate}</span>`;
+          timeline.appendChild(li);
+        });
+      }
+
+      let expanded = false;
+      renderItems(COLLAPSE_LIMIT);
+      showAllBtn.style.display = items.length > COLLAPSE_LIMIT ? '' : 'none';
+      showAllBtn.textContent = `查看全部（${items.length} 項）`;
+
+      showAllBtn.addEventListener('click', () => {
+        expanded = true;
+        renderItems(items.length);
+        showAllBtn.style.display = 'none';
+      });
+
+      // Toggle visibility of panel body
+      panelToggle.addEventListener('click', () => {
+        const isOpen = panelBody.style.display !== 'none';
+        panelBody.style.display = isOpen ? 'none' : '';
+        panelToggle.textContent = isOpen ? '顯示' : '隱藏';
+        panelToggle.setAttribute('aria-expanded', String(!isOpen));
+      });
+    })();
   </script>
 </BaseLayout>
