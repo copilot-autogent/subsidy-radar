@@ -28,8 +28,9 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 **Bugs fixed in follow-up pass (Issue #28):**
 | Subsidy ID | Issue | Fix Applied |
 |---|---|---|
-| `youth-home-loan` | `eligibility` and `steps[0]` listed "年齡45歲以下" and "家庭年收入120萬以下" which are wrong for 新青安精進方案 | Removed age cap and income limit; updated to reflect current 新青安 1.0 criteria |
+| `youth-home-loan` | `eligibility` and `steps[0]` listed "年齡45歲以下" and "家庭年收入120萬以下" which are wrong for 新青安精進方案 | Removed age cap and income limit; updated to reflect current 新青安 1.0 criteria (official source: ey.gov.tw) |
 | `youth-home-loan` | `deadlineStatus: "ongoing"` with no deadline; program expires 2026-07-31 | Changed to `deadlineStatus: "open"` + `deadlineDate: "2026-07-31"` |
+| `home-renovation-loan-subsidy` | `deadlineDate: "2025-09-30"` + `deadlineStatus: "closed"` was stale (114年 window expired) | Changed to `deadlineStatus: "periodic"` + `deadlineDate: "2026-09-30"` (expected 115年 annual window) |
 
 ---
 
@@ -58,8 +59,8 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 ### ✅ youth-home-loan *(fixed — 2026-06-18)*
 - **URL verified:** `https://www.nta.gov.tw/htmlList/71` — HTTP 200 ✅ (NTA application landing page is live)
 - **NTA program status confirmed active:** 新青安貸款精進方案 runs until **115年7月31日（2026-07-31）**. Sources: (1) EY policy page ey.gov.tw — "實施至115年7月31日"; (2) yda.gov.tw — "展延至115年7月31日止". The NTA URL (`nta.gov.tw/htmlList/71`) is the correct user-facing application entry point for the 財政部版 program.
-- **Eligibility criteria corrected:** Previous `eligibility[]` and `steps[0]` listed "年齡45歲以下" and "家庭年收入120萬以下" — these are conditions from the original pre-2023 program. The 新青安精進方案 (effective 2023-08) has NO age cap and NO income limit (confirmed: money168.com/blog/youth-housing-loan-eligibility: "新青安年齡限制18歲以上即可申請，新青安條件年收入不限"). Fixed to reflect 新青安 1.0 criteria.
-- **Deadline updated:** Added `deadlineDate: "2026-07-31"` and `deadlineStatus: "open"` to reflect program expiry. `deadline` text updated to mention 2.0 succession so entry stays informative after July 31.
+- **Eligibility criteria corrected:** Previous `eligibility[]` and `steps[0]` listed "年齡45歲以下" and "家庭年收入120萬以下" — these are conditions from the original pre-2023 program. The 新青安精進方案 (effective 2023-08) has NO age cap and NO income limit. Confirmed from official sources: (1) EY policy page (ey.gov.tw) states "年滿18歲的成人...均可申請" with no income condition; (2) NTA FAQ page (nta.gov.tw/singlehtml/109) makes no reference to age cap or income limit in the 精進方案. Fixed to reflect 新青安 1.0 criteria.
+- **Deadline updated:** Added `deadlineDate: "2026-07-31"` and `deadlineStatus: "open"` to reflect program expiry. `deadline` text references official application channel only (2.0 succession speculation removed from user-facing field).
 
 ### ✅ interest-subsidy
 - **URL verified:** `https://has.nlma.gov.tw/subsidyOnline/` — live
@@ -108,9 +109,10 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 - **URL verified:** `https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341` — domain live
 - **Steps:** Consistent with 公所社政課 window service
 
-### ✅ home-renovation-loan-subsidy
+### ✅ home-renovation-loan-subsidy *(updated — 2026-06-18)*
 - **URL verified:** `https://pip.moi.gov.tw/v3/b/SCRB0108.aspx` — accessible (內政部不動產資訊平台)
 - **Steps:** Steps reference annual September application window; consistent with 整合住宅補貼資源實施方案 cycle (114年9月1–30日 observed)
+- **Deadline updated:** Previous `deadlineDate: "2025-09-30"` with `deadlineStatus: "closed"` was stale (114年 window expired). Updated to `deadlineStatus: "periodic"` + `deadlineDate: "2026-09-30"` to reflect expected annual 115年 September window. Exact dates TBC per official announcement.
 - **Note:** URL resolves to housing info portal; users should navigate to 住宅補貼 → 整合住宅補貼資源實施方案 section
 
 ### ✅ self-use-housing-tax-reduction
@@ -161,4 +163,4 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 
 - **youth-home-loan**: 新青安 2.0 announcement expected ~June/August 2026 — re-verify eligibility and update data when official 2.0 notice is published (draft proposal in circulation as of 2026-06, details not yet enacted).
 - **interest-subsidy**: Confirm 115年 September application window opens as expected
-- **home-renovation-loan-subsidy**: Confirm 115年 September application window announcement; current `deadlineDate: "2025-09-30"` is stale (closed), update when 115年 window is announced.
+- **home-renovation-loan-subsidy**: Stale deadline fixed in this pass (periodic + 2026-09-30). Confirm 115年 September window official dates when announced and update if needed.
