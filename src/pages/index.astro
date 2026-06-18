@@ -835,6 +835,7 @@ const personas = [
           const date = document.createElement('span');
           date.className = 'dl-date';
           date.textContent = item.deadlineDate;
+          date.setAttribute('aria-hidden', 'true'); // visually hidden on mobile; badge conveys same info
 
           li.append(dot, link, badge, date);
           timeline.appendChild(li);
