@@ -317,10 +317,10 @@ main {
   text-underline-offset: 2px;
 }
 
-.hero-youth-link:hover strong,
-.hero-youth-link:focus strong {
-  color: #78350f;
+.hero-youth-link:hover,
+.hero-youth-link:focus {
   text-decoration: underline solid;
+  color: #78350f;
 }
 
 .hero-youth-link:focus {

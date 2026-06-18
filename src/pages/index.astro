@@ -590,14 +590,18 @@ const personas = [
     const heroYouthLink = document.getElementById('heroYouthLink');
     heroYouthLink?.addEventListener('click', () => {
       const youthBtn = [...filterBtns].find(b => b.dataset.category === '⭐ 青年必看');
-      if (youthBtn) {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        youthBtn.classList.add('active');
-        activeCategory = '⭐ 青年必看';
-        activeSituation = '';
-        updateDisplay();
-        youthBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (!youthBtn) {
+        console.warn('[heroYouthLink] Could not find ⭐ 青年必看 filter button');
+        return;
       }
+      filterBtns.forEach(b => b.classList.remove('active'));
+      youthBtn.classList.add('active');
+      activeCategory = '⭐ 青年必看';
+      activeSituation = '';
+      // Clear any visually selected quiz options so UI matches reset state
+      quizOptions.forEach(opt => opt.classList.remove('selected'));
+      updateDisplay();
+      youthBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
     // ── Init ─────────────────────────────────────────────────────────────────
