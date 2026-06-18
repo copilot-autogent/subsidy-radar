@@ -454,8 +454,11 @@ const personas = [
         label.textContent = originalText;
         btn.classList.remove('copied');
         shareResetTimers.delete(btn);
-        // Restore focus to the button after feedback clears (a11y).
-        btn.focus();
+        // Restore focus only if the user hasn't moved focus deliberately.
+        const active = document.activeElement;
+        if (active === btn || active === document.body || active == null) {
+          btn.focus();
+        }
       }, 2000);
       shareResetTimers.set(btn, id);
     }
@@ -463,18 +466,15 @@ const personas = [
     function fallbackCopy(url: string): boolean {
       const textArea = document.createElement('textarea');
       textArea.value = url;
-      textArea.style.position = 'fixed';
-      textArea.style.opacity = '0';
+      // Position in-viewport (not off-screen) — iOS Safari requires the element
+      // to be visible and focusable; opacity:0 alone can block clipboard access.
+      textArea.style.cssText =
+        'position:fixed;top:0;left:0;width:2em;height:2em;' +
+        'padding:0;border:none;outline:none;box-shadow:none;background:transparent;';
+      textArea.setAttribute('readonly', '');
       document.body.appendChild(textArea);
-      // iOS Safari ignores textarea.select() — use range-based selection instead.
       textArea.focus();
-      const range = document.createRange();
-      range.selectNodeContents(textArea);
-      const sel = window.getSelection();
-      if (sel) {
-        sel.removeAllRanges();
-        sel.addRange(range);
-      }
+      // setSelectionRange is the correct cross-browser path (incl. iOS Safari).
       textArea.setSelectionRange(0, textArea.value.length);
       let ok = false;
       try {
