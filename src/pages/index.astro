@@ -454,9 +454,9 @@ const personas = [
         label.textContent = originalText;
         btn.classList.remove('copied');
         shareResetTimers.delete(btn);
-        // Restore focus only if the user hasn't moved focus deliberately.
+        // Restore focus only if the user hasn't moved to a meaningful element.
         const active = document.activeElement;
-        if (active === btn || active === document.body || active == null) {
+        if (active === btn || active == null) {
           btn.focus();
         }
       }, 2000);
@@ -464,6 +464,7 @@ const personas = [
     }
 
     function fallbackCopy(url: string): boolean {
+      const prevFocus = document.activeElement as HTMLElement | null;
       const textArea = document.createElement('textarea');
       textArea.value = url;
       // Position in-viewport (not off-screen) — iOS Safari requires the element
@@ -483,6 +484,10 @@ const personas = [
         ok = false;
       } finally {
         document.body.removeChild(textArea);
+        // Restore focus to the element that had it before the copy (a11y).
+        if (prevFocus && typeof prevFocus.focus === 'function') {
+          prevFocus.focus();
+        }
       }
       return ok;
     }
