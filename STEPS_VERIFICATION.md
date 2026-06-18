@@ -30,7 +30,7 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 |---|---|---|
 | `youth-home-loan` | `eligibility` and `steps[0]` listed "年齡45歲以下" and "家庭年收入120萬以下" which are wrong for 新青安精進方案 | Removed age cap and income limit; updated to reflect current 新青安 1.0 criteria (official source: ey.gov.tw) |
 | `youth-home-loan` | `deadlineStatus: "ongoing"` with no deadline; program expires 2026-07-31 | Changed to `deadlineStatus: "open"` + `deadlineDate: "2026-07-31"` |
-| `home-renovation-loan-subsidy` | `deadlineDate: "2025-09-30"` + `deadlineStatus: "closed"` was stale (114年 window expired) | Changed to `deadlineStatus: "periodic"` + `deadlineDate: "2026-09-30"` (expected 115年 annual window) |
+| `home-renovation-loan-subsidy` | `deadlineDate: "2025-09-30"` + `deadlineStatus: "closed"` was stale (114年 window expired) | Changed to `deadlineStatus: "periodic"` (no deadlineDate until 115年 window is officially announced) |
 
 ---
 
@@ -112,7 +112,7 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 ### ✅ home-renovation-loan-subsidy *(updated — 2026-06-18)*
 - **URL verified:** `https://pip.moi.gov.tw/v3/b/SCRB0108.aspx` — accessible (內政部不動產資訊平台)
 - **Steps:** Steps reference annual September application window; consistent with 整合住宅補貼資源實施方案 cycle (114年9月1–30日 observed)
-- **Deadline updated:** Previous `deadlineDate: "2025-09-30"` with `deadlineStatus: "closed"` was stale (114年 window expired). Updated to `deadlineStatus: "periodic"` + `deadlineDate: "2026-09-30"` to reflect expected annual 115年 September window. Exact dates TBC per official announcement.
+- **Deadline updated:** Previous `deadlineDate: "2025-09-30"` with `deadlineStatus: "closed"` was stale (114年 window expired). Updated to `deadlineStatus: "periodic"` with no `deadlineDate` (115年 dates not yet officially announced; speculative date removed to avoid misleading the deadline UI).
 - **Note:** URL resolves to housing info portal; users should navigate to 住宅補貼 → 整合住宅補貼資源實施方案 section
 
 ### ✅ self-use-housing-tax-reduction
@@ -120,9 +120,9 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 - **Steps:** Confirmed key dates: 地價稅 9月22日截止申請; 房屋稅 設籍後可申請
 
 ### ✅ sbir-sme-innovation *(re-verified 2026-06-18)*
-- **URL:** `https://www.sbir.org.tw/` — HTTP check fails from server environment (WAF/geo-block), but **confirmed valid via multiple sources**: sme.gov.tw directly links to sbir.org.tw; web search shows 2026-05-15 announcement on sbir.org.tw; MOEA confirms "隨到隨受理" (rolling). URL is correct.
-- **Steps:** Confirmed accurate against sme.gov.tw SBIR programme page (updated 2025-12-29) and MOEA application guidance.
-- **Deadline:** `deadlineStatus: "open"` is correct — program accepts applications on a rolling basis (隨到隨受理).
+- **URL:** `https://www.sbir.org.tw/` — HTTP check fails from verification server (WAF/CDN protection). **Authority-delegation verification accepted**: `sme.gov.tw/article-tw-2895-13878` (HTTP 200 ✅, official 中小及新創企業署 page updated 2025-12-29) explicitly lists `sbir.org.tw` as the program link — this is the government's own published authoritative pointer to the application site. Web search also shows live 2026-05-15 content on sbir.org.tw from public-client crawlers. The URL in the data is the only official application platform; WAF-restricted environments can use `https://www.sme.gov.tw/article-tw-2895-13878` as a reachable entry point.
+- **Steps:** Confirmed accurate against sme.gov.tw SBIR programme page and MOEA application guidance ("隨到隨受理" rolling basis).
+- **Deadline:** `deadlineStatus: "open"` ✅ — rolling basis.
 
 ### ✅ siir-service-innovation
 - **URL verified:** `https://gcis.nat.gov.tw/neo-s/` — live (商業發展署 SIIR)
@@ -163,4 +163,4 @@ The 4 subsidies added in PR #30 (labor-child-education-grant, indigenous-student
 
 - **youth-home-loan**: 新青安 2.0 announcement expected ~June/August 2026 — re-verify eligibility and update data when official 2.0 notice is published (draft proposal in circulation as of 2026-06, details not yet enacted).
 - **interest-subsidy**: Confirm 115年 September application window opens as expected
-- **home-renovation-loan-subsidy**: Stale deadline fixed in this pass (periodic + 2026-09-30). Confirm 115年 September window official dates when announced and update if needed.
+- **home-renovation-loan-subsidy**: Stale deadline fixed in this pass (`periodic`, no date). Confirm 115年 September window official dates when announced and add `deadlineDate` then.
