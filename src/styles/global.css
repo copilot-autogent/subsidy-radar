@@ -305,6 +305,30 @@ main {
   border: 1px solid #fbbf24;
 }
 
+.hero-youth-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+
+.hero-youth-link:hover strong,
+.hero-youth-link:focus strong {
+  color: #78350f;
+  text-decoration: underline solid;
+}
+
+.hero-youth-link:focus {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
 .results-count {
   font-size: 0.9rem;
   color: var(--color-text-muted);
