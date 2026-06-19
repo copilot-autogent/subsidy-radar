@@ -13,13 +13,13 @@ const {
 
 const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
 
-// Canonical URL for OG tags — uses the configured site origin from astro.config.mjs.
+// Canonical URL for OG tags — Astro.url.href is set per-page by the static build.
 // Note: hash-based deep-links (e.g. #card=xyz from the share button) cannot have
 // per-card OG tags in a static build; all shares resolve to this site-level preview.
 // Per-card OG would require pre-rendered /subsidies/[id].astro routes or SSR.
-const siteOrigin = Astro.site ? Astro.site.origin : 'https://copilot-autogent.github.io';
-const canonicalUrl = `${siteOrigin}${base}`;
-const ogImage = `${siteOrigin}${base}og-image.svg`;
+const siteOrigin = Astro.site?.origin ?? 'https://copilot-autogent.github.io';
+const canonicalUrl = Astro.url.href;
+const ogImage = `${siteOrigin}${base}og-image.png`;
 ---
 
 <!doctype html>
@@ -34,6 +34,7 @@ const ogImage = `${siteOrigin}${base}og-image.svg`;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="zh_TW" />
