@@ -12,6 +12,14 @@ const {
 } = Astro.props;
 
 const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+
+// Canonical URL for OG tags — Astro.url.href is set per-page by the static build.
+// Note: hash-based deep-links (e.g. #card=xyz from the share button) cannot have
+// per-card OG tags in a static build; all shares resolve to this site-level preview.
+// Per-card OG would require pre-rendered /subsidies/[id].astro routes or SSR.
+const siteOrigin = Astro.site?.origin ?? 'https://copilot-autogent.github.io';
+const canonicalUrl = Astro.url.href;
+const ogImage = `${siteOrigin}${base}og-image.png`;
 ---
 
 <!doctype html>
@@ -20,9 +28,22 @@ const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="zh_TW" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
     <link rel="manifest" href={`${base}manifest.json`} />
     <meta name="theme-color" content="#2563eb" />
