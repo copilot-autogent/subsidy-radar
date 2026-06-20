@@ -18,6 +18,8 @@ const now = new Date(); now.setHours(0, 0, 0, 0);
 const recencyCount = subsidies.filter(s => {
   if (!s.addedDate) return false;
   const [y, m, d] = s.addedDate.split('-').map(Number);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return false;
+  if (m < 1 || m > 12 || d < 1 || d > 31) return false;
   const added = new Date(y, m - 1, d);
   const diff = Math.floor((now.getTime() - added.getTime()) / 86400000);
   return diff >= 0 && diff <= RECENCY_DAYS;
@@ -164,6 +166,7 @@ const personas = [
           <button
             class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
             data-category={cat}
+            data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
           >
             {cat} <span class="count-badge">{count}</span>
@@ -297,8 +300,9 @@ const personas = [
     let sortByDifficulty = false;
     let showTrackedOnly = false;
 
-    const RECENCY_DAYS_CLIENT = 90;
     const RECENCY_FILTER_LABEL = '🆕 最新';
+    const _recencyBtn = document.querySelector<HTMLElement>(`.filter-btn[data-category="${RECENCY_FILTER_LABEL}"]`);
+    const RECENCY_DAYS_CLIENT = Number(_recencyBtn?.dataset.recencyDays ?? 90);
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
@@ -887,8 +891,7 @@ const personas = [
         if (recent) recencyLiveCount++;
       });
       // Keep filter button count badge in sync with client-side live count
-      const recencyBtn = document.querySelector<HTMLElement>(`.filter-btn[data-category="${RECENCY_FILTER_LABEL}"]`);
-      const countSpan = recencyBtn?.querySelector<HTMLElement>('.count-badge');
+      const countSpan = _recencyBtn?.querySelector<HTMLElement>('.count-badge');
       if (countSpan) countSpan.textContent = String(recencyLiveCount);
     }
 
