@@ -302,11 +302,11 @@ const personas = [
         q2: quizAnswers.employment ?? '',
         q3: quizAnswers.housing ?? '',
       });
-      history.replaceState(null, '', `?${params.toString()}`);
+      history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
     }
 
     function clearQuizUrl() {
-      history.replaceState(null, '', window.location.pathname);
+      history.replaceState(null, '', `${window.location.pathname}${window.location.hash}`);
     }
 
     function showQuizQuestion(index: number) {
@@ -706,6 +706,9 @@ const personas = [
         applyQuizFilter();
         quizShareContainer.style.display = 'block';
         currentQuestionIndex = quizQuestions.length;
+      } else if (params.has('q1') || params.has('q2') || params.has('q3')) {
+        // Stale/partial/invalid params — clear them so the URL matches UI state
+        clearQuizUrl();
       }
     }
 

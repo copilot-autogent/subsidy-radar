@@ -799,8 +799,7 @@ main {
 }
 
 .quiz-share-btn:hover {
-  background: var(--color-primary-dark, #0052cc);
-  border-color: var(--color-primary-dark, #0052cc);
+  opacity: 0.88;
 }
 
 .quiz-share-btn.copied {
