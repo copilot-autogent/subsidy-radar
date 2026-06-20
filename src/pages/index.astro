@@ -122,6 +122,12 @@ const personas = [
     <div class="quiz-reset" style="display:none">
       <button class="reset-btn" id="quizReset" type="button">↺ 重新開始</button>
     </div>
+    <div class="quiz-share" id="quizShareContainer" style="display:none">
+      <button class="quiz-share-btn" id="quizShareBtn" type="button">
+        <span class="share-icon">🔗</span>
+        <span class="share-text">分享我的結果</span>
+      </button>
+    </div>
   </section>
 
   <div class="controls">
@@ -280,6 +286,29 @@ const personas = [
     let quizAnswers: Record<string, string> = {};
     let currentQuestionIndex = 0;
 
+    const quizShareContainer = document.getElementById('quizShareContainer')!;
+    const quizShareBtn = document.getElementById('quizShareBtn') as HTMLButtonElement;
+
+    // Valid answer sets for each question key
+    const VALID_QUIZ_VALUES: Record<string, Set<string>> = {
+      age:        new Set(['youth', 'adult']),
+      employment: new Set(['fresh-grad', 'unemployed', 'employed', 'entrepreneur']),
+      housing:    new Set(['renter', 'homebuyer', 'parent', 'other']),
+    };
+
+    function updateQuizUrl() {
+      const params = new URLSearchParams({
+        q1: quizAnswers.age ?? '',
+        q2: quizAnswers.employment ?? '',
+        q3: quizAnswers.housing ?? '',
+      });
+      history.replaceState(null, '', `?${params.toString()}`);
+    }
+
+    function clearQuizUrl() {
+      history.replaceState(null, '', window.location.pathname);
+    }
+
     function showQuizQuestion(index: number) {
       quizQuestions.forEach((q, i) => {
         q.style.display = i === index ? 'block' : 'none';
@@ -351,9 +380,11 @@ const personas = [
         if (currentQuestionIndex < quizQuestions.length) {
           setTimeout(() => showQuizQuestion(currentQuestionIndex), 300);
         } else {
-          // Quiz complete — apply filter
+          // Quiz complete — apply filter, encode results in URL, show share button
           setTimeout(() => {
             applyQuizFilter();
+            updateQuizUrl();
+            quizShareContainer.style.display = 'block';
           }, 300);
         }
       });
@@ -364,6 +395,8 @@ const personas = [
       currentQuestionIndex = 0;
       quizOptions.forEach(opt => opt.classList.remove('selected'));
       showQuizQuestion(0);
+      quizShareContainer.style.display = 'none';
+      clearQuizUrl();
       
       // Reset filters
       activeCategory = '全部';
@@ -631,11 +664,57 @@ const personas = [
       youthBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
+    // ── Quiz share button ─────────────────────────────────────────────────────
+    quizShareBtn.addEventListener('click', async () => {
+      const url = window.location.href;
+      const label = quizShareBtn.querySelector<HTMLElement>('.share-text');
+      if (!label) return;
+      let copied = false;
+      if (navigator.clipboard && window.isSecureContext) {
+        try { await navigator.clipboard.writeText(url); copied = true; } catch { copied = false; }
+      }
+      if (!copied) copied = fallbackCopy(url);
+      if (copied) {
+        showCopied(quizShareBtn, label);
+      } else {
+        alert('無法複製連結，請手動複製網址列');
+      }
+    });
+
+    // ── Init from query params ────────────────────────────────────────────────
+    function initFromQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      const q1 = params.get('q1') ?? '';
+      const q2 = params.get('q2') ?? '';
+      const q3 = params.get('q3') ?? '';
+      if (
+        VALID_QUIZ_VALUES.age.has(q1) &&
+        VALID_QUIZ_VALUES.employment.has(q2) &&
+        VALID_QUIZ_VALUES.housing.has(q3)
+      ) {
+        quizAnswers = { age: q1, employment: q2, housing: q3 };
+        // Mark each answer as selected in the UI
+        quizQuestions.forEach(q => { q.style.display = 'none'; });
+        quizResetContainer.style.display = 'block';
+        quizOptions.forEach(opt => {
+          const question = opt.closest<HTMLElement>('.quiz-question')!;
+          const questionType = question.dataset.question!;
+          if (quizAnswers[questionType] === opt.dataset.value) {
+            opt.classList.add('selected');
+          }
+        });
+        applyQuizFilter();
+        quizShareContainer.style.display = 'block';
+        currentQuestionIndex = quizQuestions.length;
+      }
+    }
+
     // ── Init ─────────────────────────────────────────────────────────────────
     initTracker();
     updateTrackerFilterLabel();
     renderCountdownBadges();
     initShareLinks();
+    initFromQueryParams();
 
     // ── Calendar Subscribe Link ───────────────────────────────────────────────
     // Rewrite to webcal:// so the user's calendar app prompts to subscribe

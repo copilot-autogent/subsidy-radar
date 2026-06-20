@@ -778,6 +778,36 @@ main {
   color: var(--color-primary);
 }
 
+.quiz-share {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.quiz-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  background: var(--color-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.2s;
+}
+
+.quiz-share-btn:hover {
+  background: var(--color-primary-dark, #0052cc);
+  border-color: var(--color-primary-dark, #0052cc);
+}
+
+.quiz-share-btn.copied {
+  background: #22c55e;
+  border-color: #22c55e;
+}
+
 @media (max-width: 640px) {
   .quiz-options {
     grid-template-columns: 1fr 1fr;
