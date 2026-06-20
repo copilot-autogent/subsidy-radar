@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string };
 const subsidies = subsidiesRaw as Subsidy[];
 
 // Compute category counts for filter buttons
@@ -12,7 +12,20 @@ subsidies.forEach(s => {
 });
 const youthHighlightCount = subsidies.filter(s => s.isYouthHighlight).length;
 
-const categories = ['全部', '⭐ 青年必看', ...new Set(subsidies.map(s => s.category))];
+const RECENCY_DAYS = 90;
+const RECENCY_LABEL = '🆕 最新';
+const now = new Date(); now.setHours(0, 0, 0, 0);
+const recencyCount = subsidies.filter(s => {
+  if (!s.addedDate) return false;
+  const [y, m, d] = s.addedDate.split('-').map(Number);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return false;
+  if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+  const added = new Date(y, m - 1, d);
+  if (added.getFullYear() !== y || added.getMonth() !== m - 1 || added.getDate() !== d) return false;
+  const diff = Math.floor((now.getTime() - added.getTime()) / 86400000);
+  return diff >= 0 && diff <= RECENCY_DAYS;
+}).length;
+const categories = ['全部', '⭐ 青年必看', RECENCY_LABEL, ...new Set(subsidies.map(s => s.category))];
 const youthCount = youthHighlightCount;
 
 const deadlineLabel: Record<string, { text: string; cls: string }> = {
@@ -147,11 +160,15 @@ const personas = [
           ? subsidies.length 
           : cat === '⭐ 青年必看' 
           ? youthHighlightCount 
+          : cat === RECENCY_LABEL
+          ? recencyCount
           : categoryCounts[cat] || 0;
         return (
           <button
-            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''}`}
+            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
+            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : undefined}
             data-category={cat}
+            data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
           >
             {cat} <span class="count-badge">{count}</span>
@@ -211,11 +228,13 @@ const personas = [
           data-id={s.id}
           data-deadline={s.deadlineDate ?? ''}
           data-deadline-status={s.deadlineStatus ?? ''}
+          data-added-date={s.addedDate ?? ''}
         >
           <div class="card-header">
             <h2 class="card-title">{s.title}</h2>
             <div class="card-badges">
               {s.isYouthHighlight && <span class="youth-badge">⭐ 青年必看</span>}
+              <span class="recency-badge" data-recency-badge style="display:none">🆕 最新</span>
               <span class="category-badge">{s.category}</span>
             </div>
             <button class="tracker-btn" data-id={s.id} title="點擊更新申請進度" type="button" aria-label="更新申請狀態">
@@ -282,6 +301,10 @@ const personas = [
     let searchQuery = '';
     let sortByDifficulty = false;
     let showTrackedOnly = false;
+
+    const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
+    const RECENCY_FILTER_LABEL = _recencyBtn?.dataset.category ?? '🆕 最新';
+    const RECENCY_DAYS_CLIENT = Number(_recencyBtn?.dataset.recencyDays ?? 90);
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
@@ -678,6 +701,8 @@ const personas = [
           ? true
           : activeCategory === '⭐ 青年必看'
           ? isYouth
+          : activeCategory === RECENCY_FILTER_LABEL
+          ? isRecentlyAdded(card)
           : cat === activeCategory;
 
         const matchSituation = activeSituation === '' || situations.includes(activeSituation);
@@ -800,6 +825,7 @@ const personas = [
     initTracker();
     updateTrackerFilterLabel();
     renderCountdownBadges();
+    renderRecencyBadges();
     renderTrackerDeadlineBanner();
     initShareLinks();
     initFromQueryParams();
@@ -836,6 +862,41 @@ const personas = [
       const deadline = new Date(y, m - 1, d); // local midnight
       const diff = Math.ceil((deadline.getTime() - now.getTime()) / 86400000);
       return Number.isFinite(diff) && diff >= 0 ? diff : null;
+    }
+
+    function daysSinceDate(dateStr: string): number | null {
+      if (!dateStr) return null;
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return null;
+      const [y, m, d] = parts.map(Number);
+      if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
+      if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const added = new Date(y, m - 1, d);
+      // Reject calendar-overflow dates (e.g. 2026-02-31 → normalises to March 3)
+      if (added.getFullYear() !== y || added.getMonth() !== m - 1 || added.getDate() !== d) return null;
+      const diff = Math.floor((today.getTime() - added.getTime()) / 86400000);
+      return Number.isFinite(diff) && diff >= 0 ? diff : null;
+    }
+
+    function isRecentlyAdded(card: HTMLElement): boolean {
+      const addedDate = card.dataset.addedDate ?? '';
+      const days = daysSinceDate(addedDate);
+      return days !== null && days <= RECENCY_DAYS_CLIENT;
+    }
+
+    function renderRecencyBadges() {
+      let recencyLiveCount = 0;
+      cards.forEach(card => {
+        const badge = card.querySelector<HTMLElement>('[data-recency-badge]');
+        if (!badge) return;
+        const recent = isRecentlyAdded(card);
+        badge.style.display = recent ? '' : 'none';
+        if (recent) recencyLiveCount++;
+      });
+      // Keep filter button count badge in sync with client-side live count
+      const countSpan = _recencyBtn?.querySelector<HTMLElement>('.count-badge');
+      if (countSpan) countSpan.textContent = String(recencyLiveCount);
     }
 
     function renderCountdownBadges() {
