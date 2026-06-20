@@ -361,6 +361,58 @@ main {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Tracker Deadline Banner ── */
+.tracker-deadline-banner {
+  background: linear-gradient(135deg, #431407 0%, #7c2d12 100%);
+  color: #fff7ed;
+  padding: 0.85rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ea580c;
+  animation: bannerSlideIn 0.3s ease-out;
+}
+
+.tracker-deadline-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.tracker-deadline-dismiss {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff7ed;
+  border-radius: 9999px;
+  padding: 0.15rem 0.65rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.tracker-deadline-dismiss:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.tracker-deadline-dismiss:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
+.tracker-deadline-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.tracker-deadline-item {
+  font-size: 0.9rem;
+}
+
 
 .grid {
   display: grid;

@@ -174,6 +174,14 @@ const personas = [
     <span id="bannerText"></span>
   </div>
 
+  <div class="tracker-deadline-banner" id="trackerDeadlineBanner" style="display:none" role="status" aria-live="polite">
+    <div class="tracker-deadline-banner-header">
+      <span>📋 你追蹤中的補助即將截止：</span>
+      <button class="tracker-deadline-dismiss" id="trackerDeadlineDismiss" type="button" aria-label="關閉截止提醒">✕ 關閉</button>
+    </div>
+    <ul class="tracker-deadline-list" id="trackerDeadlineList"></ul>
+  </div>
+
   <section class="deadline-panel" id="deadlinePanelSection" style="display:none" aria-label="即將截止補助">
     <div class="deadline-panel-header">
       <h2 class="deadline-panel-title">📅 即將截止</h2>
@@ -456,6 +464,15 @@ const personas = [
           saveTracker(t);
           applyTrackerToBtn(btn, next);
           updateTrackerFilterLabel();
+          // Only clear session dismissal if this item is now newly at-risk (未申請 or 進行中 with deadline ≤ 30d)
+          if (next === '未申請' || next === '進行中') {
+            const deadline = (btn.closest('[data-deadline]') as HTMLElement | null)?.dataset.deadline ?? '';
+            const days = daysUntilDate(deadline);
+            if (days !== null && days >= 0 && days <= 30) {
+              try { sessionStorage.removeItem(TRACKER_BANNER_DISMISSED_KEY); } catch { /* blocked */ }
+            }
+          }
+          renderTrackerDeadlineBanner();
           if (showTrackedOnly) updateDisplay();
         });
       });
@@ -473,6 +490,69 @@ const personas = [
         : `📌 只看追蹤中${n > 0 ? ` (${n})` : ''}`;
       trackerFilterBtn.classList.toggle('active', showTrackedOnly);
       trackerFilterBtn.setAttribute('aria-pressed', String(showTrackedOnly));
+    }
+
+    // ── Tracker Deadline Banner ───────────────────────────────────────────────
+    const TRACKER_BANNER_DISMISSED_KEY = 'tracker-deadline-banner-dismissed';
+
+    function renderTrackerDeadlineBanner() {
+      const banner = document.getElementById('trackerDeadlineBanner');
+      const list = document.getElementById('trackerDeadlineList');
+      const dismissBtn = document.getElementById('trackerDeadlineDismiss') as HTMLButtonElement | null;
+      if (!banner || !list) return;
+
+      // Respect session dismissal (guard against storage exceptions in privacy mode)
+      try {
+        if (sessionStorage.getItem(TRACKER_BANNER_DISMISSED_KEY)) {
+          banner.style.display = 'none';
+          return;
+        }
+      } catch { /* sessionStorage blocked; proceed without dismissal */ }
+
+      const tracker = loadTracker();
+      const atRisk: { title: string; days: number }[] = [];
+
+      cards.forEach(card => {
+        const id = card.dataset.id ?? '';
+        const deadline = card.dataset.deadline ?? '';
+        if (!deadline || !id) return;
+        // Only include items explicitly present in the tracker (user has interacted)
+        if (!(id in tracker)) return;
+        const status = tracker[id];
+        // Only show for 未申請 or 進行中 (not 已申請 or 已完成)
+        if (status !== '未申請' && status !== '進行中') return;
+        const days = daysUntilDate(deadline);
+        if (days === null || days < 0 || days > 30) return;
+        const title = card.querySelector('.card-title')?.textContent?.trim() ?? id;
+        atRisk.push({ title, days });
+      });
+
+      if (atRisk.length === 0) {
+        banner.style.display = 'none';
+        return;
+      }
+
+      // Sort soonest first
+      atRisk.sort((a, b) => a.days - b.days);
+
+      list.innerHTML = '';
+      atRisk.forEach(({ title, days }) => {
+        const li = document.createElement('li');
+        li.className = 'tracker-deadline-item';
+        const dot = days <= 7 ? '🔴' : '🟡';
+        const label = days === 0 ? '今天截止' : days === 1 ? '明天截止' : `還有 ${days} 天`;
+        li.textContent = `${dot} ${title} — ${label}`;
+        list.appendChild(li);
+      });
+
+      banner.style.display = '';
+
+      if (dismissBtn) {
+        dismissBtn.onclick = () => {
+          try { sessionStorage.setItem(TRACKER_BANNER_DISMISSED_KEY, '1'); } catch { /* blocked */ }
+          banner.style.display = 'none';
+        };
+      }
     }
 
     // ── Share Link ───────────────────────────────────────────────────────────
@@ -720,6 +800,7 @@ const personas = [
     initTracker();
     updateTrackerFilterLabel();
     renderCountdownBadges();
+    renderTrackerDeadlineBanner();
     initShareLinks();
     initFromQueryParams();
 
