@@ -897,5 +897,117 @@
       "至縣市政府住宅服務網或各縣市受理窗口填寫申請書（可線上申請或紙本）",
       "115年全年受理，隨到隨審；核准後補助按月或按季撥入，補貼至年底止"
     ]
+  },
+  {
+    "id": "employment-promotion-subsidy",
+    "title": "就業促進津貼（中高齡再就業補助）",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "45歲以上非自願離職者重新就業後，每月可領5,000至11,000元就業促進津貼，最長補助6個月，協助中高齡者穩定重返職場。",
+    "eligibility": [
+      "年滿45歲以上本國籍勞工",
+      "非自願離職後經公立就業服務機構推介就業",
+      "受僱於同一雇主且連續受僱達30日以上",
+      "工作報酬未超過基本工資1.5倍"
+    ],
+    "amount": "每月5,000至11,000元（依薪資級距不同），最長發給6個月",
+    "deadline": "全年常態受理，隨時可申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=6DD5A8BE5EE84F37",
+    "tags": ["中高齡", "45歲以上", "就業促進", "津貼", "再就業"],
+    "situations": ["unemployed"],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-20",
+    "steps": [
+      "非自願離職後，攜帶離職證明至公立就業服務機構辦理求職登記",
+      "經就業服務員媒合推介，受僱同一雇主連續工作滿30日",
+      "備齊申請書、在職證明、薪資資料及身分證，向就業服務站申請津貼",
+      "審核通過後，津貼按月匯入帳戶，最長發給6個月"
+    ]
+  },
+  {
+    "id": "mid-age-employment-reward",
+    "title": "中高齡就業獎勵金",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "45至65歲失業勞工就業後穩定工作，可依年資領取就業獎勵金，最高一次領取50,000元，鼓勵中高齡者積極求職再就業。",
+    "eligibility": [
+      "年齡45至65歲本國籍失業勞工",
+      "於公立就業服務機構登記求職",
+      "受僱全職工作，薪資符合規定標準",
+      "依中高齡者及高齡者就業促進法規定申請"
+    ],
+    "amount": "就業滿3個月領20,000元；滿6個月再領30,000元，合計最高50,000元",
+    "deadline": "全年常態受理，依就業起算日申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=BE85A9FE95C61A78",
+    "tags": ["中高齡", "45至65歲", "就業獎勵", "再就業", "促進就業法"],
+    "situations": ["unemployed"],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-20",
+    "steps": [
+      "至公立就業服務機構辦理求職登記，確認符合中高齡失業資格",
+      "經媒合受僱全職工作，留存聘僱合約與勞保加保證明",
+      "就業滿3個月後申請首期獎勵金，附在職證明、薪資單及身分證",
+      "持續就業至滿6個月，再提出第二期申請，合計最高50,000元"
+    ]
+  },
+  {
+    "id": "cross-region-employment-subsidy",
+    "title": "跨域就業補助（異地就業交通與搬遷補助）",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "失業者若在不同縣市找到工作，可申請跨域就業補助，包含求職交通補助及最高30,000元搬遷費用，減輕異地就業的經濟負擔。",
+    "eligibility": [
+      "設籍縣市與就業地點不同縣市之失業勞工",
+      "向公立就業服務機構辦理求職登記",
+      "受僱全職工作，工作地點與戶籍地距離30公里以上",
+      "實際搬遷至工作地點居住"
+    ],
+    "amount": "搬遷補助最高30,000元；另有求職交通補助每次500元（最多10次）",
+    "deadline": "全年常態受理，就業後90日內申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=CB87D1FAA95D0FBB",
+    "tags": ["跨縣市", "搬遷補助", "交通補助", "異地就業", "勞動力發展署"],
+    "situations": ["unemployed"],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-20",
+    "steps": [
+      "確認戶籍地與工作地屬不同縣市且距離超過30公里",
+      "受僱後保留聘僱合約、搬遷收據（租屋契約或搬家費收據）",
+      "就業後90日內，向戶籍地公立就業服務站提出申請",
+      "備齊申請書、搬遷證明文件、薪資資料及身分證，審核後撥款"
+    ]
+  },
+  {
+    "id": "itraining-subsidy",
+    "title": "在職訓練補助（itraining個人訓練帳戶）",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "在職勞工每年最高補助10,000元的職業訓練費用，補助比例達70%，可上itraining平台挑選數位、語言、管理等各類課程，邊工作邊進修！",
+    "eligibility": [
+      "現職受僱勞工（需有勞保投保記錄）",
+      "年滿15歲，具就業保險投保資格",
+      "選擇itraining認可之訓練課程",
+      "每人每年補助上限10,000元"
+    ],
+    "amount": "訓練費用補助70%（自付30%），每人每年最高補助10,000元",
+    "deadline": "全年常態受理，依課程開班時間申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://itraining.wda.gov.tw/",
+    "tags": ["在職訓練", "進修補助", "itraining", "技能提升", "在職勞工"],
+    "situations": ["employed"],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-06-20",
+    "steps": [
+      "至 itraining.wda.gov.tw 以勞保身分登入，瀏覽認可課程清單",
+      "選擇課程並完成報名繳費，保留繳費收據",
+      "全程參與訓練並完成課程（出勤率需達規定）",
+      "課程結束後上傳收據申請補助，審核通過後補助款約2-3週匯入帳戶"
+    ]
   }
 ]
