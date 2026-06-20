@@ -395,6 +395,10 @@ main {
 .tracker-deadline-dismiss:hover {
   background: rgba(255, 255, 255, 0.25);
 }
+.tracker-deadline-dismiss:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
 
 .tracker-deadline-list {
   list-style: none;
