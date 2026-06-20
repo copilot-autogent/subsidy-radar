@@ -297,16 +297,20 @@ const personas = [
     };
 
     function updateQuizUrl() {
-      const params = new URLSearchParams({
-        q1: quizAnswers.age ?? '',
-        q2: quizAnswers.employment ?? '',
-        q3: quizAnswers.housing ?? '',
-      });
+      const params = new URLSearchParams(window.location.search);
+      params.set('q1', quizAnswers.age ?? '');
+      params.set('q2', quizAnswers.employment ?? '');
+      params.set('q3', quizAnswers.housing ?? '');
       history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
     }
 
     function clearQuizUrl() {
-      history.replaceState(null, '', `${window.location.pathname}${window.location.hash}`);
+      const params = new URLSearchParams(window.location.search);
+      params.delete('q1');
+      params.delete('q2');
+      params.delete('q3');
+      const qs = params.toString();
+      history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
 
     function showQuizQuestion(index: number) {
