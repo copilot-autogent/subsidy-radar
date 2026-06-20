@@ -273,9 +273,18 @@ const personas = [
             </details>
           )}
           <div class="card-actions">
-            <button class="share-link-btn" data-id={s.id} title="複製此補助的連結" type="button">
-              <span class="share-icon">🔗</span>
-              <span class="share-text">複製連結</span>
+            <button
+              class="share-link-btn"
+              data-id={s.id}
+              data-title={s.title}
+              data-amount={s.amount}
+              data-agency={s.agency}
+              title="分享此補助"
+              type="button"
+              aria-label={`分享 ${s.title}`}
+            >
+              <span class="share-icon">📤</span>
+              <span class="share-text">分享</span>
             </button>
             <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">立即申請 →</a>
           </div>
@@ -284,6 +293,8 @@ const personas = [
     })}
     <div class="no-results" id="noResults" style="display:none">找不到符合條件的補助，請嘗試其他關鍵字。</div>
   </div>
+
+  <div id="share-toast" class="share-toast" role="status" aria-live="polite">已複製連結</div>
 
   <script>
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
@@ -579,13 +590,26 @@ const personas = [
     }
 
     // ── Share Link ───────────────────────────────────────────────────────────
+    const shareToast = document.getElementById('share-toast') as HTMLElement | null;
+    let shareToastTimer: number | undefined;
+
+    function showShareToast() {
+      if (!shareToast) return;
+      shareToast.classList.add('visible');
+      if (shareToastTimer !== undefined) clearTimeout(shareToastTimer);
+      shareToastTimer = window.setTimeout(() => {
+        shareToast.classList.remove('visible');
+        shareToastTimer = undefined;
+      }, 2500);
+    }
+
     const shareResetTimers = new WeakMap<HTMLButtonElement, number>();
     const shareOriginalText = new WeakMap<HTMLButtonElement, string>();
 
     function showCopied(btn: HTMLButtonElement, label: HTMLElement) {
       // Capture original text only on first invocation per button (before any "✓ 已複製" swap).
       if (!shareOriginalText.has(btn)) {
-        shareOriginalText.set(btn, label.textContent ?? '複製連結');
+        shareOriginalText.set(btn, label.textContent ?? '分享');
       }
       const originalText = shareOriginalText.get(btn)!;
       label.textContent = '✓ 已複製';
@@ -646,6 +670,25 @@ const personas = [
           const label = btn.querySelector<HTMLElement>('.share-text');
           if (!label) return;
 
+          // Web Share API — native share sheet on mobile (iOS Safari 15+, Android Chrome)
+          if (typeof navigator.share === 'function') {
+            const cardTitle = btn.dataset.title ?? '';
+            const cardAmount = btn.dataset.amount ?? '';
+            const cardAgency = btn.dataset.agency ?? '';
+            try {
+              await navigator.share({
+                title: cardTitle,
+                text: `${cardTitle}｜${cardAmount}｜${cardAgency}`,
+                url,
+              });
+              return; // native share sheet handled it; no further feedback needed
+            } catch (err) {
+              // User cancelled (AbortError) — silently return; other errors fall through to clipboard
+              if (err instanceof DOMException && err.name === 'AbortError') return;
+            }
+          }
+
+          // Clipboard fallback (desktop / browsers without Share API)
           let copied = false;
           if (navigator.clipboard && window.isSecureContext) {
             try {
@@ -659,6 +702,7 @@ const personas = [
             copied = fallbackCopy(url);
           }
           if (copied) {
+            showShareToast();
             showCopied(btn, label);
           } else {
             alert('無法複製連結，請手動複製網址列');
