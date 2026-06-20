@@ -595,14 +595,18 @@ const personas = [
 
     function showShareToast() {
       if (!shareToast) return;
-      // Clear then re-set so aria-live regions re-announce on repeated triggers
+      // Cancel any existing hide-timer before the rAF gap to avoid race
+      if (shareToastTimer !== undefined) {
+        clearTimeout(shareToastTimer);
+        shareToastTimer = undefined;
+      }
       shareToast.textContent = '';
       shareToast.classList.remove('visible');
-      // Microtask flush ensures the DOM mutation is processed before the new content lands
+      // Defer to next frame so the cleared state is committed before new content
+      // lands, ensuring aria-live regions re-announce on repeated triggers
       window.requestAnimationFrame(() => {
         shareToast.textContent = '已複製連結';
         shareToast.classList.add('visible');
-        if (shareToastTimer !== undefined) clearTimeout(shareToastTimer);
         shareToastTimer = window.setTimeout(() => {
           shareToast.classList.remove('visible');
           shareToastTimer = undefined;
