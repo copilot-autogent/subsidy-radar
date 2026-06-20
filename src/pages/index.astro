@@ -864,6 +864,7 @@ const personas = [
       if (parts.length !== 3) return null;
       const [y, m, d] = parts.map(Number);
       if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
+      if (m < 1 || m > 12 || d < 1 || d > 31) return null;
       const today = new Date(); today.setHours(0, 0, 0, 0);
       const added = new Date(y, m - 1, d);
       const diff = Math.floor((today.getTime() - added.getTime()) / 86400000);
@@ -877,11 +878,18 @@ const personas = [
     }
 
     function renderRecencyBadges() {
+      let recencyLiveCount = 0;
       cards.forEach(card => {
         const badge = card.querySelector<HTMLElement>('[data-recency-badge]');
         if (!badge) return;
-        badge.style.display = isRecentlyAdded(card) ? '' : 'none';
+        const recent = isRecentlyAdded(card);
+        badge.style.display = recent ? '' : 'none';
+        if (recent) recencyLiveCount++;
       });
+      // Keep filter button count badge in sync with client-side live count
+      const recencyBtn = document.querySelector<HTMLElement>(`.filter-btn[data-category="${RECENCY_FILTER_LABEL}"]`);
+      const countSpan = recencyBtn?.querySelector<HTMLElement>('.count-badge');
+      if (countSpan) countSpan.textContent = String(recencyLiveCount);
     }
 
     function renderCountdownBadges() {
