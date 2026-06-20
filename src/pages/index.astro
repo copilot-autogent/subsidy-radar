@@ -294,7 +294,7 @@ const personas = [
     <div class="no-results" id="noResults" style="display:none">找不到符合條件的補助，請嘗試其他關鍵字。</div>
   </div>
 
-  <div id="share-toast" class="share-toast" role="status" aria-live="polite">已複製連結</div>
+  <div id="share-toast" class="share-toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <script>
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
@@ -595,6 +595,7 @@ const personas = [
 
     function showShareToast() {
       if (!shareToast) return;
+      shareToast.textContent = '已複製連結';
       shareToast.classList.add('visible');
       if (shareToastTimer !== undefined) clearTimeout(shareToastTimer);
       shareToastTimer = window.setTimeout(() => {
@@ -683,8 +684,8 @@ const personas = [
               });
               return; // native share sheet handled it; no further feedback needed
             } catch (err) {
-              // User cancelled (AbortError) — silently return; other errors fall through to clipboard
-              if (err instanceof DOMException && err.name === 'AbortError') return;
+              // User cancelled (AbortError / NotAllowedError) — silently return; other errors fall through to clipboard
+              if (err instanceof DOMException && (err.name === 'AbortError' || err.name === 'NotAllowedError')) return;
             }
           }
 
