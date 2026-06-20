@@ -21,6 +21,7 @@ const recencyCount = subsidies.filter(s => {
   if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return false;
   if (m < 1 || m > 12 || d < 1 || d > 31) return false;
   const added = new Date(y, m - 1, d);
+  if (added.getFullYear() !== y || added.getMonth() !== m - 1 || added.getDate() !== d) return false;
   const diff = Math.floor((now.getTime() - added.getTime()) / 86400000);
   return diff >= 0 && diff <= RECENCY_DAYS;
 }).length;
@@ -165,6 +166,7 @@ const personas = [
         return (
           <button
             class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
+            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : undefined}
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
@@ -300,8 +302,8 @@ const personas = [
     let sortByDifficulty = false;
     let showTrackedOnly = false;
 
-    const RECENCY_FILTER_LABEL = '🆕 最新';
-    const _recencyBtn = document.querySelector<HTMLElement>(`.filter-btn[data-category="${RECENCY_FILTER_LABEL}"]`);
+    const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
+    const RECENCY_FILTER_LABEL = _recencyBtn?.dataset.category ?? '🆕 最新';
     const RECENCY_DAYS_CLIENT = Number(_recencyBtn?.dataset.recencyDays ?? 90);
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
@@ -871,6 +873,8 @@ const personas = [
       if (m < 1 || m > 12 || d < 1 || d > 31) return null;
       const today = new Date(); today.setHours(0, 0, 0, 0);
       const added = new Date(y, m - 1, d);
+      // Reject calendar-overflow dates (e.g. 2026-02-31 → normalises to March 3)
+      if (added.getFullYear() !== y || added.getMonth() !== m - 1 || added.getDate() !== d) return null;
       const diff = Math.floor((today.getTime() - added.getTime()) / 86400000);
       return Number.isFinite(diff) && diff >= 0 ? diff : null;
     }
