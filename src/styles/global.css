@@ -755,6 +755,70 @@ main {
   grid-column: 1 / -1;
 }
 
+.no-results-emoji {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+  line-height: 1;
+}
+
+.no-results-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
+}
+
+.no-results-hint {
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.no-results-tips {
+  list-style: disc;
+  display: inline-block;
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.no-results-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.no-results-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.no-results-btn-clear {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.no-results-btn-clear:hover {
+  background: var(--color-primary-light);
+}
+
+.no-results-btn-quiz {
+  background: var(--color-primary);
+  color: #fff;
+}
+.no-results-btn-quiz:hover {
+  background: #1e40af;
+}
+
 @media (max-width: 640px) {
   .hero h1 { font-size: 1.75rem; }
   .controls { flex-direction: column; }
