@@ -438,6 +438,14 @@ main {
   transform: translateY(-2px);
 }
 
+.card-expired {
+  opacity: 0.6;
+}
+
+.card-expired:hover {
+  opacity: 0.8;
+}
+
 .card-header {
   display: flex;
   align-items: flex-start;
@@ -1000,6 +1008,11 @@ main {
   background: #f0fdf4;
   color: #166534;
   border-color: #86efac;
+}
+.countdown-expired {
+  background: #f3f4f6;
+  color: #6b7280;
+  border-color: #d1d5db;
 }
 @keyframes pulse-urgent {
   0%, 100% { opacity: 1; }
