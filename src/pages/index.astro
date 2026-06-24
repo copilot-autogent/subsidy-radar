@@ -355,9 +355,9 @@ const personas = [
         </article>
       );
     })}
-    <div class="no-results" id="noResults" style="display:none" role="status" aria-live="polite">
+    <div class="no-results" id="noResults" style="display:none">
       <div class="no-results-emoji">🔍</div>
-      <p class="no-results-heading">沒有找到符合的補助</p>
+      <p class="no-results-heading" role="status" aria-live="polite" aria-atomic="true">沒有找到符合的補助</p>
       <p class="no-results-hint">試試：</p>
       <ul class="no-results-tips">
         <li>清除搜尋詞</li>
@@ -972,7 +972,8 @@ const personas = [
       sortAmountBtn.textContent = '依金額高低';
       applySort();
       filterBtns.forEach(b => b.classList.remove('active'));
-      if (filterBtns[0]) filterBtns[0].classList.add('active');
+      const allFilterBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
+      if (allFilterBtn) allFilterBtn.classList.add('active');
       updateTrackerFilterLabel();
       updateDisplay();
     });

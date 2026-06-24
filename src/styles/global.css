@@ -810,6 +810,10 @@ main {
 .no-results-btn-clear:hover {
   background: var(--color-primary-light);
 }
+.no-results-btn-clear:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
 
 .no-results-btn-quiz {
   background: var(--color-primary);
@@ -817,6 +821,11 @@ main {
 }
 .no-results-btn-quiz:hover {
   background: #1e40af;
+}
+.no-results-btn-quiz:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-primary-light);
 }
 
 @media (max-width: 640px) {

@@ -41,7 +41,16 @@ test.describe('empty-state message — no results after search + filter', () => 
     await expect(page.locator('.subsidy-card').first()).toBeVisible();
   });
 
-  test('empty-state disappears when search is cleared manually', async ({ page }) => {
+  test('→ 測驗 button is present and clickable when empty state is visible', async ({ page }) => {
+    await page.locator('#searchInput').fill('zzzzz');
+    await expect(page.locator('#noResults')).toBeVisible();
+
+    const quizBtn = page.locator('#startQuizBtn');
+    await expect(quizBtn).toBeVisible();
+    // Clicking should not throw and quiz section should be present in DOM
+    await quizBtn.click();
+    await expect(page.locator('.quiz-section')).toBeAttached();
+  });
     const input = page.locator('#searchInput');
     await input.fill('zzzzz');
     await expect(page.locator('#noResults')).toBeVisible();
