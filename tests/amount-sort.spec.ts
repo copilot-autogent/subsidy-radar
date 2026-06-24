@@ -18,11 +18,23 @@ test.describe('依金額高低 sort button', () => {
     await expect(btn).toContainText('金額高→低');
     await expect(btn).toHaveAttribute('aria-pressed', 'true');
 
-    // Verify card CSS order values decrease (highest-value card has order=1)
-    const cards = page.locator('.subsidy-card');
-    const firstOrder = await cards.first().evaluate(el => (el as HTMLElement).style.order);
-    const secondOrder = await cards.nth(1).evaluate(el => (el as HTMLElement).style.order);
-    expect(Number(firstOrder)).toBeLessThan(Number(secondOrder));
+    // Verify the card ranked #1 has a higher amount than the card ranked #2.
+    // (CSS `order` assigns 1..N; DOM order is unchanged — use data-amount-value.)
+    const allCards = page.locator('.subsidy-card');
+    const count = await allCards.count();
+    const orderValuePairs: { order: number; amount: number }[] = [];
+    for (let i = 0; i < count; i++) {
+      const card = allCards.nth(i);
+      const order = await card.evaluate(el => Number((el as HTMLElement).style.order) || 0);
+      const amount = await card.evaluate(el => Number((el as HTMLElement).dataset.amountValue ?? 0));
+      orderValuePairs.push({ order, amount });
+    }
+    // All cards should have a numeric order assigned
+    expect(orderValuePairs.every(p => p.order > 0)).toBe(true);
+    // Order 1 (highest) should have an amount >= order 2
+    const rank1 = orderValuePairs.find(p => p.order === 1)!;
+    const rank2 = orderValuePairs.find(p => p.order === 2)!;
+    expect(rank1.amount).toBeGreaterThanOrEqual(rank2.amount);
   });
 
   test('second click sorts cards low→high by amount', async ({ page }) => {

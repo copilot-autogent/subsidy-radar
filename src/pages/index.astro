@@ -41,6 +41,7 @@ function parseAmountValue(amount: string): number {
   if (!amount) return 0;
   const text = amount.replace(/,/g, '');
   let maxValue = 0;
+  let foundWan = false;
 
   // Match "N 萬" (e.g. 200萬, 1,000萬) → N × 10000
   const wanRe = /(\d+(?:\.\d+)?)\s*萬/g;
@@ -48,6 +49,7 @@ function parseAmountValue(amount: string): number {
   while ((m = wanRe.exec(text)) !== null) {
     const v = parseFloat(m[1]) * 10000;
     if (v > maxValue) maxValue = v;
+    foundWan = true;
   }
 
   // Match "N 元" not already captured by 萬 (e.g. 48,000 元)
@@ -59,10 +61,12 @@ function parseAmountValue(amount: string): number {
 
   if (maxValue === 0) return 0;
 
-  // Annualise monthly amounts (每月 X 元 → X × 12), unless an explicit annual figure is present.
+  // Annualise monthly amounts (每月 X 元 → X × 12) only when the dominant
+  // amount is 元-scale (not 萬-scale, which indicates a one-time loan/grant)
+  // and no explicit annual figure is already present.
   const hasAnnual = /每年|年省|全年/.test(amount);
   const hasMonthly = /每月/.test(amount);
-  if (hasMonthly && !hasAnnual) maxValue *= 12;
+  if (hasMonthly && !hasAnnual && !foundWan) maxValue *= 12;
 
   return Math.round(maxValue);
 }
