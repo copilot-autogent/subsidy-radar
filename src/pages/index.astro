@@ -35,6 +35,56 @@ const deadlineLabel: Record<string, { text: string; cls: string }> = {
   closed:   { text: '⏸ 已截止',      cls: 'status-closed' },
 };
 
+// Build-time amount parser: extracts the best numeric value from an amount string.
+// Returns an integer (元), applying a ×12 annualisation for monthly (每月) amounts.
+function parseAmountValue(amount: string): number {
+  if (!amount) return 0;
+  const text = amount.replace(/,/g, '');
+  let maxValue = 0;
+  let foundWan = false;
+
+  // Match "N 萬" (e.g. 200萬, 1,000萬) → N × 10000
+  const wanRe = /(\d+(?:\.\d+)?)\s*萬/g;
+  let m: RegExpExecArray | null;
+  while ((m = wanRe.exec(text)) !== null) {
+    const v = parseFloat(m[1]) * 10000;
+    if (v > maxValue) maxValue = v;
+    foundWan = true;
+  }
+
+  // Match "N 元" not already captured by 萬 (e.g. 48,000 元)
+  const yuanRe = /(\d+(?:\.\d+)?)\s*元/g;
+  while ((m = yuanRe.exec(text)) !== null) {
+    const v = parseFloat(m[1]);
+    if (v > maxValue) maxValue = v;
+  }
+
+  if (maxValue === 0) return 0;
+
+  // Annualise only when the dominant value is itself monthly (every-月 context):
+  // — no 萬-scale amount found (those are always one-time grants/loans)
+  // — "每月" appears somewhere in the string
+  // — no explicit annual marker present
+  // — the value paired with "每月" accounts for the overall max (guards against
+  //   strings like "每月 5,000 元；上限 60,000 元" where the cap is larger)
+  const hasAnnual = /每年|年省|全年/.test(amount);
+  const hasMonthly = /每月/.test(amount);
+  if (hasMonthly && !hasAnnual && !foundWan) {
+    // Extract the maximum value that appears directly in a 每月 context
+    const monthlyRe = /每月[^萬元]*?(\d[\d]*(?:\.\d+)?)\s*元/g;
+    let monthlyMax = 0;
+    let mm: RegExpExecArray | null;
+    while ((mm = monthlyRe.exec(text)) !== null) {
+      const v = parseFloat(mm[1]);
+      if (v > monthlyMax) monthlyMax = v;
+    }
+    // Only multiply when the monthly value IS the global maximum
+    if (monthlyMax > 0 && monthlyMax >= maxValue) maxValue *= 12;
+  }
+
+  return Math.round(maxValue);
+}
+
 const difficultyLabel: Record<string, { text: string; cls: string; tooltip: string }> = {
   easy:   { text: '🟢 申請簡單', cls: 'diff-easy',   tooltip: '線上申請，約5-10分鐘可完成' },
   medium: { text: '🟡 需備文件', cls: 'diff-medium', tooltip: '需備齊紙本文件，約1-2週處理' },
@@ -180,6 +230,9 @@ const personas = [
       <button class="sort-btn" id="sortDifficulty" type="button" aria-pressed="false">
         依申請難度排序
       </button>
+      <button class="sort-btn" id="sortAmount" type="button" aria-pressed="false">
+        依金額高低
+      </button>
       <button class="sort-btn tracker-filter-btn" id="trackerFilter" type="button" aria-pressed="false">
         📌 只看追蹤中
       </button>
@@ -229,6 +282,7 @@ const personas = [
           data-deadline={s.deadlineDate ?? ''}
           data-deadline-status={s.deadlineStatus ?? ''}
           data-added-date={s.addedDate ?? ''}
+          data-amount-value={parseAmountValue(s.amount ?? '')}
         >
           <div class="card-header">
             <h2 class="card-title">{s.title}</h2>
@@ -305,12 +359,15 @@ const personas = [
     const eligibilityBanner = document.getElementById('eligibilityBanner')!;
     const bannerText = document.getElementById('bannerText')!;
     const sortBtn = document.getElementById('sortDifficulty') as HTMLButtonElement;
+    const sortAmountBtn = document.getElementById('sortAmount') as HTMLButtonElement;
     const trackerFilterBtn = document.getElementById('trackerFilter') as HTMLButtonElement;
 
     let activeCategory = '全部';
     let activeSituation = '';
     let searchQuery = '';
     let sortByDifficulty = false;
+    /** 0 = off, 1 = high→low, 2 = low→high */
+    let sortAmountState: 0 | 1 | 2 = 0;
     let showTrackedOnly = false;
 
     const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
@@ -726,14 +783,28 @@ const personas = [
 
     // ── Sort ─────────────────────────────────────────────────────────────────
     function applySort() {
-      cards.forEach(card => {
-        if (sortByDifficulty) {
+      if (sortByDifficulty) {
+        cards.forEach(card => {
           const diff = card.dataset.difficulty ?? 'medium';
           card.style.order = String(difficultyOrder[diff] ?? 2);
-        } else {
-          card.style.order = '';
-        }
-      });
+        });
+      } else if (sortAmountState !== 0) {
+        // Collect [card, amountValue] pairs for ranking
+        const pairs = Array.from(cards).map(card => ({
+          card,
+          val: Number(card.dataset.amountValue ?? 0),
+        }));
+        // Sort: unparseable (val=0) always last; among parsed values, desc (state 1) or asc (state 2)
+        pairs.sort((a, b) => {
+          if (a.val === 0 && b.val === 0) return 0;
+          if (a.val === 0) return 1;
+          if (b.val === 0) return -1;
+          return sortAmountState === 1 ? b.val - a.val : a.val - b.val;
+        });
+        pairs.forEach(({ card }, i) => { card.style.order = String(i + 1); });
+      } else {
+        cards.forEach(card => { card.style.order = ''; });
+      }
     }
 
     // ── Display ──────────────────────────────────────────────────────────────
@@ -803,9 +874,34 @@ const personas = [
 
     sortBtn.addEventListener('click', () => {
       sortByDifficulty = !sortByDifficulty;
+      // Reset amount sort when difficulty sort activates
+      if (sortByDifficulty) {
+        sortAmountState = 0;
+        sortAmountBtn.classList.remove('active');
+        sortAmountBtn.setAttribute('aria-pressed', 'false');
+        sortAmountBtn.textContent = '依金額高低';
+      }
       sortBtn.classList.toggle('active', sortByDifficulty);
       sortBtn.setAttribute('aria-pressed', String(sortByDifficulty));
       sortBtn.textContent = sortByDifficulty ? '✓ 🟢 簡單優先' : '依申請難度排序';
+      applySort();
+    });
+
+    sortAmountBtn.addEventListener('click', () => {
+      // Cycle: 0 → 1 (high→low) → 2 (low→high) → 0 (reset)
+      sortAmountState = ((sortAmountState + 1) % 3) as 0 | 1 | 2;
+      const labels = ['依金額高低', '✓ 💰 金額高→低', '✓ 💰 金額低→高'] as const;
+      sortAmountBtn.textContent = labels[sortAmountState];
+      const isActive = sortAmountState !== 0;
+      sortAmountBtn.classList.toggle('active', isActive);
+      sortAmountBtn.setAttribute('aria-pressed', String(isActive));
+      // Reset difficulty sort when amount sort activates
+      if (isActive && sortByDifficulty) {
+        sortByDifficulty = false;
+        sortBtn.classList.remove('active');
+        sortBtn.setAttribute('aria-pressed', 'false');
+        sortBtn.textContent = '依申請難度排序';
+      }
       applySort();
     });
 
