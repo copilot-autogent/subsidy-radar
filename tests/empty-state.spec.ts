@@ -47,10 +47,16 @@ test.describe('empty-state message — no results after search + filter', () => 
 
     const quizBtn = page.locator('#startQuizBtn');
     await expect(quizBtn).toBeVisible();
-    // Clicking should not throw and quiz section should be present in DOM
+    // Clicking should scroll to the quiz section which must already exist in the DOM
+    const quizSectionBefore = await page.locator('.quiz-section').boundingBox();
     await quizBtn.click();
+    // Quiz section should still be attached (the handler runs without error)
     await expect(page.locator('.quiz-section')).toBeAttached();
+    // Verify the section actually exists (proving the selector is correct)
+    expect(quizSectionBefore).not.toBeNull();
   });
+
+  test('empty-state disappears when search is cleared manually', async ({ page }) => {
     const input = page.locator('#searchInput');
     await input.fill('zzzzz');
     await expect(page.locator('#noResults')).toBeVisible();
