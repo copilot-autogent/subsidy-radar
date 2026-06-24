@@ -252,6 +252,11 @@ const personas = [
     <ul class="tracker-deadline-list" id="trackerDeadlineList"></ul>
   </div>
 
+  <div class="tracker-summary-banner" id="trackerSummaryBanner" style="display:none" role="status" aria-live="polite">
+    <span class="tracker-summary-text">📌 已追蹤 <strong><span id="trackerSummaryCount">0</span></strong> 項補助</span>
+    <button class="print-tracker-btn" id="printTrackerBtn" type="button">🖨️ 列印追蹤清單</button>
+  </div>
+
   <section class="deadline-panel" id="deadlinePanelSection" style="display:none" aria-label="即將截止補助">
     <div class="deadline-panel-header">
       <h2 class="deadline-panel-title">📅 即將截止</h2>
@@ -264,6 +269,11 @@ const personas = [
   </section>
 
   <p class="results-count" id="resultsCount">共 {subsidies.length} 項補助</p>
+
+  <div class="print-header" id="printHeader" aria-hidden="true">
+    <h1>補助追蹤清單</h1>
+    <p>列印於 <span id="printDate"></span></p>
+  </div>
 
   <div class="grid" id="subsidyGrid">
     {subsidies.map(s => {
@@ -564,6 +574,7 @@ const personas = [
             }
           }
           renderTrackerDeadlineBanner();
+          updateTrackerSummaryBanner();
           if (showTrackedOnly) updateDisplay();
         });
       });
@@ -572,6 +583,22 @@ const personas = [
     function countTracked(): number {
       const tracker = loadTracker();
       return Object.values(tracker).filter(s => s !== '未申請').length;
+    }
+
+    function updateTrackerSummaryBanner() {
+      const n = countTracked();
+      const banner = document.getElementById('trackerSummaryBanner');
+      const countEl = document.getElementById('trackerSummaryCount');
+      if (!banner) return;
+      if (countEl) countEl.textContent = String(n);
+      banner.style.display = n > 0 ? '' : 'none';
+      // Sync tracker-state-tracked class on all cards for @media print targeting
+      const tracker = loadTracker();
+      cards.forEach(card => {
+        const id = card.dataset.id ?? '';
+        const isTracked = tracker[id] !== undefined && tracker[id] !== '未申請';
+        card.classList.toggle('tracker-state-tracked', isTracked);
+      });
     }
 
     function updateTrackerFilterLabel() {
@@ -911,6 +938,20 @@ const personas = [
       updateDisplay();
     });
 
+    // ── Print Tracker ─────────────────────────────────────────────────────────
+    const printTrackerBtn = document.getElementById('printTrackerBtn') as HTMLButtonElement | null;
+    if (printTrackerBtn) {
+      printTrackerBtn.addEventListener('click', () => {
+        const dateEl = document.getElementById('printDate');
+        if (dateEl) {
+          dateEl.textContent = new Date().toLocaleDateString('zh-Hant-TW', {
+            year: 'numeric', month: 'long', day: 'numeric',
+          });
+        }
+        window.print();
+      });
+    }
+
     // ── Hero youth link ───────────────────────────────────────────────────────
     const heroYouthLink = document.getElementById('heroYouthLink');
     heroYouthLink?.addEventListener('click', () => {
@@ -977,6 +1018,7 @@ const personas = [
     // ── Init ─────────────────────────────────────────────────────────────────
     initTracker();
     updateTrackerFilterLabel();
+    updateTrackerSummaryBanner();
     renderCountdownBadges();
     renderRecencyBadges();
     renderTrackerDeadlineBanner();
