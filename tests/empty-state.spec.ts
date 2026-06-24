@@ -1,0 +1,77 @@
+import { test, expect } from '@playwright/test';
+
+test.describe('empty-state message — no results after search + filter', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+  test('empty-state is hidden on initial load', async ({ page }) => {
+    const emptyState = page.locator('#noResults');
+    await expect(emptyState).toBeHidden();
+  });
+
+  test('empty-state appears when nonsense query returns 0 results', async ({ page }) => {
+    const input = page.locator('#searchInput');
+    await input.fill('zzzzz');
+    const emptyState = page.locator('#noResults');
+    await expect(emptyState).toBeVisible();
+    await expect(emptyState).toContainText('沒有找到符合的補助');
+  });
+
+  test('empty-state contains 清除篩選 and 測驗 buttons', async ({ page }) => {
+    await page.locator('#searchInput').fill('zzzzz');
+    const emptyState = page.locator('#noResults');
+    await expect(emptyState).toBeVisible();
+    await expect(emptyState.locator('#clearFiltersBtn')).toBeVisible();
+    await expect(emptyState.locator('#startQuizBtn')).toBeVisible();
+  });
+
+  test('清除篩選 button resets search and shows all cards', async ({ page }) => {
+    const input = page.locator('#searchInput');
+    await input.fill('zzzzz');
+    await expect(page.locator('#noResults')).toBeVisible();
+
+    await page.locator('#clearFiltersBtn').click();
+    await expect(page.locator('#noResults')).toBeHidden();
+    // Input should be cleared
+    await expect(input).toHaveValue('');
+    // The 全部 filter button should be active
+    await expect(page.locator('.filter-btn[data-category="全部"]')).toHaveClass(/active/);
+    // At least one card should be visible
+    await expect(page.locator('.subsidy-card').first()).toBeVisible();
+  });
+
+  test('→ 測驗 button is present and clickable when empty state is visible', async ({ page }) => {
+    await page.locator('#searchInput').fill('zzzzz');
+    await expect(page.locator('#noResults')).toBeVisible();
+
+    const quizBtn = page.locator('#startQuizBtn');
+    await expect(quizBtn).toBeVisible();
+    // Clicking should scroll to the quiz section which must already exist in the DOM
+    const quizSectionBefore = await page.locator('.quiz-section').boundingBox();
+    await quizBtn.click();
+    // Quiz section should still be attached (the handler runs without error)
+    await expect(page.locator('.quiz-section')).toBeAttached();
+    // Verify the section actually exists (proving the selector is correct)
+    expect(quizSectionBefore).not.toBeNull();
+  });
+
+  test('empty-state disappears when search is cleared manually', async ({ page }) => {
+    const input = page.locator('#searchInput');
+    await input.fill('zzzzz');
+    await expect(page.locator('#noResults')).toBeVisible();
+
+    await input.fill('');
+    await expect(page.locator('#noResults')).toBeHidden();
+  });
+
+  test('empty-state hidden when at least 1 card matches', async ({ page }) => {
+    // Use a known token from fixture data (subsidies.json first card title)
+    const input = page.locator('#searchInput');
+    await input.fill('支援青年');
+    const emptyState = page.locator('#noResults');
+    // At least one card should be visible (the first fixture card matches)
+    await expect(page.locator('#youth-job-support')).toBeVisible();
+    await expect(emptyState).toBeHidden();
+  });
+});

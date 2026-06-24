@@ -355,7 +355,20 @@ const personas = [
         </article>
       );
     })}
-    <div class="no-results" id="noResults" style="display:none">找不到符合條件的補助，請嘗試其他關鍵字。</div>
+    <div class="no-results" id="noResults" hidden role="status" aria-live="polite" aria-atomic="true">
+      <div class="no-results-emoji">🔍</div>
+      <p class="no-results-heading">沒有找到符合的補助</p>
+      <p class="no-results-hint">試試：</p>
+      <ul class="no-results-tips">
+        <li>清除搜尋詞</li>
+        <li>換個類別</li>
+        <li>使用資格測驗找到適合你的補助</li>
+      </ul>
+      <div class="no-results-actions">
+        <button id="clearFiltersBtn" class="no-results-btn no-results-btn-clear" type="button">清除篩選</button>
+        <button id="startQuizBtn" class="no-results-btn no-results-btn-quiz" type="button">→ 測驗</button>
+      </div>
+    </div>
   </div>
 
   <div id="share-toast" class="share-toast" role="status" aria-live="polite" aria-atomic="true"></div>
@@ -870,7 +883,7 @@ const personas = [
         if (show) visible++;
       });
       resultsCount.textContent = `共 ${visible} 項補助`;
-      noResults.style.display = visible === 0 ? 'block' : 'none';
+      noResults.hidden = visible !== 0;
 
       // Hide eligibility banner when tracker filter is active (BUG-A fix)
       if (showTrackedOnly) {
@@ -937,6 +950,41 @@ const personas = [
       showTrackedOnly = !showTrackedOnly;
       updateTrackerFilterLabel();
       updateDisplay();
+    });
+
+    // ── Empty-state CTA buttons ────────────────────────────────────────────────
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn') as HTMLButtonElement | null;
+    const startQuizBtn = document.getElementById('startQuizBtn') as HTMLButtonElement | null;
+
+    clearFiltersBtn?.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      activeCategory = '全部';
+      activeSituation = '';
+      showTrackedOnly = false;
+      sortByDifficulty = false;
+      sortAmountState = 0;
+      sortBtn.classList.remove('active');
+      sortBtn.setAttribute('aria-pressed', 'false');
+      sortBtn.textContent = '依申請難度排序';
+      sortAmountBtn.classList.remove('active');
+      sortAmountBtn.setAttribute('aria-pressed', 'false');
+      sortAmountBtn.textContent = '依金額高低';
+      applySort();
+      filterBtns.forEach(b => b.classList.remove('active'));
+      const allFilterBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
+      if (allFilterBtn) allFilterBtn.classList.add('active');
+      updateTrackerFilterLabel();
+      updateDisplay();
+    });
+
+    startQuizBtn?.addEventListener('click', () => {
+      const quizSection = document.querySelector<HTMLElement>('.quiz-section');
+      if (!quizSection) {
+        console.warn('[startQuizBtn] .quiz-section not found');
+        return;
+      }
+      quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     // ── Print Tracker ─────────────────────────────────────────────────────────
