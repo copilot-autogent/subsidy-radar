@@ -35,6 +35,8 @@ test.describe('empty-state message — no results after search + filter', () => 
     await expect(page.locator('#noResults')).toBeHidden();
     // Input should be cleared
     await expect(input).toHaveValue('');
+    // The 全部 filter button should be active
+    await expect(page.locator('.filter-btn[data-category="全部"]')).toHaveClass(/active/);
     // At least one card should be visible
     await expect(page.locator('.subsidy-card').first()).toBeVisible();
   });
@@ -53,11 +55,10 @@ test.describe('empty-state message — no results after search + filter', () => 
     const input = page.locator('#searchInput');
     await input.fill('補助');
     const emptyState = page.locator('#noResults');
-    // At least one card should still be visible (補助 is in many titles)
+    // Ensure there are visible cards before asserting empty state is hidden
     const visibleCards = page.locator('.subsidy-card:visible');
     const count = await visibleCards.count();
-    if (count > 0) {
-      await expect(emptyState).toBeHidden();
-    }
+    expect(count, 'Expected at least one card to match 補助').toBeGreaterThan(0);
+    await expect(emptyState).toBeHidden();
   });
 });

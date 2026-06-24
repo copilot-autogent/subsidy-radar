@@ -357,7 +357,7 @@ const personas = [
     })}
     <div class="no-results" id="noResults" style="display:none" role="status" aria-live="polite">
       <div class="no-results-emoji">🔍</div>
-      <h2 class="no-results-heading">沒有找到符合的補助</h2>
+      <p class="no-results-heading">沒有找到符合的補助</p>
       <p class="no-results-hint">試試：</p>
       <ul class="no-results-tips">
         <li>清除搜尋詞</li>
@@ -962,6 +962,15 @@ const personas = [
       activeCategory = '全部';
       activeSituation = '';
       showTrackedOnly = false;
+      sortByDifficulty = false;
+      sortAmountState = 0;
+      sortBtn.classList.remove('active');
+      sortBtn.setAttribute('aria-pressed', 'false');
+      sortBtn.textContent = '依申請難度排序';
+      sortAmountBtn.classList.remove('active');
+      sortAmountBtn.setAttribute('aria-pressed', 'false');
+      sortAmountBtn.textContent = '依金額高低';
+      applySort();
       filterBtns.forEach(b => b.classList.remove('active'));
       if (filterBtns[0]) filterBtns[0].classList.add('active');
       updateTrackerFilterLabel();
@@ -970,7 +979,11 @@ const personas = [
 
     startQuizBtn?.addEventListener('click', () => {
       const quizSection = document.querySelector<HTMLElement>('.quiz-section');
-      if (quizSection) quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!quizSection) {
+        console.warn('[startQuizBtn] .quiz-section not found');
+        return;
+      }
+      quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     // ── Print Tracker ─────────────────────────────────────────────────────────
