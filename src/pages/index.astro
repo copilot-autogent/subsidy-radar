@@ -1103,11 +1103,31 @@ const personas = [
       if (countSpan) countSpan.textContent = String(recencyLiveCount);
     }
 
+    function isDeadlinePast(dateStr: string): boolean {
+      if (!dateStr) return false;
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return false;
+      const [y, m, d] = parts.map(Number);
+      if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return false;
+      const now = new Date(); now.setHours(0, 0, 0, 0);
+      return new Date(y, m - 1, d) < now;
+    }
+
     function renderCountdownBadges() {
       cards.forEach(card => {
         const badge = card.querySelector<HTMLElement>('[data-deadline-badge]');
         if (!badge) return;
         const deadline = card.dataset.deadline ?? '';
+
+        if (isDeadlinePast(deadline)) {
+          badge.style.display = '';
+          badge.className = 'countdown-badge countdown-expired';
+          badge.textContent = '已截止';
+          card.classList.add('card-expired');
+          return;
+        }
+
+        card.classList.remove('card-expired');
         const days = daysUntilDate(deadline);
         if (days === null) { badge.style.display = 'none'; return; }
         let text: string; let cls: string;
@@ -1116,6 +1136,7 @@ const personas = [
         else if (days <= 7)  { text = `🔥 剩 ${days} 天`; cls = 'countdown-urgent'; }
         else if (days <= 30) { text = `⏰ 剩 ${days} 天`; cls = 'countdown-soon'; }
         else                 { text = `📅 剩 ${days} 天`; cls = 'countdown-ok'; }
+        badge.style.display = '';
         badge.className = `countdown-badge ${cls}`;
         badge.textContent = text;
       });
