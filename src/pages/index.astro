@@ -1110,25 +1110,36 @@ const personas = [
       const [y, m, d] = parts.map(Number);
       if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return false;
       if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+      const parsed = new Date(y, m - 1, d);
+      // Reject overflowed dates (e.g. 2026-02-31 → March 3)
+      if (parsed.getFullYear() !== y || parsed.getMonth() !== m - 1 || parsed.getDate() !== d) return false;
       const now = new Date(); now.setHours(0, 0, 0, 0);
-      return new Date(y, m - 1, d) < now;
+      return parsed < now;
+    }
+
+    function isCardExpired(card: HTMLElement): boolean {
+      // Explicit closed status always dims the card, regardless of deadlineDate
+      if (card.dataset.deadlineStatus === 'closed') return true;
+      return isDeadlinePast(card.dataset.deadline ?? '');
     }
 
     function renderCountdownBadges() {
       cards.forEach(card => {
+        // Apply/remove card-expired class regardless of badge presence
+        const expired = isCardExpired(card);
+        card.classList.toggle('card-expired', expired);
+
         const badge = card.querySelector<HTMLElement>('[data-deadline-badge]');
         if (!badge) return;
         const deadline = card.dataset.deadline ?? '';
 
-        if (isDeadlinePast(deadline)) {
+        if (expired) {
           badge.style.display = '';
           badge.className = 'countdown-badge countdown-expired';
           badge.textContent = '已截止';
-          card.classList.add('card-expired');
           return;
         }
 
-        card.classList.remove('card-expired');
         const days = daysUntilDate(deadline);
         if (days === null) { badge.style.display = 'none'; return; }
         let text: string; let cls: string;
