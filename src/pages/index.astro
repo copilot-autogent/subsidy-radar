@@ -355,9 +355,9 @@ const personas = [
         </article>
       );
     })}
-    <div class="no-results" id="noResults" style="display:none">
+    <div class="no-results" id="noResults" hidden role="status" aria-live="polite" aria-atomic="true">
       <div class="no-results-emoji">🔍</div>
-      <p class="no-results-heading" role="status" aria-live="polite" aria-atomic="true">沒有找到符合的補助</p>
+      <p class="no-results-heading">沒有找到符合的補助</p>
       <p class="no-results-hint">試試：</p>
       <ul class="no-results-tips">
         <li>清除搜尋詞</li>
@@ -883,7 +883,7 @@ const personas = [
         if (show) visible++;
       });
       resultsCount.textContent = `共 ${visible} 項補助`;
-      noResults.style.display = visible === 0 ? 'block' : 'none';
+      noResults.hidden = visible !== 0;
 
       // Hide eligibility banner when tracker filter is active (BUG-A fix)
       if (showTrackedOnly) {

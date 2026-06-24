@@ -66,14 +66,12 @@ test.describe('empty-state message — no results after search + filter', () => 
   });
 
   test('empty-state hidden when at least 1 card matches', async ({ page }) => {
-    // Type partial text that should match something
+    // Use a known token from fixture data (subsidies.json first card title)
     const input = page.locator('#searchInput');
-    await input.fill('補助');
+    await input.fill('支援青年');
     const emptyState = page.locator('#noResults');
-    // Ensure there are visible cards before asserting empty state is hidden
-    const visibleCards = page.locator('.subsidy-card:visible');
-    const count = await visibleCards.count();
-    expect(count, 'Expected at least one card to match 補助').toBeGreaterThan(0);
+    // At least one card should be visible (the first fixture card matches)
+    await expect(page.locator('#youth-job-support')).toBeVisible();
     await expect(emptyState).toBeHidden();
   });
 });

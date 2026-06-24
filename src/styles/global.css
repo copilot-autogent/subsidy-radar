@@ -754,6 +754,8 @@ main {
   padding: 3rem;
   grid-column: 1 / -1;
 }
+/* Ensure the hidden attribute collapses the element even inside a grid */
+.no-results[hidden] { display: none; }
 
 .no-results-emoji {
   font-size: 3rem;
