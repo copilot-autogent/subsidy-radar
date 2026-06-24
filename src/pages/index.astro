@@ -61,12 +61,26 @@ function parseAmountValue(amount: string): number {
 
   if (maxValue === 0) return 0;
 
-  // Annualise monthly amounts (每月 X 元 → X × 12) only when the dominant
-  // amount is 元-scale (not 萬-scale, which indicates a one-time loan/grant)
-  // and no explicit annual figure is already present.
+  // Annualise only when the dominant value is itself monthly (every-月 context):
+  // — no 萬-scale amount found (those are always one-time grants/loans)
+  // — "每月" appears somewhere in the string
+  // — no explicit annual marker present
+  // — the value paired with "每月" accounts for the overall max (guards against
+  //   strings like "每月 5,000 元；上限 60,000 元" where the cap is larger)
   const hasAnnual = /每年|年省|全年/.test(amount);
   const hasMonthly = /每月/.test(amount);
-  if (hasMonthly && !hasAnnual && !foundWan) maxValue *= 12;
+  if (hasMonthly && !hasAnnual && !foundWan) {
+    // Extract the maximum value that appears directly in a 每月 context
+    const monthlyRe = /每月[^萬元]*?(\d[\d]*(?:\.\d+)?)\s*元/g;
+    let monthlyMax = 0;
+    let mm: RegExpExecArray | null;
+    while ((mm = monthlyRe.exec(text)) !== null) {
+      const v = parseFloat(mm[1]);
+      if (v > monthlyMax) monthlyMax = v;
+    }
+    // Only multiply when the monthly value IS the global maximum
+    if (monthlyMax > 0 && monthlyMax >= maxValue) maxValue *= 12;
+  }
 
   return Math.round(maxValue);
 }
