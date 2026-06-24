@@ -28,25 +28,30 @@ test.describe('expired subsidy — 已截止 badge and dimmed card', () => {
   });
 
   test('active cards with future deadlines do NOT have card-expired class', async ({ page }) => {
-    // Locate any card whose data-deadline attribute is in the future
     const allCards = page.locator('.subsidy-card[data-deadline]');
     const count = await allCards.count();
 
+    let foundFutureCard = false;
     for (let i = 0; i < count; i++) {
       const card = allCards.nth(i);
       const deadline = await card.getAttribute('data-deadline');
-      if (!deadline) continue;
+      const deadlineStatus = await card.getAttribute('data-deadline-status');
+      if (!deadline || deadlineStatus === 'closed') continue;
+
       const [y, m, d] = deadline.split('-').map(Number);
-      const dl = new Date(y, m - 1, d);
-      if (dl >= new Date()) {
-        // This card's deadline is still in the future — must not be expired
+      const dl = new Date(y, m - 1, d); // midnight, matches isDeadlinePast semantics
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      if (dl > today) {
         await expect(card).not.toHaveClass(/card-expired/);
         const badge = card.locator('[data-deadline-badge]');
         if (await badge.count() > 0) {
           await expect(badge).not.toHaveText('已截止');
         }
-        break; // one sample is enough
+        foundFutureCard = true;
+        break;
       }
     }
+    // There must be at least one active (non-expired) card for this assertion to be meaningful
+    expect(foundFutureCard, 'Expected at least one active card with a future deadline').toBe(true);
   });
 });
