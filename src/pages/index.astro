@@ -596,6 +596,7 @@ const personas = [
       const tracker = loadTracker();
       cards.forEach(card => {
         const id = card.dataset.id ?? '';
+        if (!id) return;
         const isTracked = tracker[id] !== undefined && tracker[id] !== '未申請';
         card.classList.toggle('tracker-state-tracked', isTracked);
       });
