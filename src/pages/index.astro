@@ -940,17 +940,25 @@ const personas = [
 
     // ── Print Tracker ─────────────────────────────────────────────────────────
     const printTrackerBtn = document.getElementById('printTrackerBtn') as HTMLButtonElement | null;
+
+    function setCurrentPrintDate() {
+      const dateEl = document.getElementById('printDate');
+      if (dateEl) {
+        dateEl.textContent = new Date().toLocaleDateString('zh-Hant-TW', {
+          year: 'numeric', month: 'long', day: 'numeric',
+        });
+      }
+    }
+
     if (printTrackerBtn) {
       printTrackerBtn.addEventListener('click', () => {
-        const dateEl = document.getElementById('printDate');
-        if (dateEl) {
-          dateEl.textContent = new Date().toLocaleDateString('zh-Hant-TW', {
-            year: 'numeric', month: 'long', day: 'numeric',
-          });
-        }
+        setCurrentPrintDate();
         window.print();
       });
     }
+
+    // Also populate date for native Ctrl+P / browser print menu
+    window.addEventListener('beforeprint', setCurrentPrintDate);
 
     // ── Hero youth link ───────────────────────────────────────────────────────
     const heroYouthLink = document.getElementById('heroYouthLink');
