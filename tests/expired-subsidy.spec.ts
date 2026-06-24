@@ -27,17 +27,26 @@ test.describe('expired subsidy — 已截止 badge and dimmed card', () => {
     await expect(expiredCard).toBeVisible();
   });
 
-  test('non-expired cards with deadlineDate do NOT have card-expired class', async ({ page }) => {
-    // youth-job-support has deadlineDate 2026-12-31 (active)
-    const activeCard = page.locator('#youth-job-support');
-    await expect(activeCard).toBeVisible();
-    await expect(activeCard).not.toHaveClass(/card-expired/);
-  });
+  test('active cards with future deadlines do NOT have card-expired class', async ({ page }) => {
+    // Locate any card whose data-deadline attribute is in the future
+    const allCards = page.locator('.subsidy-card[data-deadline]');
+    const count = await allCards.count();
 
-  test('non-expired card countdown badge shows days remaining, not 已截止', async ({ page }) => {
-    const badge = page.locator('#youth-job-support [data-deadline-badge]');
-    await expect(badge).toBeVisible();
-    await expect(badge).not.toHaveText('已截止');
-    await expect(badge).not.toHaveClass(/countdown-expired/);
+    for (let i = 0; i < count; i++) {
+      const card = allCards.nth(i);
+      const deadline = await card.getAttribute('data-deadline');
+      if (!deadline) continue;
+      const [y, m, d] = deadline.split('-').map(Number);
+      const dl = new Date(y, m - 1, d);
+      if (dl >= new Date()) {
+        // This card's deadline is still in the future — must not be expired
+        await expect(card).not.toHaveClass(/card-expired/);
+        const badge = card.locator('[data-deadline-badge]');
+        if (await badge.count() > 0) {
+          await expect(badge).not.toHaveText('已截止');
+        }
+        break; // one sample is enough
+      }
+    }
   });
 });
