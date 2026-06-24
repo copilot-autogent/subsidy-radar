@@ -780,8 +780,13 @@ const personas = [
           card,
           val: Number(card.dataset.amountValue ?? 0),
         }));
-        // Sort descending (state 1) or ascending (state 2)
-        pairs.sort((a, b) => sortAmountState === 1 ? b.val - a.val : a.val - b.val);
+        // Sort: unparseable (val=0) always last; among parsed values, desc (state 1) or asc (state 2)
+        pairs.sort((a, b) => {
+          if (a.val === 0 && b.val === 0) return 0;
+          if (a.val === 0) return 1;
+          if (b.val === 0) return -1;
+          return sortAmountState === 1 ? b.val - a.val : a.val - b.val;
+        });
         pairs.forEach(({ card }, i) => { card.style.order = String(i + 1); });
       } else {
         cards.forEach(card => { card.style.order = ''; });

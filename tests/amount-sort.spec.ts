@@ -32,18 +32,36 @@ test.describe('依金額高低 sort button', () => {
     // All cards should have a numeric order assigned
     expect(orderValuePairs.every(p => p.order > 0)).toBe(true);
     // Order 1 (highest) should have an amount >= order 2
-    const rank1 = orderValuePairs.find(p => p.order === 1)!;
-    const rank2 = orderValuePairs.find(p => p.order === 2)!;
-    expect(rank1.amount).toBeGreaterThanOrEqual(rank2.amount);
+    const rank1 = orderValuePairs.find(p => p.order === 1);
+    const rank2 = orderValuePairs.find(p => p.order === 2);
+    expect(rank1).toBeDefined();
+    expect(rank2).toBeDefined();
+    expect(rank1!.amount).toBeGreaterThanOrEqual(rank2!.amount);
   });
 
-  test('second click sorts cards low→high by amount', async ({ page }) => {
+  test('second click sorts cards low→high by amount (parsed amounts sort before unparseable)', async ({ page }) => {
     const btn = page.getByRole('button', { name: /依金額高低|金額/ });
     await btn.click(); // high→low
     await btn.click(); // low→high
 
     await expect(btn).toContainText('金額低→高');
     await expect(btn).toHaveAttribute('aria-pressed', 'true');
+
+    // Verify the card ranked #1 has amount <= the card ranked #2
+    const allCards = page.locator('.subsidy-card');
+    const count = await allCards.count();
+    const pairs: { order: number; amount: number }[] = [];
+    for (let i = 0; i < count; i++) {
+      const card = allCards.nth(i);
+      const order = await card.evaluate(el => Number((el as HTMLElement).style.order) || 0);
+      const amount = await card.evaluate(el => Number((el as HTMLElement).dataset.amountValue ?? 0));
+      pairs.push({ order, amount });
+    }
+    const rank1 = pairs.find(p => p.order === 1);
+    const rank2 = pairs.find(p => p.order === 2);
+    expect(rank1).toBeDefined();
+    expect(rank2).toBeDefined();
+    expect(rank1!.amount).toBeLessThanOrEqual(rank2!.amount);
   });
 
   test('third click resets sort to default', async ({ page }) => {
