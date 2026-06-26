@@ -11,6 +11,7 @@ subsidies.forEach(s => {
   categoryCounts[s.category] = (categoryCounts[s.category] || 0) + 1;
 });
 const youthHighlightCount = subsidies.filter(s => s.isYouthHighlight).length;
+const seniorCount = subsidies.filter(s => (s.situations as string[] | undefined)?.includes('senior')).length;
 
 const RECENCY_DAYS = 90;
 const RECENCY_LABEL = '🆕 最新';
@@ -25,7 +26,8 @@ const recencyCount = subsidies.filter(s => {
   const diff = Math.floor((now.getTime() - added.getTime()) / 86400000);
   return diff >= 0 && diff <= RECENCY_DAYS;
 }).length;
-const categories = ['全部', '⭐ 青年必看', RECENCY_LABEL, ...new Set(subsidies.map(s => s.category))];
+const SENIOR_LABEL = '⭐ 長者照護';
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category))];
 const youthCount = youthHighlightCount;
 
 const deadlineLabel: Record<string, { text: string; cls: string }> = {
@@ -210,12 +212,14 @@ const personas = [
           ? subsidies.length 
           : cat === '⭐ 青年必看' 
           ? youthHighlightCount 
+          : cat === SENIOR_LABEL
+          ? seniorCount
           : cat === RECENCY_LABEL
           ? recencyCount
           : categoryCounts[cat] || 0;
         return (
           <button
-            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
+            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
             id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : undefined}
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
@@ -396,6 +400,7 @@ const personas = [
     const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
     const RECENCY_FILTER_LABEL = _recencyBtn?.dataset.category ?? '🆕 最新';
     const RECENCY_DAYS_CLIENT = Number(_recencyBtn?.dataset.recencyDays ?? 90);
+    const SENIOR_FILTER_LABEL = '⭐ 長者照護';
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
@@ -870,6 +875,8 @@ const personas = [
           ? true
           : activeCategory === '⭐ 青年必看'
           ? isYouth
+          : activeCategory === SENIOR_FILTER_LABEL
+          ? situations.includes('senior')
           : activeCategory === RECENCY_FILTER_LABEL
           ? isRecentlyAdded(card)
           : cat === activeCategory;
