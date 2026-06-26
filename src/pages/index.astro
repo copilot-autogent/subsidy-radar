@@ -11,7 +11,7 @@ subsidies.forEach(s => {
   categoryCounts[s.category] = (categoryCounts[s.category] || 0) + 1;
 });
 const youthHighlightCount = subsidies.filter(s => s.isYouthHighlight).length;
-const seniorCount = subsidies.filter(s => (s.situations as string[] | undefined)?.includes('senior')).length;
+const seniorCount = subsidies.filter(s => (s.situations as string[] | undefined)?.includes('senior') || s.category === '長者').length;
 
 const RECENCY_DAYS = 90;
 const RECENCY_LABEL = '🆕 最新';
@@ -877,7 +877,7 @@ const personas = [
           : activeCategory === '⭐ 青年必看'
           ? isYouth
           : activeCategory === SENIOR_FILTER_LABEL
-          ? situations.includes('senior')
+          ? (situations.includes('senior') || cat === '長者')
           : activeCategory === RECENCY_FILTER_LABEL
           ? isRecentlyAdded(card)
           : cat === activeCategory;
