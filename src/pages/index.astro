@@ -884,6 +884,8 @@ const personas = [
           ? isYouth
           : activeCategory === SENIOR_FILTER_LABEL
           ? (situations.includes('senior') || cat === '長者')
+          // Disability entries span multiple categories (生活, 就業) — tag-only matching is intentional.
+          // All disability subsidies carry the 'disabled' situation tag; there is no dedicated 身障 category.
           : activeCategory === DISABILITY_FILTER_LABEL
           ? situations.includes('disabled')
           : activeCategory === RECENCY_FILTER_LABEL
