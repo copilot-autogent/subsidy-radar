@@ -484,6 +484,13 @@ main {
   transform: translateY(-2px);
 }
 
+.subsidy-card:focus,
+.subsidy-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  box-shadow: var(--shadow-hover);
+}
+
 .card-expired {
   opacity: 0.6;
 }

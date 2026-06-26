@@ -285,7 +285,7 @@ const personas = [
     <p>列印於 <span id="printDate"></span></p>
   </div>
 
-  <div class="grid" id="subsidyGrid">
+  <div class="grid" id="subsidyGrid" tabindex="-1">
     {subsidies.map(s => {
       const status = deadlineLabel[s.deadlineStatus] ?? deadlineLabel['ongoing'];
       const diff = difficultyLabel[s.difficulty ?? 'medium'];
@@ -293,6 +293,8 @@ const personas = [
         <article
           id={s.id}
           class={`subsidy-card ${s.isYouthHighlight ? 'youth-highlight' : ''}`}
+          tabindex="0"
+          aria-label={`${s.title} - 金額：${s.amount} - 主辦機關：${s.agency}`}
           data-category={s.category}
           data-youth={s.isYouthHighlight ? 'true' : 'false'}
           data-situations={JSON.stringify(s.situations ?? [])}
@@ -1408,5 +1410,54 @@ const personas = [
         panelToggle.setAttribute('aria-expanded', String(!isOpen));
       });
     })();
+
+    // ── Keyboard navigation for subsidy cards ────────────────────────────────
+    (function initCardKeyboardNav() {
+      function getVisibleCards(): HTMLElement[] {
+        // offsetParent === null for any element with display:none (inline or from CSS)
+        return Array.from(
+          document.querySelectorAll<HTMLElement>('.subsidy-card')
+        ).filter(c => c.offsetParent !== null);
+      }
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      document.addEventListener('keydown', (e: KeyboardEvent) => {
+        const target = e.target as HTMLElement;
+        const isCard = target.classList.contains('subsidy-card');
+
+        // Arrow key navigation: only fire when focus is already on a card
+        if (isCard && (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowLeft')) {
+          e.preventDefault();
+          const visible = getVisibleCards();
+          const idx = visible.indexOf(target);
+          if (idx === -1) return;
+          const next = (e.key === 'ArrowDown' || e.key === 'ArrowRight')
+            ? visible[(idx + 1) % visible.length]
+            : visible[(idx - 1 + visible.length) % visible.length];
+          next.focus();
+          next.scrollIntoView({ block: 'nearest', behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+          return;
+        }
+
+        // Enter / Space: activate the CTA link of the focused card
+        if (isCard && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          const link = target.querySelector<HTMLAnchorElement>('a.card-link');
+          if (link) link.click();
+          return;
+        }
+
+        // Escape: blur the focused card and return focus to the grid container
+        if (isCard && e.key === 'Escape') {
+          e.preventDefault();
+          target.blur();
+          const grid = document.getElementById('subsidyGrid');
+          if (grid) (grid as HTMLElement).focus();
+          return;
+        }
+      });
+    })();
+    // ─────────────────────────────────────────────────────────────────────────
   </script>
 </BaseLayout>
