@@ -220,6 +220,20 @@ main {
   color: white;
 }
 
+.filter-btn.senior-filter {
+  border-color: #0891b2;
+  color: #164e63;
+  background: #cffafe;
+  font-weight: 600;
+}
+
+.filter-btn.senior-filter:hover,
+.filter-btn.senior-filter.active {
+  background: #0891b2;
+  border-color: #0891b2;
+  color: white;
+}
+
 /* ── Category count badge ── */
 .count-badge {
   display: inline-block;
@@ -242,6 +256,15 @@ main {
 
 .filter-btn.youth-filter:hover .count-badge,
 .filter-btn.youth-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-btn.senior-filter .count-badge {
+  background: rgba(8, 145, 178, 0.2);
+}
+
+.filter-btn.senior-filter:hover .count-badge,
+.filter-btn.senior-filter.active .count-badge {
   background: rgba(255, 255, 255, 0.3);
 }
 
