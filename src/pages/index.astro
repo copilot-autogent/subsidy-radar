@@ -220,7 +220,7 @@ const personas = [
         return (
           <button
             class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
-            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : undefined}
+            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : undefined}
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
@@ -400,7 +400,7 @@ const personas = [
     const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
     const RECENCY_FILTER_LABEL = _recencyBtn?.dataset.category ?? '🆕 最新';
     const RECENCY_DAYS_CLIENT = Number(_recencyBtn?.dataset.recencyDays ?? 90);
-    const SENIOR_FILTER_LABEL = '⭐ 長者照護';
+    const SENIOR_FILTER_LABEL = (document.getElementById('seniorFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 長者照護';
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
