@@ -2,7 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string };
+type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled';
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[] };
 const subsidies = subsidiesRaw as Subsidy[];
 
 // Compute category counts for filter buttons
@@ -11,7 +12,7 @@ subsidies.forEach(s => {
   categoryCounts[s.category] = (categoryCounts[s.category] || 0) + 1;
 });
 const youthHighlightCount = subsidies.filter(s => s.isYouthHighlight).length;
-const seniorCount = subsidies.filter(s => (s.situations as string[] | undefined)?.includes('senior') || s.category === '長者').length;
+const seniorCount = subsidies.filter(s => s.situations?.includes('senior') || s.category === '長者').length;
 
 const RECENCY_DAYS = 90;
 const RECENCY_LABEL = '🆕 最新';
@@ -29,7 +30,7 @@ const recencyCount = subsidies.filter(s => {
 const SENIOR_LABEL = '⭐ 長者照護';
 const SENIOR_CATEGORY = '長者';
 const DISABILITY_LABEL = '⭐ 身障';
-const disabledCount = subsidies.filter(s => (s.situations as string[] | undefined)?.includes('disabled')).length;
+const disabledCount = subsidies.filter(s => s.situations?.includes('disabled')).length;
 const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
 const youthCount = youthHighlightCount;
 
