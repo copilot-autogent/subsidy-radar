@@ -27,7 +27,8 @@ const recencyCount = subsidies.filter(s => {
   return diff >= 0 && diff <= RECENCY_DAYS;
 }).length;
 const SENIOR_LABEL = '⭐ 長者照護';
-const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category))];
+const SENIOR_CATEGORY = '長者';
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
 const youthCount = youthHighlightCount;
 
 const deadlineLabel: Record<string, { text: string; cls: string }> = {
