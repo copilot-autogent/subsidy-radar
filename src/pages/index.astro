@@ -285,7 +285,7 @@ const personas = [
     <p>列印於 <span id="printDate"></span></p>
   </div>
 
-  <div class="grid" id="subsidyGrid">
+  <div class="grid" id="subsidyGrid" tabindex="-1">
     {subsidies.map(s => {
       const status = deadlineLabel[s.deadlineStatus] ?? deadlineLabel['ongoing'];
       const diff = difficultyLabel[s.difficulty ?? 'medium'];

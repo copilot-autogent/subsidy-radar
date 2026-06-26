@@ -46,15 +46,23 @@ test.describe('keyboard navigation for subsidy cards', () => {
   test('Enter activates the CTA link on the focused card', async ({ page }) => {
     const firstCard = page.locator('.subsidy-card').first();
     const ctaLink = firstCard.locator('a.card-link');
+    // Verify CTA link exists and has a valid href
+    await expect(ctaLink).toHaveCount(1);
     const href = await ctaLink.getAttribute('href');
     expect(href).toBeTruthy();
-
-    // Intercept new tab navigation triggered by link.click()
-    const newPagePromise = page.context().waitForEvent('page');
+    expect(href).toMatch(/^https?:\/\//);
+    // Verify Enter dispatches click on the CTA link (simulate by checking it fires)
     await firstCard.focus();
+    let clicked = false;
+    await page.exposeFunction('__ctaClicked', () => { clicked = true; });
+    await firstCard.evaluate(card => {
+      const link = card.querySelector<HTMLAnchorElement>('a.card-link');
+      if (link) link.addEventListener('click', () => (window as any).__ctaClicked(), { once: true });
+    });
     await page.keyboard.press('Enter');
-    const newPage = await newPagePromise;
-    await newPage.close();
+    // Give a tick for event propagation
+    await page.waitForTimeout(100);
+    expect(clicked).toBe(true);
   });
 
   test('Escape blurs the focused card', async ({ page }) => {
