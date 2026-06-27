@@ -525,6 +525,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeCategory = '全部';
       filterBtns.forEach(b => b.classList.remove('active'));
       if (filterBtns[0]) filterBtns[0].classList.add('active');
+      activeDifficulty = '';
+      difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       
       // Apply multi-situation filter
       const isYouth = quizAnswers.age === 'youth';
@@ -587,9 +589,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // Reset filters
       activeCategory = '全部';
       activeSituation = '';
+      activeDifficulty = '';
       searchQuery = '';
       filterBtns.forEach(b => b.classList.remove('active'));
       if (filterBtns[0]) filterBtns[0].classList.add('active');
+      difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
@@ -943,7 +947,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const matchSituation = activeSituation === '' || situations.includes(activeSituation);
         const matchSearch = searchQuery === '' || search.includes(searchQuery);
         const matchTracked = !showTrackedOnly || (tracker[cardId] && tracker[cardId] !== '未申請');
-        const matchDifficulty = activeDifficulty === '' || (card.dataset.difficulty ?? 'medium') === activeDifficulty;
+        const matchDifficulty = activeDifficulty === '' || (card.dataset.difficulty ?? 'medium').trim().toLowerCase() === activeDifficulty;
 
         const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty;
         card.style.display = show ? '' : 'none';
@@ -1046,6 +1050,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       searchQuery = '';
       activeCategory = '全部';
       activeSituation = '';
+      activeDifficulty = '';
       showTrackedOnly = false;
       sortByDifficulty = false;
       sortAmountState = 0;
@@ -1059,6 +1064,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       filterBtns.forEach(b => b.classList.remove('active'));
       const allFilterBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
       if (allFilterBtn) allFilterBtn.classList.add('active');
+      difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       updateTrackerFilterLabel();
       updateDisplay();
     });
