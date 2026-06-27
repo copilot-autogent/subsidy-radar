@@ -104,12 +104,29 @@ const personas = [
   { key: 'entrepreneur',icon: '💼', label: '想創業' },
   { key: 'parent',      icon: '👶', label: '育兒家庭' },
 ];
+
+// Build JSON-LD ItemList for Google rich results (static, build-time, zero runtime cost)
+const siteUrl = `${Astro.site?.origin ?? 'https://copilot-autogent.github.io'}${import.meta.env.BASE_URL.replace(/\/?$/, '/')}`;
+const jsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '台灣政府補助清單',
+  itemListElement: subsidies.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: s.title,
+    url: siteUrl,
+  })),
+});
 ---
 
 <BaseLayout
   title="補助雷達 — 台灣政府補助一站查詢"
   description="快速查詢台灣政府補助資訊，包含就業、創業、住宅等補助，找到您符合資格的補助方案。"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={jsonLd} />
+  </Fragment>
 
   <section class="hero">
     <h1>📡 補助雷達</h1>
