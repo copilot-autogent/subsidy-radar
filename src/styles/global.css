@@ -428,7 +428,6 @@ main {
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 400;
-  white-space: nowrap;
   z-index: 100;
   pointer-events: none;
   max-width: min(90vw, 360px);
