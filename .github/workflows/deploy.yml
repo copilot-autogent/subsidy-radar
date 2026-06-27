@@ -51,12 +51,10 @@ jobs:
           PAGE_URL: ${{ needs.deploy.outputs.page_url }}
         run: |
           # Verify the live site responds correctly after deploy.
-          # Uses Node.js HTTPS (no curl) — writes response to a temp file to
-          # avoid shell mangling of multibyte characters before grepping.
+          # Uses Node.js HTTPS built-ins (no curl) per project runtime constraints.
           node - <<'SMOKE_EOF'
           const https = require('https');
           const http = require('http');
-          const fs = require('fs');
           const url = process.env.PAGE_URL;
           if (!url) { console.error('❌ PAGE_URL is empty — deploy output not set'); process.exit(1); }
 
@@ -100,7 +98,6 @@ jobs:
                 console.error(`❌ Attempt ${attempt}/${maxAttempts}: ${msg} — giving up`);
                 process.exit(1);
               }
-              fs.writeFileSync('/tmp/smoke-response.html', body);
               // Marker: CSS class rendered by Astro into the static HTML nav element.
               // Present in every page of the site; absent from GitHub's generic 404 page.
               if (!body.includes('class="logo"')) {
@@ -108,6 +105,7 @@ jobs:
                 process.exit(1);
               }
               console.log(`✅ Attempt ${attempt}: HTTP ${status} + app-shell marker found — deploy verified`);
+              process.exit(0);
             });
           }
           run();
