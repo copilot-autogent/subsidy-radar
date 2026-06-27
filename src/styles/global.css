@@ -141,6 +141,8 @@ main {
 
 .search-box input:focus {
   border-color: var(--color-primary);
+  outline: 2px solid var(--color-primary);
+  outline-offset: -1px;
 }
 
 .search-icon {
@@ -219,6 +221,11 @@ main {
   color: var(--color-primary);
 }
 
+.sort-btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .sort-btn.active {
   background: #f0fdf4;
   border-color: #15803d;
@@ -242,6 +249,11 @@ main {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: white;
+}
+
+.filter-btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .filter-btn.youth-filter {
@@ -373,6 +385,11 @@ main {
 }
 
 .tracker-btn:hover { opacity: 0.85; }
+
+.tracker-btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
 
 .tracker-btn.ts-none   { background: var(--color-tag); color: var(--color-text-muted); border-color: var(--color-border); }
 .tracker-btn.ts-applied   { background: #dcfce7; color: #15803d; border-color: #86efac; }
@@ -790,6 +807,11 @@ main {
   transform: translateY(-1px);
 }
 
+.card-link:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 .card-eligibility {
   font-size: 0.85rem;
   color: var(--color-text-muted);
@@ -1004,6 +1026,11 @@ main {
   background: var(--color-primary-light);
   transform: translateY(-2px);
   box-shadow: var(--shadow);
+}
+
+.quiz-option:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .quiz-option.selected {
@@ -1630,5 +1657,99 @@ main {
     content: " (" attr(href) ")";
     font-weight: normal;
     color: #1d4ed8;
+  }
+}
+
+/* ── High-Contrast Mode (Windows HCM / forced-colors) ─────────────────────── */
+@media (forced-colors: active) {
+  /* Reinforce borders on elements that convey active state via background-color alone.
+     System color keywords work without forced-color-adjust:none — the UA applies them. */
+  .filter-btn,
+  .filter-btn.active,
+  .filter-btn.youth-filter,
+  .filter-btn.senior-filter,
+  .filter-btn.disability-filter {
+    border: 2px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .filter-btn.active,
+  .filter-btn:focus-visible {
+    background: Highlight;
+    color: HighlightText;
+    border-color: ButtonText;
+  }
+
+  .sort-btn,
+  .sort-btn.active {
+    border: 2px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .sort-btn.active,
+  .sort-btn:focus-visible {
+    background: Highlight;
+    color: HighlightText;
+    border-color: ButtonText;
+  }
+
+  .tracker-btn,
+  .tracker-btn.ts-none,
+  .tracker-btn.ts-applied,
+  .tracker-btn.ts-inprogress,
+  .tracker-btn.ts-done {
+    border: 2px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .tracker-btn:focus-visible {
+    background: Highlight;
+    color: HighlightText;
+    outline: 2px solid ButtonText;
+  }
+
+  .quiz-option {
+    border: 2px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .quiz-option.selected,
+  .quiz-option:focus-visible {
+    background: Highlight;
+    color: HighlightText;
+    border-color: ButtonText;
+  }
+
+  .card-link {
+    background: ButtonFace;
+    color: LinkText;
+    border: 2px solid LinkText;
+    text-decoration: underline;
+  }
+
+  .card-link:focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  .subsidy-card {
+    border: 2px solid ButtonText;
+  }
+
+  .subsidy-card:focus,
+  .subsidy-card:focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 3px;
+  }
+
+  /* Status badges — add border so color-only state is conveyed by shape too */
+  .deadline-status,
+  .difficulty-badge,
+  .countdown-badge {
+    border: 1px solid currentColor;
   }
 }

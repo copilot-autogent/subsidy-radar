@@ -163,13 +163,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     <h2 class="quiz-title">🎯 找出最適合你的補助（3 個問題）</h2>
     
     <div class="quiz-question" data-question="age">
-      <label class="quiz-label">1. 你的年齡是？</label>
-      <div class="quiz-options">
-        <button class="quiz-option" data-value="youth" type="button">
+      <label id="quiz-label-age" class="quiz-label">1. 你的年齡是？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-age">
+        <button class="quiz-option" data-value="youth" type="button" role="radio" aria-checked="false">
           <span class="option-icon">🎓</span>
           <span class="option-text">18-29 歲（青年）</span>
         </button>
-        <button class="quiz-option" data-value="adult" type="button">
+        <button class="quiz-option" data-value="adult" type="button" role="radio" aria-checked="false">
           <span class="option-icon">👤</span>
           <span class="option-text">30 歲以上</span>
         </button>
@@ -177,21 +177,21 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     </div>
 
     <div class="quiz-question" data-question="employment" style="display:none">
-      <label class="quiz-label">2. 你的就業狀況是？</label>
-      <div class="quiz-options">
-        <button class="quiz-option" data-value="fresh-grad" type="button">
+      <label id="quiz-label-employment" class="quiz-label">2. 你的就業狀況是？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-employment">
+        <button class="quiz-option" data-value="fresh-grad" type="button" role="radio" aria-checked="false">
           <span class="option-icon">🎓</span>
           <span class="option-text">應屆畢業生／初次求職</span>
         </button>
-        <button class="quiz-option" data-value="unemployed" type="button">
+        <button class="quiz-option" data-value="unemployed" type="button" role="radio" aria-checked="false">
           <span class="option-icon">🔍</span>
           <span class="option-text">待業中</span>
         </button>
-        <button class="quiz-option" data-value="employed" type="button">
+        <button class="quiz-option" data-value="employed" type="button" role="radio" aria-checked="false">
           <span class="option-icon">💼</span>
           <span class="option-text">已就業</span>
         </button>
-        <button class="quiz-option" data-value="entrepreneur" type="button">
+        <button class="quiz-option" data-value="entrepreneur" type="button" role="radio" aria-checked="false">
           <span class="option-icon">💡</span>
           <span class="option-text">想創業</span>
         </button>
@@ -199,21 +199,21 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     </div>
 
     <div class="quiz-question" data-question="housing" style="display:none">
-      <label class="quiz-label">3. 你的居住狀況是？</label>
-      <div class="quiz-options">
-        <button class="quiz-option" data-value="renter" type="button">
+      <label id="quiz-label-housing" class="quiz-label">3. 你的居住狀況是？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-housing">
+        <button class="quiz-option" data-value="renter" type="button" role="radio" aria-checked="false">
           <span class="option-icon">🏠</span>
           <span class="option-text">租屋中</span>
         </button>
-        <button class="quiz-option" data-value="homebuyer" type="button">
+        <button class="quiz-option" data-value="homebuyer" type="button" role="radio" aria-checked="false">
           <span class="option-icon">🏡</span>
           <span class="option-text">想買房</span>
         </button>
-        <button class="quiz-option" data-value="parent" type="button">
+        <button class="quiz-option" data-value="parent" type="button" role="radio" aria-checked="false">
           <span class="option-icon">👶</span>
           <span class="option-text">育兒家庭</span>
         </button>
-        <button class="quiz-option" data-value="other" type="button">
+        <button class="quiz-option" data-value="other" type="button" role="radio" aria-checked="false">
           <span class="option-icon">✓</span>
           <span class="option-text">其他</span>
         </button>
@@ -242,8 +242,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         autocomplete="off"
       />
     </div>
-    <div class="category-filters" role="group" aria-label="類別篩選">
-      {categories.map(cat => {
+    <div class="category-filters" role="toolbar" aria-label="類別篩選">
+      {categories.map((cat, idx) => {
         const count = cat === '全部' 
           ? subsidies.length 
           : cat === '⭐ 青年必看' 
@@ -262,6 +262,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
+            aria-pressed={cat === '全部' ? 'true' : 'false'}
+            aria-label={`篩選類別：${cat}（${count} 項）`}
+            tabindex={cat === '全部' ? '0' : '-1'}
           >
             {cat} <span class="count-badge">{count}</span>
           </button>
@@ -402,7 +405,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               <span class="recency-badge" data-recency-badge style="display:none">🆕 最新</span>
               <span class="category-badge">{s.category}</span>
             </div>
-            <button class="tracker-btn" data-id={s.id} title="點擊更新申請進度" type="button" aria-label="更新申請狀態">
+            <button class="tracker-btn" data-id={s.id} title="點擊更新申請進度" type="button" aria-label={`申請狀態：未申請，點擊切換 — ${s.title}`}>
               <span class="tracker-label">未申請</span>
             </button>
           </div>
@@ -451,7 +454,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               <span class="share-icon">📤</span>
               <span class="share-text">分享</span>
             </button>
-            <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link">立即申請 →</a>
+            <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link" aria-label={`前往申請 ${s.title}（新視窗開啟）`}>立即申請 →</a>
           </div>
         </article>
       );
@@ -587,8 +590,21 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       
       // Reset category filter
       activeCategory = '全部';
-      filterBtns.forEach(b => b.classList.remove('active'));
-      if (filterBtns[0]) filterBtns[0].classList.add('active');
+      filterBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('tabindex', '-1');
+      });
+      const allBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
+      if (allBtn) {
+        allBtn.classList.add('active');
+        allBtn.setAttribute('aria-pressed', 'true');
+        allBtn.setAttribute('tabindex', '0');
+      } else if (filterBtns[0]) {
+        filterBtns[0].classList.add('active');
+        filterBtns[0].setAttribute('aria-pressed', 'true');
+        filterBtns[0].setAttribute('tabindex', '0');
+      }
       activeDifficulty = '';
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       
@@ -625,9 +641,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // Save answer
         quizAnswers[questionType] = value;
         
-        // Visual feedback
-        question.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+        // Visual feedback + ARIA state + roving tabindex
+        question.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach(opt => {
+          opt.classList.remove('selected');
+          opt.setAttribute('aria-checked', 'false');
+          opt.setAttribute('tabindex', '-1');
+        });
         btn.classList.add('selected');
+        btn.setAttribute('aria-checked', 'true');
+        btn.setAttribute('tabindex', '0');
         
         // Advance to next question
         currentQuestionIndex++;
@@ -644,10 +666,46 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
     });
 
+    // Radiogroup arrow-key navigation within each quiz question (manual-selection variant:
+    // arrow keys move focus + update tabindex only; selection fires on click/Enter/Space)
+    document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+      // Initialise: first option is the single tab stop
+      group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((btn, i) => {
+        btn.setAttribute('tabindex', i === 0 ? '0' : '-1');
+      });
+      group.addEventListener('keydown', (e: KeyboardEvent) => {
+        const radios = Array.from(group.querySelectorAll<HTMLButtonElement>('.quiz-option'));
+        const idx = radios.indexOf(e.target as HTMLButtonElement);
+        if (idx === -1) return;
+        let nextIdx = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          nextIdx = (idx + 1) % radios.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          nextIdx = (idx - 1 + radios.length) % radios.length;
+        }
+        if (nextIdx !== -1) {
+          radios[idx].setAttribute('tabindex', '-1');
+          radios[nextIdx].setAttribute('tabindex', '0');
+          radios[nextIdx].focus();
+        }
+      });
+    });
+
     quizResetBtn.addEventListener('click', () => {
       quizAnswers = {};
       currentQuestionIndex = 0;
-      quizOptions.forEach(opt => opt.classList.remove('selected'));
+      quizOptions.forEach(opt => {
+        opt.classList.remove('selected');
+        opt.setAttribute('aria-checked', 'false');
+      });
+      // Reinitialise roving tabindex for each radiogroup
+      document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+        group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((btn, i) => {
+          btn.setAttribute('tabindex', i === 0 ? '0' : '-1');
+        });
+      });
       showQuizQuestion(0);
       quizShareContainer.style.display = 'none';
       clearQuizUrl();
@@ -657,8 +715,21 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeSituation = '';
       activeDifficulty = '';
       searchQuery = '';
-      filterBtns.forEach(b => b.classList.remove('active'));
-      if (filterBtns[0]) filterBtns[0].classList.add('active');
+      filterBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('tabindex', '-1');
+      });
+      const allBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
+      if (allBtn) {
+        allBtn.classList.add('active');
+        allBtn.setAttribute('aria-pressed', 'true');
+        allBtn.setAttribute('tabindex', '0');
+      } else if (filterBtns[0]) {
+        filterBtns[0].classList.add('active');
+        filterBtns[0].setAttribute('aria-pressed', 'true');
+        filterBtns[0].setAttribute('tabindex', '0');
+      }
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
@@ -692,6 +763,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       label.textContent = status;
       btn.className = `tracker-btn ${STATUS_CLASS[status]}`;
       btn.title = `申請進度：${status}（點擊切換）`;
+      // Update aria-label with current status and subsidy name
+      const card = btn.closest<HTMLElement>('.subsidy-card');
+      const cardTitle = card?.querySelector<HTMLElement>('.card-title')?.textContent?.trim() ?? '';
+      btn.setAttribute('aria-label', `申請狀態：${status}，點擊切換${cardTitle ? ` — ${cardTitle}` : ''}`);
     }
 
     function initTracker() {
@@ -1082,12 +1157,41 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
+        filterBtns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+          b.setAttribute('tabindex', '-1');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        btn.setAttribute('tabindex', '0');
         activeCategory = btn.dataset.category ?? '全部';
         activeSituation = '';
         updateDisplay();
       });
+    });
+
+    // Roving tabindex — arrow keys navigate within .category-filters
+    const categoryFilterGroup = document.querySelector<HTMLElement>('.category-filters');
+    categoryFilterGroup?.addEventListener('keydown', (e: KeyboardEvent) => {
+      const target = e.target as HTMLButtonElement;
+      if (!target.classList.contains('filter-btn')) return;
+      const allFilterBtns = Array.from(filterBtns);
+      const idx = allFilterBtns.indexOf(target);
+      if (idx === -1) return;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = allFilterBtns[(idx + 1) % allFilterBtns.length];
+        next.setAttribute('tabindex', '0');
+        target.setAttribute('tabindex', '-1');
+        next.focus();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = allFilterBtns[(idx - 1 + allFilterBtns.length) % allFilterBtns.length];
+        prev.setAttribute('tabindex', '0');
+        target.setAttribute('tabindex', '-1');
+        prev.focus();
+      }
     });
 
     difficultyBtns.forEach(btn => {
@@ -1177,9 +1281,17 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       sortAmountBtn.setAttribute('aria-pressed', 'false');
       sortAmountBtn.textContent = '依金額高低';
       applySort();
-      filterBtns.forEach(b => b.classList.remove('active'));
+      filterBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('tabindex', '-1');
+      });
       const allFilterBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
-      if (allFilterBtn) allFilterBtn.classList.add('active');
+      if (allFilterBtn) {
+        allFilterBtn.classList.add('active');
+        allFilterBtn.setAttribute('aria-pressed', 'true');
+        allFilterBtn.setAttribute('tabindex', '0');
+      }
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       updateTrackerFilterLabel();
       updateCountyUrl();
@@ -1261,14 +1373,31 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         VALID_QUIZ_VALUES.housing.has(q3)
       ) {
         quizAnswers = { age: q1, employment: q2, housing: q3 };
-        // Mark each answer as selected in the UI
+        // Mark each answer as selected in the UI; sync roving tabindex per group
         quizQuestions.forEach(q => { q.style.display = 'none'; });
         quizResetContainer.style.display = 'block';
-        quizOptions.forEach(opt => {
-          const question = opt.closest<HTMLElement>('.quiz-question')!;
+        // Update aria-checked and roving tabindex per radiogroup
+        document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+          const question = group.closest<HTMLElement>('.quiz-question')!;
           const questionType = question.dataset.question!;
-          if (quizAnswers[questionType] === opt.dataset.value) {
-            opt.classList.add('selected');
+          const selectedValue = quizAnswers[questionType];
+          let hasSelected = false;
+          group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach(opt => {
+            if (opt.dataset.value === selectedValue) {
+              opt.classList.add('selected');
+              opt.setAttribute('aria-checked', 'true');
+              opt.setAttribute('tabindex', '0');
+              hasSelected = true;
+            } else {
+              opt.classList.remove('selected');
+              opt.setAttribute('aria-checked', 'false');
+              opt.setAttribute('tabindex', '-1');
+            }
+          });
+          // If no answer for this group (shouldn't happen given validation), reset to first
+          if (!hasSelected) {
+            const first = group.querySelector<HTMLButtonElement>('.quiz-option');
+            if (first) first.setAttribute('tabindex', '0');
           }
         });
         currentQuestionIndex = quizQuestions.length;
