@@ -38,7 +38,7 @@ const youthCount = youthHighlightCount;
 const VALID_DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
 const difficultyCounts: Record<string, number> = { easy: 0, medium: 0, hard: 0 };
 subsidies.forEach(s => {
-  const d = ((s.difficulty as string | undefined | null)?.trim().toLowerCase() || 'medium');
+  const d = (String(s.difficulty ?? 'medium')).trim().toLowerCase() || 'medium';
   if (VALID_DIFFICULTIES.has(d)) difficultyCounts[d]++;
 });
 const difficultyFilters = [
