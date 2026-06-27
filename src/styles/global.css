@@ -1752,10 +1752,4 @@ main {
   .countdown-badge {
     border: 1px solid currentColor;
   }
-
-  /* Ensure countdown emojis (🔴🟡🟢) render in HCM; does not affect text contrast */
-  .countdown-badge,
-  .tracker-deadline-item {
-    forced-color-adjust: none;
-  }
 }

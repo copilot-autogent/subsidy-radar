@@ -263,8 +263,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
             aria-pressed={cat === '全部' ? 'true' : 'false'}
-            aria-label={`篩選類別：${cat}`}
-            tabindex={idx === 0 ? '0' : '-1'}
+            aria-label={`篩選類別：${cat}（${count} 項）`}
+            tabindex={cat === '全部' ? '0' : '-1'}
           >
             {cat} <span class="count-badge">{count}</span>
           </button>
@@ -1373,17 +1373,31 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         VALID_QUIZ_VALUES.housing.has(q3)
       ) {
         quizAnswers = { age: q1, employment: q2, housing: q3 };
-        // Mark each answer as selected in the UI
+        // Mark each answer as selected in the UI; sync roving tabindex per group
         quizQuestions.forEach(q => { q.style.display = 'none'; });
         quizResetContainer.style.display = 'block';
-        quizOptions.forEach(opt => {
-          const question = opt.closest<HTMLElement>('.quiz-question')!;
+        // Update aria-checked and roving tabindex per radiogroup
+        document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+          const question = group.closest<HTMLElement>('.quiz-question')!;
           const questionType = question.dataset.question!;
-          if (quizAnswers[questionType] === opt.dataset.value) {
-            opt.classList.add('selected');
-            opt.setAttribute('aria-checked', 'true');
-          } else {
-            opt.setAttribute('aria-checked', 'false');
+          const selectedValue = quizAnswers[questionType];
+          let hasSelected = false;
+          group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach(opt => {
+            if (opt.dataset.value === selectedValue) {
+              opt.classList.add('selected');
+              opt.setAttribute('aria-checked', 'true');
+              opt.setAttribute('tabindex', '0');
+              hasSelected = true;
+            } else {
+              opt.classList.remove('selected');
+              opt.setAttribute('aria-checked', 'false');
+              opt.setAttribute('tabindex', '-1');
+            }
+          });
+          // If no answer for this group (shouldn't happen given validation), reset to first
+          if (!hasSelected) {
+            const first = group.querySelector<HTMLButtonElement>('.quiz-option');
+            if (first) first.setAttribute('tabindex', '0');
           }
         });
         currentQuestionIndex = quizQuestions.length;
