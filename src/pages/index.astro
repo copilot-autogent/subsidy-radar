@@ -1147,7 +1147,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             matchUrgency = false;
           } else {
             const days = daysUntilDate(deadlineDate);
-            matchUrgency = days !== null && days <= activeUrgency;
+            matchUrgency = days !== null && days >= 0 && days <= activeUrgency;
           }
         }
 
@@ -1244,12 +1244,14 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           const deadlineStatus = card.dataset.deadlineStatus ?? '';
           if (!deadlineDate || deadlineStatus === 'periodic') return;
           const days = daysUntilDate(deadlineDate);
-          if (days !== null && days <= threshold) count++;
+          if (days !== null && days >= 0 && days <= threshold) count++;
         });
         const badge = btn.querySelector<HTMLElement>('.count-badge');
         if (badge) badge.textContent = String(count);
         if (count === 0) {
           btn.disabled = true;
+          btn.setAttribute('aria-disabled', 'true');
+          btn.removeAttribute('aria-pressed');
           btn.classList.add('urgency-disabled');
         }
       });
