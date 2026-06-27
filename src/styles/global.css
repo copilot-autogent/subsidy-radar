@@ -1183,6 +1183,83 @@ main {
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* ── Difficulty filter row ───────────────────────────────────────────────── */
+.difficulty-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.filter-btn.diff-easy-filter {
+  border-color: #15803d;
+  color: #14532d;
+  background: #f0fdf4;
+  font-weight: 600;
+}
+
+.filter-btn.diff-easy-filter:hover,
+.filter-btn.diff-easy-filter.active {
+  background: #15803d;
+  border-color: #15803d;
+  color: white;
+}
+
+.filter-btn.diff-easy-filter .count-badge {
+  background: rgba(21, 128, 61, 0.15);
+}
+
+.filter-btn.diff-easy-filter:hover .count-badge,
+.filter-btn.diff-easy-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-btn.diff-medium-filter {
+  border-color: #a16207;
+  color: #713f12;
+  background: #fefce8;
+  font-weight: 600;
+}
+
+.filter-btn.diff-medium-filter:hover,
+.filter-btn.diff-medium-filter.active {
+  background: #a16207;
+  border-color: #a16207;
+  color: white;
+}
+
+.filter-btn.diff-medium-filter .count-badge {
+  background: rgba(161, 98, 7, 0.15);
+}
+
+.filter-btn.diff-medium-filter:hover .count-badge,
+.filter-btn.diff-medium-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-btn.diff-hard-filter {
+  border-color: #be123c;
+  color: #881337;
+  background: #fff1f2;
+  font-weight: 600;
+}
+
+.filter-btn.diff-hard-filter:hover,
+.filter-btn.diff-hard-filter.active {
+  background: #be123c;
+  border-color: #be123c;
+  color: white;
+}
+
+.filter-btn.diff-hard-filter .count-badge {
+  background: rgba(190, 18, 60, 0.15);
+}
+
+.filter-btn.diff-hard-filter:hover .count-badge,
+.filter-btn.diff-hard-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 /* ── Push Notification Row ───────────────────────────────────────────────── */
 .push-notif-row {
   display: flex;

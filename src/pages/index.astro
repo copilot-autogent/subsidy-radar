@@ -34,6 +34,19 @@ const disabledCount = subsidies.filter(s => s.situations?.includes('disabled')).
 const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
 const youthCount = youthHighlightCount;
 
+// Difficulty filter counts
+const VALID_DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
+const difficultyCounts: Record<string, number> = { easy: 0, medium: 0, hard: 0 };
+subsidies.forEach(s => {
+  const d = (String(s.difficulty ?? 'medium')).trim().toLowerCase() || 'medium';
+  if (VALID_DIFFICULTIES.has(d)) difficultyCounts[d]++;
+});
+const difficultyFilters = [
+  { key: 'easy',   label: '🟢 簡單', cls: 'diff-easy-filter' },
+  { key: 'medium', label: '🟡 中等', cls: 'diff-medium-filter' },
+  { key: 'hard',   label: '🔴 困難', cls: 'diff-hard-filter' },
+] as const;
+
 const deadlineLabel: Record<string, { text: string; cls: string }> = {
   open:     { text: '✅ 開放申請中', cls: 'status-open' },
   ongoing:  { text: '🔄 長期辦理',   cls: 'status-ongoing' },
@@ -255,6 +268,18 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         );
       })}
     </div>
+    <div class="difficulty-filters" role="group" aria-label="難度篩選">
+      {difficultyFilters.map(df => (
+        <button
+          class={`filter-btn ${df.cls}`}
+          data-difficulty={df.key}
+          type="button"
+          aria-pressed="false"
+        >
+          {df.label} <span class="count-badge">{difficultyCounts[df.key]}</span>
+        </button>
+      ))}
+    </div>
     <div class="sort-row">
       <button class="sort-btn" id="sortDifficulty" type="button" aria-pressed="false">
         依申請難度排序
@@ -406,7 +431,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
   <script>
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn:not([data-difficulty])');
+    const difficultyBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn[data-difficulty]');
     const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
     const resultsCount = document.getElementById('resultsCount')!;
     const noResults = document.getElementById('noResults')!;
@@ -418,6 +444,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     let activeCategory = '全部';
     let activeSituation = '';
+    let activeDifficulty = '';
     let searchQuery = '';
     let sortByDifficulty = false;
     /** 0 = off, 1 = high→low, 2 = low→high */
@@ -498,6 +525,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeCategory = '全部';
       filterBtns.forEach(b => b.classList.remove('active'));
       if (filterBtns[0]) filterBtns[0].classList.add('active');
+      activeDifficulty = '';
+      difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       
       // Apply multi-situation filter
       const isYouth = quizAnswers.age === 'youth';
@@ -560,9 +589,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // Reset filters
       activeCategory = '全部';
       activeSituation = '';
+      activeDifficulty = '';
       searchQuery = '';
       filterBtns.forEach(b => b.classList.remove('active'));
       if (filterBtns[0]) filterBtns[0].classList.add('active');
+      difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
@@ -916,8 +947,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const matchSituation = activeSituation === '' || situations.includes(activeSituation);
         const matchSearch = searchQuery === '' || search.includes(searchQuery);
         const matchTracked = !showTrackedOnly || (tracker[cardId] && tracker[cardId] !== '未申請');
+        const matchDifficulty = activeDifficulty === '' || (card.dataset.difficulty || 'medium').trim().toLowerCase() === activeDifficulty;
 
-        const show = matchCat && matchSituation && matchSearch && matchTracked;
+        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty;
         card.style.display = show ? '' : 'none';
         if (show) visible++;
       });
@@ -948,6 +980,24 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         btn.classList.add('active');
         activeCategory = btn.dataset.category ?? '全部';
         activeSituation = '';
+        updateDisplay();
+      });
+    });
+
+    difficultyBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.difficulty ?? '';
+        if (activeDifficulty === key) {
+          // toggle off
+          activeDifficulty = '';
+          btn.classList.remove('active');
+          btn.setAttribute('aria-pressed', 'false');
+        } else {
+          difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+          activeDifficulty = key;
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+        }
         updateDisplay();
       });
     });
@@ -1000,6 +1050,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       searchQuery = '';
       activeCategory = '全部';
       activeSituation = '';
+      activeDifficulty = '';
       showTrackedOnly = false;
       sortByDifficulty = false;
       sortAmountState = 0;
@@ -1013,6 +1064,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       filterBtns.forEach(b => b.classList.remove('active'));
       const allFilterBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
       if (allFilterBtn) allFilterBtn.classList.add('active');
+      difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       updateTrackerFilterLabel();
       updateDisplay();
     });
