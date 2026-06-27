@@ -1046,7 +1046,12 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // County filter: if no county selected, show all. If county selected, hide cards
         // that have a counties list which does NOT include the selected county.
         const cardCounties: string[] = card.dataset.counties ? JSON.parse(card.dataset.counties) : [];
-        const matchCounty = activeCounty === '' || cardCounties.length === 0 || cardCounties.includes(activeCounty);
+        // Normalize county name: 臺→台 so data variants match the dropdown values
+        const normalizeCounty = (c: string) => c.replace(/臺/g, '台');
+        const activeCountyNorm = normalizeCounty(activeCounty);
+        const matchCounty = activeCounty === ''
+          || cardCounties.length === 0
+          || cardCounties.some(c => normalizeCounty(c) === activeCountyNorm);
 
         const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty;
         card.style.display = show ? '' : 'none';
@@ -1275,12 +1280,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
       // Restore county filter from URL
       const countyParam = params.get('county') ?? '';
-      if (countyParam && countySelect) {
-        const opt = Array.from(countySelect.options).find(o => o.value === countyParam);
-        if (opt) {
-          countySelect.value = countyParam;
-          activeCounty = countyParam;
-          updateDisplay();
+      if (countyParam) {
+        if (countySelect) {
+          const opt = Array.from(countySelect.options).find(o => o.value === countyParam);
+          if (opt) {
+            countySelect.value = countyParam;
+            activeCounty = countyParam;
+            updateDisplay();
+          } else {
+            // Stale/invalid county param — clear it so URL matches UI state
+            const cleanParams = new URLSearchParams(window.location.search);
+            cleanParams.delete('county');
+            const qs = cleanParams.toString();
+            history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
+          }
         }
       }
     }
