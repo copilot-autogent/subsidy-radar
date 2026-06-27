@@ -1465,7 +1465,8 @@
     ],
     "situations": [
       "unemployed",
-      "disabled"
+      "disabled",
+      "employed"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -1587,8 +1588,8 @@
       "衛福部"
     ],
     "situations": [
-      "parent",
-      "employed"
+      "employed",
+      "fresh-grad"
     ],
     "isYouthHighlight": true,
     "difficulty": "hard",
