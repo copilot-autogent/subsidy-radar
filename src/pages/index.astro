@@ -106,8 +106,8 @@ const personas = [
 ];
 
 // Build JSON-LD ItemList for Google rich results (static, build-time, zero runtime cost)
-const siteUrl = `${Astro.site?.origin ?? 'https://copilot-autogent.github.io'}${import.meta.env.BASE_URL.replace(/\/?$/, '/')}`;
-const jsonLd = JSON.stringify({
+const siteBase = new URL(import.meta.env.BASE_URL, Astro.site ?? 'https://copilot-autogent.github.io').href.replace(/\/?$/, '/');
+const jsonLdRaw = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: '台灣政府補助清單',
@@ -115,9 +115,11 @@ const jsonLd = JSON.stringify({
     '@type': 'ListItem',
     position: i + 1,
     name: s.title,
-    url: siteUrl,
+    url: `${siteBase}#${s.id}`,
   })),
 });
+// Escape </script> sequences to prevent breaking out of the script tag
+const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
 ---
 
 <BaseLayout
