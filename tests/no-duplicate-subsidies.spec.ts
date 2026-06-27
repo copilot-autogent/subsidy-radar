@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { resolve, dirname } from 'node:path';
 
 interface Subsidy {
   id: string;
@@ -20,13 +21,20 @@ test.describe('subsidies.json data integrity', () => {
   let subsidies: Subsidy[];
 
   test.beforeAll(() => {
-    const dataPath = resolve(import.meta.dirname, '../src/data/subsidies.json');
-    subsidies = JSON.parse(readFileSync(dataPath, 'utf-8')) as Subsidy[];
+    const dataPath = resolve(dirname(fileURLToPath(import.meta.url)), '../src/data/subsidies.json');
+    const raw: unknown = JSON.parse(readFileSync(dataPath, 'utf-8'));
+    if (!Array.isArray(raw)) {
+      throw new Error(`subsidies.json root must be an array, got ${typeof raw}`);
+    }
+    subsidies = raw as Subsidy[];
   });
 
   test('no duplicate ids across all subsidies', () => {
     const seen = new Map<string, Subsidy[]>();
     for (const s of subsidies) {
+      if (typeof s.id !== 'string' || s.id === '') {
+        throw new Error(`Subsidy entry has missing or non-string id: ${JSON.stringify(s)}`);
+      }
       const entries = seen.get(s.id) ?? [];
       entries.push(s);
       seen.set(s.id, entries);
@@ -49,6 +57,9 @@ test.describe('subsidies.json data integrity', () => {
   test('no duplicate titles (normalized) across all subsidies', () => {
     const seen = new Map<string, Subsidy[]>();
     for (const s of subsidies) {
+      if (typeof s.title !== 'string') {
+        throw new Error(`Subsidy entry has missing or non-string title (id="${s.id}"): ${JSON.stringify(s)}`);
+      }
       const key = normalizeTitle(s.title);
       const entries = seen.get(key) ?? [];
       entries.push(s);
