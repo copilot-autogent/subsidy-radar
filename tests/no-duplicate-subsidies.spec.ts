@@ -38,9 +38,9 @@ test.describe('subsidies.json data integrity', () => {
       if (typeof s.id !== 'string' || s.id.trim() === '') {
         throw new Error(`Subsidy entry has missing, non-string, or whitespace-only id: ${JSON.stringify(s)}`);
       }
-      const entries = seen.get(s.id) ?? [];
+      const entries = seen.get(s.id.trim()) ?? [];
       entries.push(s);
-      seen.set(s.id, entries);
+      seen.set(s.id.trim(), entries);
     }
     const dupes = [...seen.entries()].filter(([, entries]) => entries.length > 1);
 
@@ -60,6 +60,9 @@ test.describe('subsidies.json data integrity', () => {
   test('no duplicate titles (normalized) across all subsidies', () => {
     const seen = new Map<string, Subsidy[]>();
     for (const s of subsidies) {
+      if (s == null || typeof s !== 'object') {
+        throw new Error(`subsidies.json contains a non-object entry: ${JSON.stringify(s)}`);
+      }
       if (typeof s.title !== 'string' || s.title.trim() === '') {
         throw new Error(`Subsidy entry has missing, non-string, or empty title (id="${s.id}"): ${JSON.stringify(s)}`);
       }
