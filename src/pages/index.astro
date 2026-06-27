@@ -35,10 +35,11 @@ const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL
 const youthCount = youthHighlightCount;
 
 // Difficulty filter counts
+const VALID_DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
 const difficultyCounts: Record<string, number> = { easy: 0, medium: 0, hard: 0 };
 subsidies.forEach(s => {
   const d = (s.difficulty ?? 'medium') as string;
-  if (d in difficultyCounts) difficultyCounts[d]++;
+  if (VALID_DIFFICULTIES.has(d)) difficultyCounts[d]++;
 });
 const difficultyFilters = [
   { key: 'easy',   label: '🟢 簡單', cls: 'diff-easy-filter' },
