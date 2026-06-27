@@ -300,7 +300,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
   <div class="eligible-total-banner" id="eligibleTotalBanner" style="display:none" role="status" aria-live="polite">
     <span class="banner-emoji">💰</span>
-    <span id="totalBannerText" class="total-banner-text" data-tooltip="此金額為各項補助最高上限加總，實際核撥依個人資格而定" title="此金額為各項補助最高上限加總，實際核撥依個人資格而定"></span>
+    <span id="totalBannerText" class="total-banner-text" tabindex="0" title="此金額為各項補助最高上限加總，實際核撥依個人資格而定" aria-label="此金額為各項補助最高上限加總，實際核撥依個人資格而定"></span>
   </div>
 
   <div class="tracker-deadline-banner" id="trackerDeadlineBanner" style="display:none" role="status" aria-live="polite">
@@ -609,7 +609,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
       isQuizActive = false;
-      eligibleTotalBanner.style.display = 'none';
+      updateEligibleTotalBanner();
     });
 
     // ── Tracker ──────────────────────────────────────────────────────────────

@@ -417,24 +417,6 @@ main {
   cursor: help;
 }
 
-.total-banner-text[data-tooltip]:hover::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 0;
-  top: calc(100% + 6px);
-  background: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  padding: 0.4rem 0.65rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 400;
-  z-index: 100;
-  pointer-events: none;
-  max-width: min(90vw, 360px);
-  white-space: normal;
-  line-height: 1.4;
-}
-
 .banner-emoji {
   font-size: 1.4rem;
   flex-shrink: 0;
