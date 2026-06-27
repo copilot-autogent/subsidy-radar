@@ -615,7 +615,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeDifficulty = '';
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       activeUrgency = 0;
-      urgencyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
       const isYouth = quizAnswers.age === 'youth';
       let visible = 0;
       
@@ -739,7 +739,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       activeUrgency = 0;
-      urgencyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
@@ -1266,9 +1266,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           btn.classList.remove('active');
           btn.setAttribute('aria-pressed', 'false');
         } else {
-          urgencyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+          urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
           activeUrgency = threshold;
-          btn.classList.add('active');
           btn.setAttribute('aria-pressed', 'true');
         }
         updateDisplay();
@@ -1357,7 +1356,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       activeUrgency = 0;
-      urgencyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
       updateTrackerFilterLabel();
       updateCountyUrl();
       updateDisplay();

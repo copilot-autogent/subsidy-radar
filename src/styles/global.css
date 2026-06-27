@@ -1283,7 +1283,7 @@ main {
   font-weight: 600;
 }
 
-.filter-btn.urgency-7-filter:hover,
+.filter-btn.urgency-7-filter:hover:not(:disabled),
 .filter-btn.urgency-7-filter.active {
   background: #dc2626;
   border-color: #dc2626;
@@ -1306,7 +1306,7 @@ main {
   font-weight: 600;
 }
 
-.filter-btn.urgency-30-filter:hover,
+.filter-btn.urgency-30-filter:hover:not(:disabled),
 .filter-btn.urgency-30-filter.active {
   background: #d97706;
   border-color: #d97706;
@@ -1329,7 +1329,7 @@ main {
   font-weight: 600;
 }
 
-.filter-btn.urgency-60-filter:hover,
+.filter-btn.urgency-60-filter:hover:not(:disabled),
 .filter-btn.urgency-60-filter.active {
   background: #0369a1;
   border-color: #0369a1;
