@@ -490,6 +490,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const sortAmountBtn = document.getElementById('sortAmount') as HTMLButtonElement;
     const trackerFilterBtn = document.getElementById('trackerFilter') as HTMLButtonElement;
 
+    // Normalize county names: 臺→台 so data variants match the dropdown values
+    const normalizeCounty = (c: string) => c.replace(/臺/g, '台');
+
     let activeCategory = '全部';
     let activeSituation = '';
     let activeDifficulty = '';
@@ -1046,8 +1049,6 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // County filter: if no county selected, show all. If county selected, hide cards
         // that have a counties list which does NOT include the selected county.
         const cardCounties: string[] = card.dataset.counties ? JSON.parse(card.dataset.counties) : [];
-        // Normalize county name: 臺→台 so data variants match the dropdown values
-        const normalizeCounty = (c: string) => c.replace(/臺/g, '台');
         const activeCountyNorm = normalizeCounty(activeCounty);
         const matchCounty = activeCounty === ''
           || cardCounties.length === 0
