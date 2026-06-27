@@ -242,7 +242,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         autocomplete="off"
       />
     </div>
-    <div class="category-filters" role="group" aria-label="類別篩選">
+    <div class="category-filters" role="toolbar" aria-label="類別篩選">
       {categories.map((cat, idx) => {
         const count = cat === '全部' 
           ? subsidies.length 
@@ -664,8 +664,23 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
     });
 
+    // Radiogroup arrow-key navigation within each quiz question
+    document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+      group.addEventListener('keydown', (e: KeyboardEvent) => {
+        const radios = Array.from(group.querySelectorAll<HTMLButtonElement>('.quiz-option'));
+        const idx = radios.indexOf(e.target as HTMLButtonElement);
+        if (idx === -1) return;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          radios[(idx + 1) % radios.length].focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          radios[(idx - 1 + radios.length) % radios.length].focus();
+        }
+      });
+    });
+
     quizResetBtn.addEventListener('click', () => {
-      quizAnswers = {};
       currentQuestionIndex = 0;
       quizOptions.forEach(opt => {
         opt.classList.remove('selected');
@@ -716,7 +731,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       btn.className = `tracker-btn ${STATUS_CLASS[status]}`;
       btn.title = `申請進度：${status}（點擊切換）`;
       // Update aria-label with current status and subsidy name
-      const card = btn.closest<HTMLElement>('[data-id]');
+      const card = btn.closest<HTMLElement>('.subsidy-card');
       const cardTitle = card?.querySelector<HTMLElement>('.card-title')?.textContent?.trim() ?? '';
       btn.setAttribute('aria-label', `申請狀態：${status}，點擊切換${cardTitle ? ` — ${cardTitle}` : ''}`);
     }

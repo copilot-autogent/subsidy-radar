@@ -1742,7 +1742,6 @@ main {
 
   .subsidy-card {
     border: 2px solid ButtonText;
-    forced-color-adjust: none;
   }
 
   .subsidy-card:focus,
@@ -1756,10 +1755,9 @@ main {
   .difficulty-badge,
   .countdown-badge {
     border: 1px solid currentColor;
-    forced-color-adjust: none;
   }
 
-  /* Ensure countdown emojis (🔴🟡🟢) are not replaced by system glyphs */
+  /* Ensure countdown emojis (🔴🟡🟢) render in HCM; does not affect text contrast */
   .countdown-badge,
   .tracker-deadline-item {
     forced-color-adjust: none;
