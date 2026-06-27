@@ -1294,7 +1294,7 @@ main {
   background: rgba(220, 38, 38, 0.15);
 }
 
-.filter-btn.urgency-7-filter:hover .count-badge,
+.filter-btn.urgency-7-filter:hover:not(:disabled) .count-badge,
 .filter-btn.urgency-7-filter.active .count-badge {
   background: rgba(255, 255, 255, 0.3);
 }
@@ -1317,7 +1317,7 @@ main {
   background: rgba(217, 119, 6, 0.15);
 }
 
-.filter-btn.urgency-30-filter:hover .count-badge,
+.filter-btn.urgency-30-filter:hover:not(:disabled) .count-badge,
 .filter-btn.urgency-30-filter.active .count-badge {
   background: rgba(255, 255, 255, 0.3);
 }
@@ -1340,7 +1340,7 @@ main {
   background: rgba(3, 105, 161, 0.15);
 }
 
-.filter-btn.urgency-60-filter:hover .count-badge,
+.filter-btn.urgency-60-filter:hover:not(:disabled) .count-badge,
 .filter-btn.urgency-60-filter.active .count-badge {
   background: rgba(255, 255, 255, 0.3);
 }
