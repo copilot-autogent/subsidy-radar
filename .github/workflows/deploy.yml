@@ -35,6 +35,51 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  smoke-test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fetch live site and assert HTTP 200 + content marker
+        env:
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          # Wait briefly for CDN propagation then verify the live site.
+          # Uses Node.js (no curl) per project runtime constraints.
+          # Writes response to a temp file to avoid shell mangling of multibyte chars.
+          sleep 10
+          node - <<'SMOKE_EOF'
+          const https = require('https');
+          const fs = require('fs');
+          const url = process.env.PAGE_URL || 'https://copilot-autogent.github.io/subsidy-radar/';
+
+          https.get(url, (res) => {
+            const { statusCode } = res;
+            if (statusCode !== 200) {
+              console.error(`❌ HTTP ${statusCode} — expected 200`);
+              process.exit(1);
+            }
+            let body = '';
+            res.setEncoding('utf8');
+            res.on('data', chunk => body += chunk);
+            res.on('end', () => {
+              fs.writeFileSync('/tmp/smoke-response.html', body);
+              if (!body.includes('subsidy-radar')) {
+                console.error('❌ Marker "subsidy-radar" not found in response body');
+                process.exit(1);
+              }
+              console.log(`✅ HTTP ${statusCode} + marker found — deploy verified`);
+            });
+          }).on('error', (err) => {
+            console.error(`❌ Request failed: ${err.message}`);
+            process.exit(1);
+          });
+          SMOKE_EOF

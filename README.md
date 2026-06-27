@@ -42,6 +42,18 @@ Subsidy data lives in `src/data/subsidies.json`. Each entry has:
 - **Phase 3**: Education subsidies (教育補助)
 - **Phase 4**: Startup subsidies (創業補助) + eligibility calculator
 
+## Deploy Verification
+
+Every push to `main` runs a three-stage CI pipeline:
+
+1. **build** — `npm ci && npm run build`
+2. **deploy** — publish `dist/` to GitHub Pages
+3. **smoke-test** — fetches the live URL and asserts HTTP 200 + the `subsidy-radar` content marker is present
+
+A failed smoke-test means the deploy did not propagate correctly and surfaces as a **red CI check** on the merge commit — "merged ≠ live" failures are no longer silent.
+
+> Sprint agents that merge to `main` must confirm the `smoke-test` job passes (or use `verify_deploy` as an explicit post-merge gate) before closing the issue.
+
 ## Data Sources
 
 - [內政部國土管理署](https://www.cpami.gov.tw/)
