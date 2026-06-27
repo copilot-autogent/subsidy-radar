@@ -22,7 +22,7 @@ test.describe('JSON-LD structured data', () => {
     expect(data.name).toBe('台灣政府補助清單');
   });
 
-  test('ItemList contains at least one ListItem with name and unique url', async ({ page }) => {
+  test('all ListItems have required fields, correct positions, and unique fragment URLs', async ({ page }) => {
     await page.goto('/');
     const scriptContent = await page.evaluate(() => {
       const el = document.querySelector('script[type="application/ld+json"]');
@@ -31,14 +31,24 @@ test.describe('JSON-LD structured data', () => {
     const data = JSON.parse(scriptContent!);
     const items: { '@type': string; position: number; name: string; url: string }[] = data.itemListElement;
     expect(items.length).toBeGreaterThan(0);
-    const first = items[0];
-    expect(first['@type']).toBe('ListItem');
-    expect(first.position).toBe(1);
-    expect(typeof first.name).toBe('string');
-    expect(first.name.length).toBeGreaterThan(0);
-    expect(first.url).toContain('http');
-    // Each item URL should be unique (fragment-based)
+
+    items.forEach((item, index) => {
+      expect(item['@type']).toBe('ListItem');
+      expect(item.position).toBe(index + 1);
+      expect(typeof item.name).toBe('string');
+      expect(item.name.length).toBeGreaterThan(0);
+      expect(item.url).toMatch(/^https?:\/\/.+#.+/);
+    });
+
+    // All URLs must be unique (each subsidy has its own fragment anchor)
     const urls = new Set(items.map(i => i.url));
     expect(urls.size).toBe(items.length);
+
+    // Each fragment must correspond to an actual element id on the page
+    const ids = items.map(i => new URL(i.url).hash.slice(1));
+    for (const id of ids) {
+      const el = await page.locator(`#${CSS.escape(id)}`).first();
+      await expect(el).toBeAttached();
+    }
   });
 });
