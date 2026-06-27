@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
 type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled';
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[] };
 const subsidies = subsidiesRaw as Subsidy[];
 
 // Compute category counts for filter buttons
@@ -280,6 +280,44 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         </button>
       ))}
     </div>
+    <div class="county-filter-row">
+      <label class="county-filter-label" for="countySelect">📍 縣市篩選</label>
+      <select id="countySelect" class="county-select" aria-label="選擇縣市">
+        <option value="">全國（顯示所有）</option>
+        <optgroup label="北部">
+          <option value="台北市">台北市</option>
+          <option value="新北市">新北市</option>
+          <option value="基隆市">基隆市</option>
+          <option value="桃園市">桃園市</option>
+          <option value="新竹市">新竹市</option>
+          <option value="新竹縣">新竹縣</option>
+          <option value="宜蘭縣">宜蘭縣</option>
+        </optgroup>
+        <optgroup label="中部">
+          <option value="台中市">台中市</option>
+          <option value="苗栗縣">苗栗縣</option>
+          <option value="彰化縣">彰化縣</option>
+          <option value="南投縣">南投縣</option>
+          <option value="雲林縣">雲林縣</option>
+        </optgroup>
+        <optgroup label="南部">
+          <option value="台南市">台南市</option>
+          <option value="高雄市">高雄市</option>
+          <option value="嘉義市">嘉義市</option>
+          <option value="嘉義縣">嘉義縣</option>
+          <option value="屏東縣">屏東縣</option>
+        </optgroup>
+        <optgroup label="東部">
+          <option value="花蓮縣">花蓮縣</option>
+          <option value="台東縣">台東縣</option>
+        </optgroup>
+        <optgroup label="離島">
+          <option value="澎湖縣">澎湖縣</option>
+          <option value="金門縣">金門縣</option>
+          <option value="連江縣">連江縣</option>
+        </optgroup>
+      </select>
+    </div>
     <div class="sort-row">
       <button class="sort-btn" id="sortDifficulty" type="button" aria-pressed="false">
         依申請難度排序
@@ -355,6 +393,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           data-added-date={s.addedDate ?? ''}
           data-amount-value={parseAmountValue(s.amount ?? '')}
           data-max-amount={s.maxAmount != null ? String(s.maxAmount) : ''}
+          data-counties={s.counties ? JSON.stringify(s.counties) : ''}
         >
           <div class="card-header">
             <h2 class="card-title">{s.title}</h2>
@@ -442,6 +481,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
     const resultsCount = document.getElementById('resultsCount')!;
     const noResults = document.getElementById('noResults')!;
+    const countySelect = document.getElementById('countySelect') as HTMLSelectElement | null;
     const eligibilityBanner = document.getElementById('eligibilityBanner')!;
     const bannerText = document.getElementById('bannerText')!;
     const eligibleTotalBanner = document.getElementById('eligibleTotalBanner')!;
@@ -459,6 +499,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     let sortAmountState: 0 | 1 | 2 = 0;
     let showTrackedOnly = false;
     let isQuizActive = false;
+    let activeCounty = '';
 
     const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
     const RECENCY_FILTER_LABEL = _recencyBtn?.dataset.category ?? '🆕 最新';
@@ -500,6 +541,17 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.delete('q1');
       params.delete('q2');
       params.delete('q3');
+      const qs = params.toString();
+      history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
+    }
+
+    function updateCountyUrl() {
+      const params = new URLSearchParams(window.location.search);
+      if (activeCounty) {
+        params.set('county', activeCounty);
+      } else {
+        params.delete('county');
+      }
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
@@ -991,7 +1043,12 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const matchTracked = !showTrackedOnly || (tracker[cardId] && tracker[cardId] !== '未申請');
         const matchDifficulty = activeDifficulty === '' || (card.dataset.difficulty || 'medium').trim().toLowerCase() === activeDifficulty;
 
-        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty;
+        // County filter: if no county selected, show all. If county selected, hide cards
+        // that have a counties list which does NOT include the selected county.
+        const cardCounties: string[] = card.dataset.counties ? JSON.parse(card.dataset.counties) : [];
+        const matchCounty = activeCounty === '' || cardCounties.length === 0 || cardCounties.includes(activeCounty);
+
+        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty;
         card.style.display = show ? '' : 'none';
         if (show) visible++;
       });
@@ -1084,6 +1141,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       updateDisplay();
     });
 
+    // ── County filter ────────────────────────────────────────────────────────
+    countySelect?.addEventListener('change', () => {
+      activeCounty = countySelect.value;
+      updateCountyUrl();
+      updateDisplay();
+    });
+
     // ── Empty-state CTA buttons ────────────────────────────────────────────────
     const clearFiltersBtn = document.getElementById('clearFiltersBtn') as HTMLButtonElement | null;
     const startQuizBtn = document.getElementById('startQuizBtn') as HTMLButtonElement | null;
@@ -1094,6 +1158,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeCategory = '全部';
       activeSituation = '';
       activeDifficulty = '';
+      activeCounty = '';
+      if (countySelect) countySelect.value = '';
       showTrackedOnly = false;
       isQuizActive = false;
       sortByDifficulty = false;
@@ -1110,6 +1176,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       if (allFilterBtn) allFilterBtn.classList.add('active');
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       updateTrackerFilterLabel();
+      updateCountyUrl();
       updateDisplay();
     });
 
@@ -1204,6 +1271,17 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       } else if (params.has('q1') || params.has('q2') || params.has('q3')) {
         // Stale/partial/invalid params — clear them so the URL matches UI state
         clearQuizUrl();
+      }
+
+      // Restore county filter from URL
+      const countyParam = params.get('county') ?? '';
+      if (countyParam && countySelect) {
+        const opt = Array.from(countySelect.options).find(o => o.value === countyParam);
+        if (opt) {
+          countySelect.value = countyParam;
+          activeCounty = countyParam;
+          updateDisplay();
+        }
       }
     }
 

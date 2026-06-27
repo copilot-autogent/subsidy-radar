@@ -164,6 +164,44 @@ main {
   justify-content: flex-end;
 }
 
+.county-filter-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.county-filter-label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.county-select {
+  padding: 0.35rem 0.75rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  min-width: 9rem;
+  max-width: 14rem;
+}
+
+.county-select:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+}
+
+.county-select:hover {
+  border-color: var(--color-primary);
+}
+
 .sort-btn {
   padding: 0.4rem 1rem;
   border: 1.5px solid var(--color-border);
