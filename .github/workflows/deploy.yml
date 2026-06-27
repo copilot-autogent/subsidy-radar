@@ -35,6 +35,78 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  smoke-test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Fetch live site and assert HTTP 200 + content marker
+        env:
+          PAGE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          # Verify the live site responds correctly after deploy.
+          # Uses Node.js HTTPS built-ins (no curl) per project runtime constraints.
+          node - <<'SMOKE_EOF'
+          const https = require('https');
+          const http = require('http');
+          const url = process.env.PAGE_URL;
+          if (!url) { console.error('❌ PAGE_URL is empty — deploy output not set'); process.exit(1); }
+
+          // Follow up to 5 redirects. Resolves relative Location headers against base URL.
+          function fetch(targetUrl, redirectsLeft, timeoutMs, callback) {
+            let called = false;
+            const done = (...args) => { if (!called) { called = true; callback(...args); } };
+            const mod = targetUrl.startsWith('https:') ? https : http;
+            const req = mod.get(targetUrl, { timeout: timeoutMs }, (res) => {
+              const { statusCode, headers } = res;
+              if ([301, 302, 303, 307, 308].includes(statusCode) && headers.location && redirectsLeft > 0) {
+                res.resume();
+                const next = new URL(headers.location, targetUrl).toString();
+                return fetch(next, redirectsLeft - 1, timeoutMs, callback);
+              }
+              let body = '';
+              res.setEncoding('utf8');
+              res.on('data', chunk => body += chunk);
+              res.on('error', err => done(new Error(`Stream error: ${err.message}`), statusCode, null));
+              res.on('end', () => done(null, statusCode, body));
+            });
+            req.on('timeout', () => { req.destroy(); done(new Error('Request timed out'), null, null); });
+            req.on('error', err => done(err, null, null));
+          }
+
+          // Retry up to 6 times with 15 s between attempts (≤ 75 s of wait) to
+          // absorb CDN propagation lag after GitHub Pages deploy.
+          let attempt = 0;
+          const maxAttempts = 6;
+          const retryDelay = 15000;
+
+          function run() {
+            attempt++;
+            fetch(url, 5, 20000, (err, status, body) => {
+              if (err || status !== 200) {
+                const msg = err ? err.message : `HTTP ${status}`;
+                if (attempt < maxAttempts) {
+                  console.log(`⏳ Attempt ${attempt}/${maxAttempts}: ${msg} — retrying in ${retryDelay / 1000}s`);
+                  return setTimeout(run, retryDelay);
+                }
+                console.error(`❌ Attempt ${attempt}/${maxAttempts}: ${msg} — giving up`);
+                process.exit(1);
+              }
+              // Marker: CSS class rendered by Astro into the static HTML nav element.
+              // Present in every page of the site; absent from GitHub's generic 404 page.
+              if (!body.includes('class="logo"')) {
+                console.error('❌ App-shell marker (class="logo") not found — deploy may be stale or broken');
+                process.exit(1);
+              }
+              console.log(`✅ Attempt ${attempt}: HTTP ${status} + app-shell marker found — deploy verified`);
+              process.exit(0);
+            });
+          }
+          run();
+          SMOKE_EOF
