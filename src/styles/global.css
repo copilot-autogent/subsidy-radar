@@ -808,7 +808,7 @@ main {
 }
 
 .card-link:focus-visible {
-  outline: 3px solid #fbbf24;
+  outline: 3px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -1662,14 +1662,14 @@ main {
 
 /* ── High-Contrast Mode (Windows HCM / forced-colors) ─────────────────────── */
 @media (forced-colors: active) {
-  /* Restore borders on elements that convey state solely through background-color */
+  /* Reinforce borders on elements that convey active state via background-color alone.
+     System color keywords work without forced-color-adjust:none — the UA applies them. */
   .filter-btn,
   .filter-btn.active,
   .filter-btn.youth-filter,
   .filter-btn.senior-filter,
   .filter-btn.disability-filter {
     border: 2px solid ButtonText;
-    forced-color-adjust: none;
     background: ButtonFace;
     color: ButtonText;
   }
@@ -1684,7 +1684,6 @@ main {
   .sort-btn,
   .sort-btn.active {
     border: 2px solid ButtonText;
-    forced-color-adjust: none;
     background: ButtonFace;
     color: ButtonText;
   }
@@ -1702,7 +1701,6 @@ main {
   .tracker-btn.ts-inprogress,
   .tracker-btn.ts-done {
     border: 2px solid ButtonText;
-    forced-color-adjust: none;
     background: ButtonFace;
     color: ButtonText;
   }
@@ -1715,7 +1713,6 @@ main {
 
   .quiz-option {
     border: 2px solid ButtonText;
-    forced-color-adjust: none;
     background: ButtonFace;
     color: ButtonText;
   }
@@ -1728,7 +1725,6 @@ main {
   }
 
   .card-link {
-    forced-color-adjust: none;
     background: ButtonFace;
     color: LinkText;
     border: 2px solid LinkText;

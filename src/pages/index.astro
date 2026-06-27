@@ -641,13 +641,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // Save answer
         quizAnswers[questionType] = value;
         
-        // Visual feedback + ARIA state
+        // Visual feedback + ARIA state + roving tabindex
         question.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach(opt => {
           opt.classList.remove('selected');
           opt.setAttribute('aria-checked', 'false');
+          opt.setAttribute('tabindex', '-1');
         });
         btn.classList.add('selected');
         btn.setAttribute('aria-checked', 'true');
+        btn.setAttribute('tabindex', '0');
         
         // Advance to next question
         currentQuestionIndex++;
@@ -664,27 +666,45 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
     });
 
-    // Radiogroup arrow-key navigation within each quiz question
+    // Radiogroup arrow-key navigation within each quiz question (manual-selection variant:
+    // arrow keys move focus + update tabindex only; selection fires on click/Enter/Space)
     document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+      // Initialise: first option is the single tab stop
+      group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((btn, i) => {
+        btn.setAttribute('tabindex', i === 0 ? '0' : '-1');
+      });
       group.addEventListener('keydown', (e: KeyboardEvent) => {
         const radios = Array.from(group.querySelectorAll<HTMLButtonElement>('.quiz-option'));
         const idx = radios.indexOf(e.target as HTMLButtonElement);
         if (idx === -1) return;
+        let nextIdx = -1;
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
           e.preventDefault();
-          radios[(idx + 1) % radios.length].focus();
+          nextIdx = (idx + 1) % radios.length;
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
           e.preventDefault();
-          radios[(idx - 1 + radios.length) % radios.length].focus();
+          nextIdx = (idx - 1 + radios.length) % radios.length;
+        }
+        if (nextIdx !== -1) {
+          radios[idx].setAttribute('tabindex', '-1');
+          radios[nextIdx].setAttribute('tabindex', '0');
+          radios[nextIdx].focus();
         }
       });
     });
 
     quizResetBtn.addEventListener('click', () => {
+      quizAnswers = {};
       currentQuestionIndex = 0;
       quizOptions.forEach(opt => {
         opt.classList.remove('selected');
         opt.setAttribute('aria-checked', 'false');
+      });
+      // Reinitialise roving tabindex for each radiogroup
+      document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+        group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((btn, i) => {
+          btn.setAttribute('tabindex', i === 0 ? '0' : '-1');
+        });
       });
       showQuizQuestion(0);
       quizShareContainer.style.display = 'none';
@@ -695,8 +715,21 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeSituation = '';
       activeDifficulty = '';
       searchQuery = '';
-      filterBtns.forEach(b => b.classList.remove('active'));
-      if (filterBtns[0]) filterBtns[0].classList.add('active');
+      filterBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('tabindex', '-1');
+      });
+      const allBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
+      if (allBtn) {
+        allBtn.classList.add('active');
+        allBtn.setAttribute('aria-pressed', 'true');
+        allBtn.setAttribute('tabindex', '0');
+      } else if (filterBtns[0]) {
+        filterBtns[0].classList.add('active');
+        filterBtns[0].setAttribute('aria-pressed', 'true');
+        filterBtns[0].setAttribute('tabindex', '0');
+      }
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
