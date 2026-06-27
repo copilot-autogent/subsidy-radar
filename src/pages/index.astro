@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
 type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled';
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[] };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number };
 const subsidies = subsidiesRaw as Subsidy[];
 
 // Compute category counts for filter buttons
@@ -298,6 +298,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     <span id="bannerText"></span>
   </div>
 
+  <div class="eligible-total-banner" id="eligibleTotalBanner" style="display:none" role="status" aria-live="polite">
+    <span class="banner-emoji">💰</span>
+    <span id="totalBannerText" class="total-banner-text" tabindex="0" title="此金額為各項補助最高上限加總，實際核撥依個人資格而定" aria-label="此金額為各項補助最高上限加總，實際核撥依個人資格而定"></span>
+  </div>
+
   <div class="tracker-deadline-banner" id="trackerDeadlineBanner" style="display:none" role="status" aria-live="polite">
     <div class="tracker-deadline-banner-header">
       <span>📋 你追蹤中的補助即將截止：</span>
@@ -349,6 +354,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           data-deadline-status={s.deadlineStatus ?? ''}
           data-added-date={s.addedDate ?? ''}
           data-amount-value={parseAmountValue(s.amount ?? '')}
+          data-max-amount={s.maxAmount != null ? String(s.maxAmount) : ''}
         >
           <div class="card-header">
             <h2 class="card-title">{s.title}</h2>
@@ -438,6 +444,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const noResults = document.getElementById('noResults')!;
     const eligibilityBanner = document.getElementById('eligibilityBanner')!;
     const bannerText = document.getElementById('bannerText')!;
+    const eligibleTotalBanner = document.getElementById('eligibleTotalBanner')!;
+    const totalBannerText = document.getElementById('totalBannerText')!;
     const sortBtn = document.getElementById('sortDifficulty') as HTMLButtonElement;
     const sortAmountBtn = document.getElementById('sortAmount') as HTMLButtonElement;
     const trackerFilterBtn = document.getElementById('trackerFilter') as HTMLButtonElement;
@@ -450,6 +458,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     /** 0 = off, 1 = high→low, 2 = low→high */
     let sortAmountState: 0 | 1 | 2 = 0;
     let showTrackedOnly = false;
+    let isQuizActive = false;
 
     const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
     const RECENCY_FILTER_LABEL = _recencyBtn?.dataset.category ?? '🆕 最新';
@@ -548,6 +557,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       
       resultsCount.textContent = `共 ${visible} 項補助符合你的情況`;
       eligibilityBanner.style.display = 'none';
+      isQuizActive = true;
+      updateEligibleTotalBanner();
     }
 
     quizOptions.forEach(btn => {
@@ -597,6 +608,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
+      isQuizActive = false;
+      updateEligibleTotalBanner();
     });
 
     // ── Tracker ──────────────────────────────────────────────────────────────
@@ -912,6 +925,35 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
     }
 
+    // ── Eligible-Total Banner ─────────────────────────────────────────────────
+    const _ntdFmt = new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', maximumFractionDigits: 0 });
+
+    function updateEligibleTotalBanner() {
+      const filterActive = isQuizActive || activeCategory !== '全部' || activeDifficulty !== '' || searchQuery !== '' || activeSituation !== '' || showTrackedOnly;
+      if (!filterActive) {
+        eligibleTotalBanner.style.display = 'none';
+        return;
+      }
+      let total = 0;
+      let hasAmount = false;
+      cards.forEach(card => {
+        if (card.style.display === 'none') return;
+        const raw = card.dataset.maxAmount ?? '';
+        if (raw === '') return;
+        const val = Number(raw);
+        if (Number.isFinite(val) && val > 0) {
+          total += val;
+          hasAmount = true;
+        }
+      });
+      if (!hasAmount) {
+        eligibleTotalBanner.style.display = 'none';
+        return;
+      }
+      totalBannerText.textContent = `估計最高可領取 ${_ntdFmt.format(total)}`;
+      eligibleTotalBanner.style.display = 'flex';
+    }
+
     // ── Display ──────────────────────────────────────────────────────────────
     function countEligible(situation: string): number {
       return Array.from(cards).filter(card => {
@@ -966,6 +1008,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       } else {
         eligibilityBanner.style.display = 'none';
       }
+      updateEligibleTotalBanner();
     }
 
     // ── Event listeners ──────────────────────────────────────────────────────
@@ -1052,6 +1095,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeSituation = '';
       activeDifficulty = '';
       showTrackedOnly = false;
+      isQuizActive = false;
       sortByDifficulty = false;
       sortAmountState = 0;
       sortBtn.classList.remove('active');

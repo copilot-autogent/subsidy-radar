@@ -397,6 +397,26 @@ main {
   animation: bannerSlideIn 0.3s ease-out;
 }
 
+.eligible-total-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 100%);
+  color: #eff6ff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border: 1px solid #3b82f6;
+  animation: bannerSlideIn 0.3s ease-out;
+}
+
+.total-banner-text {
+  position: relative;
+  cursor: help;
+}
+
 .banner-emoji {
   font-size: 1.4rem;
   flex-shrink: 0;
@@ -1515,6 +1535,7 @@ main {
   .controls,
   .sort-row,
   .eligibility-banner,
+  .eligible-total-banner,
   .tracker-deadline-banner,
   .tracker-summary-banner,
   .deadline-panel,
