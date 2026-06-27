@@ -283,6 +283,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         </button>
       ))}
     </div>
+    <div class="urgency-filters" role="group" aria-label="截止日期篩選">
+      <button class="filter-btn urgency-7-filter" data-urgency="7" type="button" aria-pressed="false">🔴 7天內截止 <span class="count-badge">0</span></button>
+      <button class="filter-btn urgency-30-filter" data-urgency="30" type="button" aria-pressed="false">🟡 30天內截止 <span class="count-badge">0</span></button>
+      <button class="filter-btn urgency-60-filter" data-urgency="60" type="button" aria-pressed="false">📅 60天內截止 <span class="count-badge">0</span></button>
+    </div>
     <div class="county-filter-row">
       <label class="county-filter-label" for="countySelect">📍 縣市篩選</label>
       <select id="countySelect" class="county-select" aria-label="選擇縣市">
@@ -479,8 +484,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
   <script>
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn:not([data-difficulty])');
+    const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn:not([data-difficulty]):not([data-urgency])');
     const difficultyBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn[data-difficulty]');
+    const urgencyBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn[data-urgency]');
     const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
     const resultsCount = document.getElementById('resultsCount')!;
     const noResults = document.getElementById('noResults')!;
@@ -506,6 +512,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     let showTrackedOnly = false;
     let isQuizActive = false;
     let activeCounty = '';
+    let activeUrgency = 0;
 
     const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
     const RECENCY_FILTER_LABEL = _recencyBtn?.dataset.category ?? '🆕 最新';
@@ -607,8 +614,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       activeDifficulty = '';
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-      
-      // Apply multi-situation filter
+      activeUrgency = 0;
+      urgencyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       const isYouth = quizAnswers.age === 'youth';
       let visible = 0;
       
@@ -731,6 +738,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         filterBtns[0].setAttribute('tabindex', '0');
       }
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      activeUrgency = 0;
+      urgencyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
@@ -1059,7 +1068,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const _ntdFmt = new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', maximumFractionDigits: 0 });
 
     function updateEligibleTotalBanner() {
-      const filterActive = isQuizActive || activeCategory !== '全部' || activeDifficulty !== '' || searchQuery !== '' || activeSituation !== '' || showTrackedOnly;
+      const filterActive = isQuizActive || activeCategory !== '全部' || activeDifficulty !== '' || searchQuery !== '' || activeSituation !== '' || showTrackedOnly || activeUrgency !== 0;
       if (!filterActive) {
         eligibleTotalBanner.style.display = 'none';
         return;
@@ -1129,7 +1138,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           || cardCounties.length === 0
           || cardCounties.some(c => normalizeCounty(c) === activeCountyNorm);
 
-        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty;
+        // Urgency filter: only match subsidies with a non-periodic deadlineDate within threshold
+        let matchUrgency = true;
+        if (activeUrgency !== 0) {
+          const deadlineDate = card.dataset.deadline ?? '';
+          const deadlineStatus = card.dataset.deadlineStatus ?? '';
+          if (!deadlineDate || deadlineStatus === 'periodic') {
+            matchUrgency = false;
+          } else {
+            const days = daysUntilDate(deadlineDate);
+            matchUrgency = days !== null && days <= activeUrgency;
+          }
+        }
+
+        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty && matchUrgency;
         card.style.display = show ? '' : 'none';
         if (show) visible++;
       });
@@ -1205,6 +1227,45 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         } else {
           difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
           activeDifficulty = key;
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+        }
+        updateDisplay();
+      });
+    });
+
+    // ── Urgency chips ─────────────────────────────────────────────────────────
+    function initUrgencyCounts() {
+      urgencyBtns.forEach(btn => {
+        const threshold = Number(btn.dataset.urgency ?? '0');
+        let count = 0;
+        cards.forEach(card => {
+          const deadlineDate = card.dataset.deadline ?? '';
+          const deadlineStatus = card.dataset.deadlineStatus ?? '';
+          if (!deadlineDate || deadlineStatus === 'periodic') return;
+          const days = daysUntilDate(deadlineDate);
+          if (days !== null && days <= threshold) count++;
+        });
+        const badge = btn.querySelector<HTMLElement>('.count-badge');
+        if (badge) badge.textContent = String(count);
+        if (count === 0) {
+          btn.disabled = true;
+          btn.classList.add('urgency-disabled');
+        }
+      });
+    }
+
+    urgencyBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const threshold = Number(btn.dataset.urgency ?? '0');
+        if (activeUrgency === threshold) {
+          // toggle off
+          activeUrgency = 0;
+          btn.classList.remove('active');
+          btn.setAttribute('aria-pressed', 'false');
+        } else {
+          urgencyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+          activeUrgency = threshold;
           btn.classList.add('active');
           btn.setAttribute('aria-pressed', 'true');
         }
@@ -1293,6 +1354,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         allFilterBtn.setAttribute('tabindex', '0');
       }
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      activeUrgency = 0;
+      urgencyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       updateTrackerFilterLabel();
       updateCountyUrl();
       updateDisplay();
@@ -1437,6 +1500,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     renderTrackerDeadlineBanner();
     initShareLinks();
     initFromQueryParams();
+    initUrgencyCounts();
 
     // ── Calendar Subscribe Link ───────────────────────────────────────────────
     // Rewrite to webcal:// so the user's calendar app prompts to subscribe

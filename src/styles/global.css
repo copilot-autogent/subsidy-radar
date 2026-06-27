@@ -1268,6 +1268,88 @@ main {
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* ── Urgency filter row ──────────────────────────────────────────────────── */
+.urgency-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.filter-btn.urgency-7-filter {
+  border-color: #dc2626;
+  color: #7f1d1d;
+  background: #fef2f2;
+  font-weight: 600;
+}
+
+.filter-btn.urgency-7-filter:hover,
+.filter-btn.urgency-7-filter.active {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+}
+
+.filter-btn.urgency-7-filter .count-badge {
+  background: rgba(220, 38, 38, 0.15);
+}
+
+.filter-btn.urgency-7-filter:hover .count-badge,
+.filter-btn.urgency-7-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-btn.urgency-30-filter {
+  border-color: #d97706;
+  color: #78350f;
+  background: #fffbeb;
+  font-weight: 600;
+}
+
+.filter-btn.urgency-30-filter:hover,
+.filter-btn.urgency-30-filter.active {
+  background: #d97706;
+  border-color: #d97706;
+  color: white;
+}
+
+.filter-btn.urgency-30-filter .count-badge {
+  background: rgba(217, 119, 6, 0.15);
+}
+
+.filter-btn.urgency-30-filter:hover .count-badge,
+.filter-btn.urgency-30-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-btn.urgency-60-filter {
+  border-color: #0369a1;
+  color: #0c4a6e;
+  background: #f0f9ff;
+  font-weight: 600;
+}
+
+.filter-btn.urgency-60-filter:hover,
+.filter-btn.urgency-60-filter.active {
+  background: #0369a1;
+  border-color: #0369a1;
+  color: white;
+}
+
+.filter-btn.urgency-60-filter .count-badge {
+  background: rgba(3, 105, 161, 0.15);
+}
+
+.filter-btn.urgency-60-filter:hover .count-badge,
+.filter-btn.urgency-60-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-btn.urgency-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* ── Difficulty filter row ───────────────────────────────────────────────── */
 .difficulty-filters {
   display: flex;
