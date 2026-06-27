@@ -48,7 +48,7 @@ Every push to `main` runs a three-stage CI pipeline:
 
 1. **build** — `npm ci && npm run build`
 2. **deploy** — publish `dist/` to GitHub Pages
-3. **smoke-test** — fetches the live URL and asserts HTTP 200 + the `subsidy-radar` content marker is present
+3. **smoke-test** — fetches the live URL and asserts HTTP 200 + the `class="logo"` app-shell marker is present (rendered by Astro into every page; absent from GitHub's generic 404)
 
 A failed smoke-test means the deploy did not propagate correctly and surfaces as a **red CI check** on the merge commit — "merged ≠ live" failures are no longer silent.
 

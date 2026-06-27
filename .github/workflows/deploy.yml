@@ -44,6 +44,7 @@ jobs:
   smoke-test:
     needs: deploy
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
       - name: Fetch live site and assert HTTP 200 + content marker
         env:
@@ -59,26 +60,30 @@ jobs:
           const url = process.env.PAGE_URL;
           if (!url) { console.error('❌ PAGE_URL is empty — deploy output not set'); process.exit(1); }
 
-          // Follow up to 5 redirects, with a 30 s total timeout.
+          // Follow up to 5 redirects. Resolves relative Location headers against base URL.
           function fetch(targetUrl, redirectsLeft, timeoutMs, callback) {
+            let called = false;
+            const done = (...args) => { if (!called) { called = true; callback(...args); } };
             const mod = targetUrl.startsWith('https:') ? https : http;
             const req = mod.get(targetUrl, { timeout: timeoutMs }, (res) => {
               const { statusCode, headers } = res;
               if ([301, 302, 303, 307, 308].includes(statusCode) && headers.location && redirectsLeft > 0) {
                 res.resume();
-                return fetch(headers.location, redirectsLeft - 1, timeoutMs, callback);
+                const next = new URL(headers.location, targetUrl).toString();
+                return fetch(next, redirectsLeft - 1, timeoutMs, callback);
               }
               let body = '';
               res.setEncoding('utf8');
               res.on('data', chunk => body += chunk);
-              res.on('error', err => callback(new Error(`Stream error: ${err.message}`), statusCode, null));
-              res.on('end', () => callback(null, statusCode, body));
+              res.on('error', err => done(new Error(`Stream error: ${err.message}`), statusCode, null));
+              res.on('end', () => done(null, statusCode, body));
             });
-            req.on('timeout', () => { req.destroy(); callback(new Error('Request timed out'), null, null); });
-            req.on('error', err => callback(err, null, null));
+            req.on('timeout', () => { req.destroy(); done(new Error('Request timed out'), null, null); });
+            req.on('error', err => done(err, null, null));
           }
 
-          // Retry up to 6 times (≈ 90 s) to absorb CDN propagation lag.
+          // Retry up to 6 times with 15 s between attempts (≤ 75 s of wait) to
+          // absorb CDN propagation lag after GitHub Pages deploy.
           let attempt = 0;
           const maxAttempts = 6;
           const retryDelay = 15000;
@@ -96,7 +101,8 @@ jobs:
                 process.exit(1);
               }
               fs.writeFileSync('/tmp/smoke-response.html', body);
-              // Marker: CSS class unique to the app layout — not present on GitHub's 404 page.
+              // Marker: CSS class rendered by Astro into the static HTML nav element.
+              // Present in every page of the site; absent from GitHub's generic 404 page.
               if (!body.includes('class="logo"')) {
                 console.error('❌ App-shell marker (class="logo") not found — deploy may be stale or broken');
                 process.exit(1);
