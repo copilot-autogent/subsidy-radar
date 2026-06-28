@@ -635,7 +635,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     // ── Debounce ─────────────────────────────────────────────────────────────
     function debounce<T extends unknown[]>(fn: (...args: T) => void, ms: number) {
       let timer: ReturnType<typeof setTimeout> | undefined = undefined;
-      return (...args: T) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
+      const call = (...args: T) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
+      call.cancel = () => clearTimeout(timer);
+      return call;
     }
 
     const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
@@ -1364,6 +1366,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           const suffix = document.createTextNode('？');
           strong.addEventListener('click', () => {
             const suggestion = topFuzzyName.trim();
+            debouncedSearch.cancel(); // prevent stale debounce from overwriting
             searchInput.value = suggestion;
             searchQuery = suggestion.toLowerCase();
             updateDisplay();
