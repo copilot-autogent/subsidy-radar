@@ -406,7 +406,23 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           data-max-amount={s.maxAmount != null ? String(s.maxAmount) : ''}
           data-counties={s.counties ? JSON.stringify(s.counties) : ''}
           data-url={s.applicationUrl ?? ''}
+          data-steps={s.steps ? String(s.steps.length) : '0'}
         >
+          <label class="compare-label">
+            <input
+              type="checkbox"
+              class="compare-checkbox"
+              data-id={s.id}
+              data-title={s.title}
+              data-amount={s.amount}
+              data-difficulty={s.difficulty ?? 'medium'}
+              data-deadline={s.deadline}
+              data-url={s.applicationUrl ?? ''}
+              data-steps={s.steps ? String(s.steps.length) : '0'}
+              aria-label={`加入比較：${s.title}`}
+            />
+            比較
+          </label>
           <div class="card-header">
             <h2 class="card-title">{s.title}</h2>
             <div class="card-badges">
@@ -485,6 +501,67 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   </div>
 
   <div id="share-toast" class="share-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ── Comparison Bar (sticky bottom) ── -->
+  <div id="compareBar" class="compare-bar" role="region" aria-label="比較補助" hidden>
+    <span id="compareBarLabel" class="compare-bar-label">已選 <strong id="compareCount">0</strong> 項補助</span>
+    <button id="compareOpenBtn" class="compare-bar-open" type="button">比較已選補助</button>
+    <button id="compareClearBtn" class="compare-bar-clear" type="button" aria-label="清除比較選取">✕ 清除</button>
+  </div>
+
+  <!-- ── Comparison Panel (overlay) ── -->
+  <div id="compareOverlay" class="compare-overlay" role="dialog" aria-modal="true" aria-label="補助比較表" hidden>
+    <div class="compare-panel">
+      <div class="compare-panel-header">
+        <h2 class="compare-panel-title">補助比較</h2>
+        <button id="compareCloseBtn" class="compare-panel-close" type="button" aria-label="關閉比較">✕</button>
+      </div>
+      <div class="compare-table-wrap">
+        <table class="compare-table" id="compareTable">
+          <thead>
+            <tr>
+              <th scope="col" class="compare-row-label compare-corner"></th>
+              <th scope="col" id="compare-name-0" class="compare-cell compare-col-header"></th>
+              <th scope="col" id="compare-name-1" class="compare-cell compare-col-header"></th>
+              <th scope="col" id="compare-name-2" class="compare-cell compare-col-header"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="compare-row-label">最高金額</th>
+              <td id="compare-amount-0" class="compare-cell"></td>
+              <td id="compare-amount-1" class="compare-cell"></td>
+              <td id="compare-amount-2" class="compare-cell"></td>
+            </tr>
+            <tr>
+              <th scope="row" class="compare-row-label">申請難度</th>
+              <td id="compare-difficulty-0" class="compare-cell"></td>
+              <td id="compare-difficulty-1" class="compare-cell"></td>
+              <td id="compare-difficulty-2" class="compare-cell"></td>
+            </tr>
+            <tr>
+              <th scope="row" class="compare-row-label">截止日期</th>
+              <td id="compare-deadline-0" class="compare-cell"></td>
+              <td id="compare-deadline-1" class="compare-cell"></td>
+              <td id="compare-deadline-2" class="compare-cell"></td>
+            </tr>
+            <tr>
+              <th scope="row" class="compare-row-label">申請步驟數</th>
+              <td id="compare-steps-0" class="compare-cell"></td>
+              <td id="compare-steps-1" class="compare-cell"></td>
+              <td id="compare-steps-2" class="compare-cell"></td>
+            </tr>
+            <tr>
+              <th scope="row" class="compare-row-label">立即申請</th>
+              <td id="compare-cta-0" class="compare-cell"></td>
+              <td id="compare-cta-1" class="compare-cell"></td>
+              <td id="compare-cta-2" class="compare-cell"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
   <script>
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
@@ -1991,6 +2068,241 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           if (grid) (grid as HTMLElement).focus();
           return;
         }
+      });
+    })();
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // ── Comparison Panel ─────────────────────────────────────────────────────
+    (function initComparisonPanel() {
+      const COMPARE_KEY = 'subsidy-compare-selection';
+      const MAX_COMPARE = 3;
+
+      const bar        = document.getElementById('compareBar')!;
+      const barLabel   = document.getElementById('compareCount')!;
+      const openBtn    = document.getElementById('compareOpenBtn') as HTMLButtonElement;
+      const clearBtn   = document.getElementById('compareClearBtn') as HTMLButtonElement;
+      const overlay    = document.getElementById('compareOverlay')!;
+      const closeBtn   = document.getElementById('compareCloseBtn') as HTMLButtonElement;
+      const checkboxes = document.querySelectorAll<HTMLInputElement>('.compare-checkbox');
+
+      type CompareItem = {
+        id: string;
+        title: string;
+        amount: string;
+        difficulty: string;
+        deadline: string;
+        url: string;
+        steps: string;
+      };
+
+      function loadSelection(): CompareItem[] {
+        try {
+          const raw = sessionStorage.getItem(COMPARE_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) return [];
+          const seenIds = new Set<string>();
+          const valid = parsed.filter((item: unknown) => {
+            if (!item || typeof item !== 'object') return false;
+            const i = item as Record<string, unknown>;
+            if (typeof i.id !== 'string' || !i.id) return false;
+            if (seenIds.has(i.id)) return false;
+            seenIds.add(i.id);
+            return (
+              typeof i.title === 'string' &&
+              typeof i.amount === 'string' &&
+              typeof i.difficulty === 'string' &&
+              typeof i.deadline === 'string' &&
+              typeof i.url === 'string' &&
+              typeof i.steps === 'string'
+            );
+          }) as CompareItem[];
+          return valid.slice(0, MAX_COMPARE);
+        } catch { return []; }
+      }
+
+      function saveSelection(items: CompareItem[]) {
+        try { sessionStorage.setItem(COMPARE_KEY, JSON.stringify(items)); } catch { /* blocked */ }
+      }
+
+      const difficultyText: Record<string, string> = {
+        easy:   '🟢 簡單',
+        medium: '🟡 中等',
+        hard:   '🔴 困難',
+      };
+
+      function syncCheckboxes(selection: CompareItem[]) {
+        const ids = new Set(selection.map(i => i.id));
+        checkboxes.forEach(cb => {
+          cb.checked = ids.has(cb.dataset.id ?? '');
+        });
+      }
+
+      function updateBar(selection: CompareItem[]) {
+        const n = selection.length;
+        barLabel.textContent = String(n);
+        bar.hidden = n < 2;
+        openBtn.textContent = `比較已選補助（${n}）`;
+      }
+
+      let compareToastTimer: ReturnType<typeof setTimeout> | undefined;
+      function showToast(msg: string) {
+        const toast = document.getElementById('share-toast')!;
+        if (compareToastTimer !== undefined) clearTimeout(compareToastTimer);
+        toast.textContent = msg;
+        toast.classList.add('visible');
+        compareToastTimer = setTimeout(() => {
+          toast.classList.remove('visible');
+          compareToastTimer = undefined;
+        }, 2500);
+      }
+
+      function renderPanel(selection: CompareItem[]) {
+        for (let col = 0; col < MAX_COMPARE; col++) {
+          const item = selection[col];
+          const nameCell       = document.getElementById(`compare-name-${col}`)!;
+          const amountCell     = document.getElementById(`compare-amount-${col}`)!;
+          const difficultyCell = document.getElementById(`compare-difficulty-${col}`)!;
+          const deadlineCell   = document.getElementById(`compare-deadline-${col}`)!;
+          const stepsCell      = document.getElementById(`compare-steps-${col}`)!;
+          const ctaCell        = document.getElementById(`compare-cta-${col}`)!;
+
+          if (item) {
+            nameCell.textContent       = item.title;
+            amountCell.textContent     = item.amount;
+            difficultyCell.textContent = difficultyText[item.difficulty] ?? item.difficulty;
+            deadlineCell.textContent   = item.deadline;
+            stepsCell.textContent      = Number(item.steps) > 0 ? `${item.steps} 步驟` : '—';
+            ctaCell.textContent = '';
+            if (item.url && /^https?:\/\//.test(item.url)) {
+              const link = document.createElement('a');
+              link.href = item.url;
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+              link.className = 'compare-cta-link';
+              link.textContent = '立即申請 →';
+              ctaCell.appendChild(link);
+            } else {
+              ctaCell.textContent = '—';
+            }
+          } else {
+            nameCell.textContent       = '';
+            amountCell.textContent     = '';
+            difficultyCell.textContent = '';
+            deadlineCell.textContent   = '';
+            stepsCell.textContent      = '';
+            ctaCell.innerHTML          = '';
+          }
+        }
+      }
+
+      let overflowLocked = false;
+
+      function openPanel() {
+        const selection = loadSelection();
+        renderPanel(selection);
+        overlay.hidden = false;
+        if (!overflowLocked) {
+          document.body.style.overflow = 'hidden';
+          overflowLocked = true;
+        }
+        closeBtn.focus();
+      }
+
+      function closePanel() {
+        overlay.hidden = true;
+        if (overflowLocked) {
+          document.body.style.overflow = '';
+          overflowLocked = false;
+        }
+        // Only focus openBtn if it's visible (bar is shown)
+        if (!bar.hidden) {
+          openBtn.focus();
+        }
+      }
+
+      function getFocusable(): HTMLElement[] {
+        return Array.from(
+          overlay.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter(el => !el.closest('[hidden]') && el.offsetParent !== null);
+      }
+
+      overlay.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key !== 'Tab') return;
+        const focusable = getFocusable();
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last  = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+        }
+      });
+
+      // Initialise from sessionStorage on page load, filtering out stale IDs
+      function reconcileSelection(raw: CompareItem[]): CompareItem[] {
+        const validIds = new Set(Array.from(checkboxes).map(cb => cb.dataset.id ?? '').filter(Boolean));
+        return raw.filter(item => validIds.has(item.id));
+      }
+
+      let selection = reconcileSelection(loadSelection());
+      syncCheckboxes(selection);
+      updateBar(selection);
+
+      // Checkbox change handler
+      checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+          selection = loadSelection();
+          const id    = cb.dataset.id ?? '';
+          const idx   = selection.findIndex(i => i.id === id);
+
+          if (cb.checked) {
+            if (selection.length >= MAX_COMPARE) {
+              cb.checked = false;
+              showToast('最多比較 3 項');
+              return;
+            }
+            selection.push({
+              id,
+              title:      cb.dataset.title    ?? '',
+              amount:     cb.dataset.amount   ?? '',
+              difficulty: cb.dataset.difficulty ?? 'medium',
+              deadline:   cb.dataset.deadline ?? '',
+              url:        cb.dataset.url      ?? '',
+              steps:      cb.dataset.steps    ?? '0',
+            });
+          } else {
+            if (idx !== -1) selection.splice(idx, 1);
+          }
+
+          saveSelection(selection);
+          updateBar(selection);
+        });
+      });
+
+      openBtn.addEventListener('click', openPanel);
+
+      clearBtn.addEventListener('click', () => {
+        if (!overlay.hidden) closePanel();
+        selection = [];
+        saveSelection(selection);
+        syncCheckboxes(selection);
+        updateBar(selection);
+      });
+
+      closeBtn.addEventListener('click', closePanel);
+
+      // Close on backdrop click
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closePanel();
+      });
+
+      // Close on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !overlay.hidden) closePanel();
       });
     })();
     // ─────────────────────────────────────────────────────────────────────────
