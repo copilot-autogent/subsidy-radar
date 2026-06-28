@@ -242,6 +242,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         autocomplete="off"
       />
     </div>
+    <div id="fuzzyHint" class="fuzzy-hint" hidden role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="category-filters" role="toolbar" aria-label="類別篩選">
       {categories.map((cat, idx) => {
         const count = cat === '全部' 
@@ -571,6 +572,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
     const resultsCount = document.getElementById('resultsCount')!;
     const noResults = document.getElementById('noResults')!;
+    const fuzzyHint = document.getElementById('fuzzyHint') as HTMLElement;
     const countySelect = document.getElementById('countySelect') as HTMLSelectElement | null;
     const eligibilityBanner = document.getElementById('eligibilityBanner')!;
     const bannerText = document.getElementById('bannerText')!;
@@ -594,6 +596,49 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     let isQuizActive = false;
     let activeCounty = '';
     let activeUrgency = 0;
+
+    // ── Fuzzy search utilities ────────────────────────────────────────────────
+    /** Minimum Jaccard bigram similarity to include a card in fuzzy results */
+    const FUZZY_THRESHOLD = 0.15;
+    /** Minimum score to surface a "Did you mean?" hint when no exact matches exist */
+    const HINT_THRESHOLD = 0.08;
+
+    function getBigrams(str: string): Set<string> {
+      const set = new Set<string>();
+      for (let i = 0; i < str.length - 1; i++) {
+        set.add(str.slice(i, i + 2));
+      }
+      return set;
+    }
+
+    function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
+      if (a.size === 0 || b.size === 0) return 0;
+      let inter = 0;
+      for (const g of a) { if (b.has(g)) inter++; }
+      return inter / (a.size + b.size - inter);
+    }
+
+    /**
+     * Returns { exact: true } when the text contains the query as a substring,
+     * or { exact: false, score } with the bigram Jaccard similarity otherwise.
+     */
+    function fuzzyMatchText(query: string, text: string): { exact: boolean; score: number } {
+      if (text.includes(query)) return { exact: true, score: 1 };
+      if (query.length < 2) return { exact: false, score: 0 };
+      const score = jaccardSimilarity(getBigrams(query), getBigrams(text));
+      return { exact: false, score };
+    }
+
+    // Per-card fuzzy scores — populated by updateDisplay(), consumed by applySort()
+    const fuzzyScores = new Map<Element, { exact: boolean; score: number }>();
+
+    // ── Debounce ─────────────────────────────────────────────────────────────
+    function debounce<T extends unknown[]>(fn: (...args: T) => void, ms: number): ((...args: T) => void) & { cancel: () => void } {
+      let timer: ReturnType<typeof setTimeout> | undefined = undefined;
+      const call = (...args: T) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
+      call.cancel = () => clearTimeout(timer);
+      return call;
+    }
 
     const _recencyBtn = document.getElementById('recencyFilterBtn') as HTMLElement | null;
     const RECENCY_FILTER_LABEL = _recencyBtn?.dataset.category ?? '🆕 最新';
@@ -1141,6 +1186,17 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           return sortAmountState === 1 ? b.val - a.val : a.val - b.val;
         });
         pairs.forEach(({ card }, i) => { card.style.order = String(i + 1); });
+      } else if (searchQuery !== '' && fuzzyScores.size > 0) {
+        // Fuzzy search ranking: exact matches first, then by score descending
+        const ranked = Array.from(cards).map(card => {
+          const fm = fuzzyScores.get(card) ?? { exact: false, score: 0 };
+          return { card, exact: fm.exact, score: fm.score };
+        });
+        ranked.sort((a, b) => {
+          if (a.exact !== b.exact) return a.exact ? -1 : 1;
+          return b.score - a.score;
+        });
+        ranked.forEach(({ card }, i) => { card.style.order = String(i + 1); });
       } else {
         cards.forEach(card => { card.style.order = ''; });
       }
@@ -1186,6 +1242,12 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     function updateDisplay() {
       const tracker = loadTracker();
       let visible = 0;
+      let exactSearchHits = 0;
+      let fuzzyOnlyHits = 0;
+      let topFuzzyName = '';
+      let topFuzzyScore = 0;
+      fuzzyScores.clear();
+
       cards.forEach(card => {
         const cat = card.dataset.category ?? '';
         const isYouth = card.dataset.youth === 'true';
@@ -1208,7 +1270,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           : cat === activeCategory;
 
         const matchSituation = activeSituation === '' || situations.includes(activeSituation);
-        const matchSearch = searchQuery === '' || search.includes(searchQuery);
+
+        // Fuzzy search: exact substring match or bigram Jaccard above threshold
+        let matchSearch: boolean;
+        if (searchQuery === '') {
+          matchSearch = true;
+        } else {
+          const fm = fuzzyMatchText(searchQuery, search);
+          fuzzyScores.set(card, fm);
+          matchSearch = fm.exact || fm.score >= FUZZY_THRESHOLD;
+        }
         const matchTracked = !showTrackedOnly || (tracker[cardId] && tracker[cardId] !== '未申請');
         const matchDifficulty = activeDifficulty === '' || (card.dataset.difficulty || 'medium').trim().toLowerCase() === activeDifficulty;
 
@@ -1235,10 +1306,84 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
         const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty && matchUrgency;
         card.style.display = show ? '' : 'none';
-        if (show) visible++;
+        if (show) {
+          visible++;
+          if (searchQuery !== '') {
+            const fm = fuzzyScores.get(card);
+            // Check exact first to avoid mis-routing exact matches into fuzzy counters
+            if (fm?.exact) {
+              exactSearchHits++;
+            } else if (fm && !fm.exact) {
+              fuzzyOnlyHits++;
+              if (fm.score > topFuzzyScore) {
+                topFuzzyScore = fm.score;
+                // Read title from server-rendered DOM (trusted content)
+                topFuzzyName = card.querySelector('h3, h2, .subsidy-title')?.textContent?.trim() ?? '';
+              }
+            }
+          }
+        }
       });
+
+      // When visible===0 and no other filters active, scan fuzzyScores for near-miss
+      // candidates (HINT_THRESHOLD ≤ score < FUZZY_THRESHOLD) to surface a suggestion.
+      // Restrict to "no other active filters" to avoid suggesting items the user cannot
+      // reach without changing their filter state.
+      const noOtherFilters = activeCategory === '全部' && activeSituation === '' &&
+        activeDifficulty === '' && activeCounty === '' && activeUrgency === 0 &&
+        !showTrackedOnly && !isQuizActive;
+      if (searchQuery !== '' && visible === 0 && noOtherFilters) {
+        fuzzyScores.forEach((fm, card) => {
+          if (!fm.exact && fm.score >= HINT_THRESHOLD && fm.score < FUZZY_THRESHOLD) {
+            if (fm.score > topFuzzyScore) {
+              topFuzzyScore = fm.score;
+              topFuzzyName = card.querySelector('h3, h2, .subsidy-title')?.textContent?.trim() ?? '';
+            }
+          }
+        });
+      }
+
       resultsCount.textContent = `共 ${visible} 項補助`;
       noResults.hidden = visible !== 0;
+
+      // Fuzzy hint: show only when search is active, results are found via fuzzy (not exact)
+      fuzzyHint.textContent = '';
+      if (searchQuery !== '' && exactSearchHits === 0 && (fuzzyOnlyHits > 0 || (visible === 0 && topFuzzyName !== ''))) {
+        const hintName = topFuzzyName || searchQuery;
+        if (visible > 0) {
+          // "Showing fuzzy results for X" — build safely with DOM API
+          const icon = document.createTextNode('🔍 顯示「');
+          const strong = document.createElement('strong');
+          strong.textContent = hintName;
+          const tail = document.createTextNode('」的相關結果（模糊比對）');
+          fuzzyHint.append(icon, strong, tail);
+        } else if (topFuzzyName !== '') {
+          // "Did you mean: X?" — clickable suggestion
+          const prefix = document.createTextNode('你是否想搜尋：');
+          const strong = document.createElement('strong');
+          strong.textContent = topFuzzyName;
+          strong.style.cursor = 'pointer';
+          strong.setAttribute('role', 'button');
+          strong.setAttribute('tabindex', '0');
+          const suffix = document.createTextNode('？');
+          const handleSuggestion = () => {
+            const suggestion = topFuzzyName.trim();
+            debouncedSearch.cancel(); // prevent stale debounce from overwriting
+            searchInput.value = suggestion;
+            searchQuery = suggestion.toLowerCase();
+            updateDisplay();
+            applySort();
+          };
+          strong.addEventListener('click', handleSuggestion, { once: true });
+          strong.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSuggestion(); }
+          }, { once: true });
+          fuzzyHint.append(prefix, strong, suffix);
+        }
+        fuzzyHint.hidden = fuzzyHint.childNodes.length === 0;
+      } else {
+        fuzzyHint.hidden = true;
+      }
 
       // Hide eligibility banner when tracker filter is active (BUG-A fix)
       if (showTrackedOnly) {
@@ -1254,9 +1399,14 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     }
 
     // ── Event listeners ──────────────────────────────────────────────────────
-    searchInput.addEventListener('input', () => {
-      searchQuery = searchInput.value.trim().toLowerCase();
+    const debouncedSearch = debounce((value: string) => {
+      searchQuery = value;
       updateDisplay();
+      applySort();
+    }, 200);
+
+    searchInput.addEventListener('input', () => {
+      debouncedSearch(searchInput.value.trim().toLowerCase());
     });
 
     filterBtns.forEach(btn => {

@@ -154,6 +154,15 @@ main {
   pointer-events: none;
 }
 
+.fuzzy-hint {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #6b7280);
+  padding: 0.3rem 0.1rem;
+  margin-top: 0.15rem;
+}
+.fuzzy-hint[hidden] { display: none; }
+.fuzzy-hint strong { color: var(--color-primary, #2563eb); }
+
 .category-filters {
   display: flex;
   flex-wrap: wrap;
