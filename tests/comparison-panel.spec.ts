@@ -36,12 +36,17 @@ test.describe('Side-by-side subsidy comparison panel', () => {
 
   test('maximum 3 subsidies can be selected (4th shows toast)', async ({ page }) => {
     const checkboxes = page.locator('.compare-checkbox');
+    const total = await checkboxes.count();
+    if (total < 4) {
+      test.skip(total < 4, 'Need at least 4 subsidies to test max-3 enforcement');
+      return;
+    }
     await checkboxes.nth(0).check();
     await checkboxes.nth(1).check();
     await checkboxes.nth(2).check();
 
-    // Attempt to check a 4th
-    await checkboxes.nth(3).check();
+    // Attempt to click a 4th (using click so the handler fires; check() would throw on false)
+    await checkboxes.nth(3).click();
 
     // 4th should revert to unchecked
     await expect(checkboxes.nth(3)).not.toBeChecked();

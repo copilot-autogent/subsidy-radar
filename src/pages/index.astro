@@ -520,10 +520,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         <table class="compare-table" id="compareTable">
           <thead>
             <tr>
-              <th scope="row" class="compare-row-label">補助名稱</th>
-              <td id="compare-name-0" class="compare-cell"></td>
-              <td id="compare-name-1" class="compare-cell"></td>
-              <td id="compare-name-2" class="compare-cell"></td>
+              <th scope="col" class="compare-row-label compare-corner"></th>
+              <th scope="col" id="compare-name-0" class="compare-cell compare-col-header"></th>
+              <th scope="col" id="compare-name-1" class="compare-cell compare-col-header"></th>
+              <th scope="col" id="compare-name-2" class="compare-cell compare-col-header"></th>
             </tr>
           </thead>
           <tbody>
@@ -2145,11 +2145,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         openBtn.textContent = `比較已選補助（${n}）`;
       }
 
+      let compareToastTimer: ReturnType<typeof setTimeout> | undefined;
       function showToast(msg: string) {
         const toast = document.getElementById('share-toast')!;
+        if (compareToastTimer !== undefined) clearTimeout(compareToastTimer);
         toast.textContent = msg;
         toast.classList.add('visible');
-        setTimeout(() => toast.classList.remove('visible'), 2500);
+        compareToastTimer = setTimeout(() => {
+          toast.classList.remove('visible');
+          compareToastTimer = undefined;
+        }, 2500);
       }
 
       function renderPanel(selection: CompareItem[]) {
@@ -2167,7 +2172,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             amountCell.textContent     = item.amount;
             difficultyCell.textContent = difficultyText[item.difficulty] ?? item.difficulty;
             deadlineCell.textContent   = item.deadline;
-            stepsCell.textContent      = item.steps ? `${item.steps} 步驟` : '—';
+            stepsCell.textContent      = Number(item.steps) > 0 ? `${item.steps} 步驟` : '—';
             ctaCell.textContent = '';
             if (item.url && /^https?:\/\//.test(item.url)) {
               const link = document.createElement('a');
@@ -2265,6 +2270,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       openBtn.addEventListener('click', openPanel);
 
       clearBtn.addEventListener('click', () => {
+        if (!overlay.hidden) closePanel();
         selection = [];
         saveSelection(selection);
         syncCheckboxes(selection);

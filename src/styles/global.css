@@ -1931,6 +1931,14 @@ main {
   min-width: 6rem;
   background: var(--color-tag);
 }
+.compare-corner {
+  font-size: 0.75rem;
+}
+.compare-col-header {
+  font-weight: 700;
+  color: var(--color-text);
+  background: var(--color-primary-light);
+}
 .compare-cell {
   color: var(--color-text);
   min-width: 140px;
