@@ -2100,7 +2100,24 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           const raw = sessionStorage.getItem(COMPARE_KEY);
           if (!raw) return [];
           const parsed = JSON.parse(raw);
-          return Array.isArray(parsed) ? parsed : [];
+          if (!Array.isArray(parsed)) return [];
+          const seenIds = new Set<string>();
+          const valid = parsed.filter((item: unknown) => {
+            if (!item || typeof item !== 'object') return false;
+            const i = item as Record<string, unknown>;
+            if (typeof i.id !== 'string' || !i.id) return false;
+            if (seenIds.has(i.id)) return false;
+            seenIds.add(i.id);
+            return (
+              typeof i.title === 'string' &&
+              typeof i.amount === 'string' &&
+              typeof i.difficulty === 'string' &&
+              typeof i.deadline === 'string' &&
+              typeof i.url === 'string' &&
+              typeof i.steps === 'string'
+            );
+          }) as CompareItem[];
+          return valid.slice(0, MAX_COMPARE);
         } catch { return []; }
       }
 
@@ -2151,9 +2168,18 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             difficultyCell.textContent = difficultyText[item.difficulty] ?? item.difficulty;
             deadlineCell.textContent   = item.deadline;
             stepsCell.textContent      = item.steps ? `${item.steps} 步驟` : '—';
-            ctaCell.innerHTML = item.url
-              ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="compare-cta-link">立即申請 →</a>`
-              : '—';
+            ctaCell.textContent = '';
+            if (item.url && /^https?:\/\//.test(item.url)) {
+              const link = document.createElement('a');
+              link.href = item.url;
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+              link.className = 'compare-cta-link';
+              link.textContent = '立即申請 →';
+              ctaCell.appendChild(link);
+            } else {
+              ctaCell.textContent = '—';
+            }
           } else {
             nameCell.textContent       = '';
             amountCell.textContent     = '';
@@ -2172,6 +2198,27 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         document.body.style.overflow = 'hidden';
         closeBtn.focus();
       }
+
+      function getFocusable(): HTMLElement[] {
+        return Array.from(
+          overlay.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter(el => !el.closest('[hidden]') && el.offsetParent !== null);
+      }
+
+      overlay.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key !== 'Tab') return;
+        const focusable = getFocusable();
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last  = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last)  { e.preventDefault(); first.focus(); }
+        }
+      });
 
       function closePanel() {
         overlay.hidden = true;
