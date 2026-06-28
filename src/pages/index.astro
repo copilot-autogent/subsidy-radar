@@ -2196,12 +2196,29 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         }
       }
 
+      let overflowLocked = false;
+
       function openPanel() {
         const selection = loadSelection();
         renderPanel(selection);
         overlay.hidden = false;
-        document.body.style.overflow = 'hidden';
+        if (!overflowLocked) {
+          document.body.style.overflow = 'hidden';
+          overflowLocked = true;
+        }
         closeBtn.focus();
+      }
+
+      function closePanel() {
+        overlay.hidden = true;
+        if (overflowLocked) {
+          document.body.style.overflow = '';
+          overflowLocked = false;
+        }
+        // Only focus openBtn if it's visible (bar is shown)
+        if (!bar.hidden) {
+          openBtn.focus();
+        }
       }
 
       function getFocusable(): HTMLElement[] {
@@ -2225,14 +2242,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         }
       });
 
-      function closePanel() {
-        overlay.hidden = true;
-        document.body.style.overflow = '';
-        openBtn.focus();
+      // Initialise from sessionStorage on page load, filtering out stale IDs
+      function reconcileSelection(raw: CompareItem[]): CompareItem[] {
+        const validIds = new Set(Array.from(checkboxes).map(cb => cb.dataset.id ?? '').filter(Boolean));
+        return raw.filter(item => validIds.has(item.id));
       }
 
-      // Initialise from sessionStorage on page load
-      let selection = loadSelection();
+      let selection = reconcileSelection(loadSelection());
       syncCheckboxes(selection);
       updateBar(selection);
 
