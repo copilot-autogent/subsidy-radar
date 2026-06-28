@@ -85,6 +85,7 @@ test.describe('Related subsidies panel — build-time algorithm', () => {
 
   test('ties are broken by difficulty (easy before medium before hard)', () => {
     // Find a card whose related results contain a tie in share count
+    let tiedPairsChecked = 0;
     for (const s of subsidies) {
       const mySituations = new Set(s.situations ?? []);
       const withCounts = subsidies
@@ -107,10 +108,13 @@ test.describe('Related subsidies panel — build-time algorithm', () => {
         const b = relatedWithCounts[i + 1];
         if (a.shared === b.shared) {
           expect(a.diffOrder).toBeLessThanOrEqual(b.diffOrder);
+          tiedPairsChecked++;
         }
       }
-      return; // tested at least one tie case
+      if (tiedPairsChecked > 0) break; // verified at least one tie case — done
     }
+    // Ensure the test actually exercised a tie case (not vacuously passing)
+    expect(tiedPairsChecked).toBeGreaterThan(0);
   });
 
   test('built HTML contains related-subsidies panels for cards with situations and steps', () => {
