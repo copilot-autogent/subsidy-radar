@@ -634,7 +634,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     // ── Debounce ─────────────────────────────────────────────────────────────
     function debounce<T extends unknown[]>(fn: (...args: T) => void, ms: number) {
-      let timer: ReturnType<typeof setTimeout>;
+      let timer: ReturnType<typeof setTimeout> | undefined = undefined;
       return (...args: T) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
     }
 
@@ -1308,26 +1308,30 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           visible++;
           if (searchQuery !== '') {
             const fm = fuzzyScores.get(card);
+            // Check exact first to avoid mis-routing exact matches into fuzzy counters
             if (fm?.exact) {
               exactSearchHits++;
-            } else if (fm && fm.score > topFuzzyScore) {
-              topFuzzyScore = fm.score;
-              // Use the title from the card heading for the hint
-              topFuzzyName = card.querySelector('h3, h2, .subsidy-title')?.textContent?.trim() ?? '';
-              fuzzyOnlyHits++;
             } else if (fm && !fm.exact) {
               fuzzyOnlyHits++;
+              if (fm.score > topFuzzyScore) {
+                topFuzzyScore = fm.score;
+                // Read title from server-rendered DOM (trusted content)
+                topFuzzyName = card.querySelector('h3, h2, .subsidy-title')?.textContent?.trim() ?? '';
+              }
             }
           }
         }
       });
 
-      // Also scan hidden cards for "Did you mean?" candidates (fuzzy hits below FUZZY_THRESHOLD
-      // but above HINT_THRESHOLD) when there are zero visible search results.
-      if (searchQuery !== '' && visible === 0) {
-        cards.forEach(card => {
-          const search = (card.dataset.search ?? '').toLowerCase();
-          const fm = fuzzyMatchText(searchQuery, search);
+      // When visible===0 and no other filters active, scan fuzzyScores for near-miss
+      // candidates (HINT_THRESHOLD ≤ score < FUZZY_THRESHOLD) to surface a suggestion.
+      // Restrict to "no other active filters" to avoid suggesting items the user cannot
+      // reach without changing their filter state.
+      const noOtherFilters = activeCategory === '全部' && activeSituation === '' &&
+        activeDifficulty === '' && activeCounty === '' && activeUrgency === 0 &&
+        !showTrackedOnly && !isQuizActive;
+      if (searchQuery !== '' && visible === 0 && noOtherFilters) {
+        fuzzyScores.forEach((fm, card) => {
           if (!fm.exact && fm.score >= HINT_THRESHOLD && fm.score < FUZZY_THRESHOLD) {
             if (fm.score > topFuzzyScore) {
               topFuzzyScore = fm.score;
@@ -1341,20 +1345,33 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       noResults.hidden = visible !== 0;
 
       // Fuzzy hint: show only when search is active, results are found via fuzzy (not exact)
+      fuzzyHint.textContent = '';
       if (searchQuery !== '' && exactSearchHits === 0 && (fuzzyOnlyHits > 0 || (visible === 0 && topFuzzyName !== ''))) {
+        const hintName = topFuzzyName || searchQuery;
         if (visible > 0) {
-          fuzzyHint.innerHTML = `🔍 顯示「<strong>${topFuzzyName || searchQuery}</strong>」的相關結果（模糊比對）`;
+          // "Showing fuzzy results for X" — build safely with DOM API
+          const icon = document.createTextNode('🔍 顯示「');
+          const strong = document.createElement('strong');
+          strong.textContent = hintName;
+          const tail = document.createTextNode('」的相關結果（模糊比對）');
+          fuzzyHint.append(icon, strong, tail);
         } else if (topFuzzyName !== '') {
-          fuzzyHint.innerHTML = `你是否想搜尋：<strong id="fuzzyHintSuggestion">${topFuzzyName}</strong>？`;
-          const suggestion = document.getElementById('fuzzyHintSuggestion');
-          suggestion?.addEventListener('click', () => {
-            searchInput.value = topFuzzyName;
-            searchQuery = topFuzzyName.toLowerCase();
+          // "Did you mean: X?" — clickable suggestion
+          const prefix = document.createTextNode('你是否想搜尋：');
+          const strong = document.createElement('strong');
+          strong.textContent = topFuzzyName;
+          strong.style.cursor = 'pointer';
+          const suffix = document.createTextNode('？');
+          strong.addEventListener('click', () => {
+            const suggestion = topFuzzyName.trim();
+            searchInput.value = suggestion;
+            searchQuery = suggestion.toLowerCase();
             updateDisplay();
             applySort();
           }, { once: true });
+          fuzzyHint.append(prefix, strong, suffix);
         }
-        fuzzyHint.hidden = false;
+        fuzzyHint.hidden = fuzzyHint.childNodes.length === 0;
       } else {
         fuzzyHint.hidden = true;
       }
