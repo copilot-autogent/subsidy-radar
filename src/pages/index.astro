@@ -359,7 +359,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
   <div class="tracker-summary-banner" id="trackerSummaryBanner" style="display:none" role="status" aria-live="polite">
     <span class="tracker-summary-text">📌 已追蹤 <strong><span id="trackerSummaryCount">0</span></strong> 項補助</span>
-    <button class="print-tracker-btn" id="printTrackerBtn" type="button">🖨️ 列印追蹤清單</button>
+    <div class="tracker-summary-actions">
+      <button class="ical-export-btn" id="icalExportBtn" type="button" style="display:none" aria-label="匯出追蹤補助截止日期至行事曆">📅 匯出行事曆</button>
+      <button class="print-tracker-btn" id="printTrackerBtn" type="button">🖨️ 列印追蹤清單</button>
+    </div>
   </div>
 
   <section class="deadline-panel" id="deadlinePanelSection" style="display:none" aria-label="即將截止補助">
@@ -402,6 +405,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           data-amount-value={parseAmountValue(s.amount ?? '')}
           data-max-amount={s.maxAmount != null ? String(s.maxAmount) : ''}
           data-counties={s.counties ? JSON.stringify(s.counties) : ''}
+          data-url={s.applicationUrl ?? ''}
         >
           <div class="card-header">
             <h2 class="card-title">{s.title}</h2>
@@ -829,6 +833,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const isTracked = tracker[id] !== undefined && tracker[id] !== '未申請';
         card.classList.toggle('tracker-state-tracked', isTracked);
       });
+      updateIcalExportBtn();
     }
 
     function updateTrackerFilterLabel() {
@@ -1370,6 +1375,135 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+
+    // ── iCal Export ───────────────────────────────────────────────────────────
+    const icalExportBtn = document.getElementById('icalExportBtn') as HTMLButtonElement | null;
+
+    function escapeIcalText(text: string): string {
+      return String(text ?? '')
+        .replace(/\\/g, '\\\\')
+        .replace(/;/g, '\\;')
+        .replace(/,/g, '\\,')
+        .replace(/\r\n|\r|\n/g, '\\n');
+    }
+
+    function foldIcalLine(line: string): string {
+      const enc = new TextEncoder();
+      const dec = new TextDecoder();
+      const bytes = enc.encode(line);
+      if (bytes.length <= 75) return line;
+      const CRLF = '\r\n';
+      const parts: string[] = [];
+      let offset = 0;
+      let limit = 75;
+      while (offset < bytes.length) {
+        let end = Math.min(offset + limit, bytes.length);
+        while (end < bytes.length && (bytes[end] & 0xc0) === 0x80) end--;
+        if (end <= offset) end = Math.min(offset + limit, bytes.length);
+        parts.push(dec.decode(bytes.slice(offset, end)));
+        offset = end;
+        limit = 74;
+      }
+      return parts.join(CRLF + ' ');
+    }
+
+    function generateTrackedIcal(): string {
+      const CRLF = '\r\n';
+      const tracker = loadTracker();
+      const now = new Date();
+      const dtstamp = [
+        now.getUTCFullYear(),
+        String(now.getUTCMonth() + 1).padStart(2, '0'),
+        String(now.getUTCDate()).padStart(2, '0'),
+        'T',
+        String(now.getUTCHours()).padStart(2, '0'),
+        String(now.getUTCMinutes()).padStart(2, '0'),
+        String(now.getUTCSeconds()).padStart(2, '0'),
+        'Z',
+      ].join('');
+
+      const eventLines: string[] = [];
+      cards.forEach(card => {
+        const id = card.dataset.id ?? '';
+        if (!id) return;
+        if (!tracker[id] || tracker[id] === '未申請') return;
+        const deadlineDate = card.dataset.deadline ?? '';
+        if (!deadlineDate || !/^\d{4}-\d{2}-\d{2}$/.test(deadlineDate)) return;
+        const startDate = deadlineDate.replace(/-/g, '');
+        // DTEND is exclusive — next day so the all-day event covers the deadline
+        const [y, m, d] = deadlineDate.split('-').map(Number);
+        const dt = new Date(Date.UTC(y, m - 1, d));
+        dt.setUTCDate(dt.getUTCDate() + 1);
+        const endDate = `${dt.getUTCFullYear()}${String(dt.getUTCMonth() + 1).padStart(2, '0')}${String(dt.getUTCDate()).padStart(2, '0')}`;
+        const title = card.querySelector<HTMLElement>('.card-title')?.textContent?.trim() ?? id;
+        const agency = card.querySelector<HTMLElement>('.card-agency')?.textContent?.trim() ?? '';
+        const url = (card as HTMLElement).dataset.url ?? '';
+        const summary = escapeIcalText(`📅 ${title} - 申請截止`);
+        const uid = escapeIcalText(`subsidy-${id}@subsidy-radar.copilot-autogent.github.io`);
+        const lines = [
+          'BEGIN:VEVENT',
+          foldIcalLine(`UID:${uid}`),
+          `DTSTAMP:${dtstamp}`,
+          `DTSTART;VALUE=DATE:${startDate}`,
+          `DTEND;VALUE=DATE:${endDate}`,
+          foldIcalLine(`SUMMARY:${summary}`),
+          foldIcalLine(`LOCATION:${escapeIcalText(agency)}`),
+        ];
+        // RFC 5545 §3.8.4.6: URL value is a URI, not TEXT — only strip CR/LF
+        // to prevent property injection; do not backslash-escape ; or , which
+        // are valid sub-delimiters in URIs (RFC 3986).
+        if (url) lines.push(foldIcalLine(`URL:${url.replace(/[\r\n]/g, '')}`));
+        lines.push('STATUS:CONFIRMED');
+        lines.push('BEGIN:VALARM');
+        lines.push('TRIGGER:-P7D');
+        lines.push('ACTION:DISPLAY');
+        lines.push(foldIcalLine(`DESCRIPTION:${escapeIcalText(`${title} 申請即將截止（還有 7 天）`)}`));
+        lines.push('END:VALARM');
+        lines.push('END:VEVENT');
+        eventLines.push(...lines);
+      });
+
+      return [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        foldIcalLine('PRODID:-//補助雷達//Subsidy Deadlines//ZH'),
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        foldIcalLine('X-WR-CALNAME:補助雷達 - 追蹤中截止日曆'),
+        'X-WR-TIMEZONE:Asia/Taipei',
+        ...eventLines,
+        'END:VCALENDAR',
+        '',
+      ].join(CRLF);
+    }
+
+    function updateIcalExportBtn() {
+      if (!icalExportBtn) return;
+      const tracker = loadTracker();
+      const hasTrackedWithDeadline = Array.from(cards).some(card => {
+        const id = card.dataset.id ?? '';
+        if (!id || !tracker[id] || tracker[id] === '未申請') return false;
+        const dd = card.dataset.deadline ?? '';
+        return dd !== '' && /^\d{4}-\d{2}-\d{2}$/.test(dd);
+      });
+      icalExportBtn.style.display = hasTrackedWithDeadline ? '' : 'none';
+    }
+
+    if (icalExportBtn) {
+      icalExportBtn.addEventListener('click', () => {
+        const ical = generateTrackedIcal();
+        const blob = new Blob([ical], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'subsidy-deadlines.ics';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        // Delay revoke so the browser has time to initiate the download
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    }
 
     // ── Print Tracker ─────────────────────────────────────────────────────────
     const printTrackerBtn = document.getElementById('printTrackerBtn') as HTMLButtonElement | null;
