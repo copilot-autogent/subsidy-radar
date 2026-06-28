@@ -32,7 +32,7 @@ test.describe('iCal export button', () => {
     // Mark as skipped explicitly if the fixture has no periodic subsidies
     test.skip(count === 0, 'No periodic (no-deadline) subsidies in fixture — skipping');
     const periodicId = await periodicCard.getAttribute('data-id');
-    if (!periodicId) return;
+    expect(periodicId, 'periodic card must have data-id').toBeTruthy();
 
     await setTrackerItem(page, periodicId, '已申請');
     await page.reload();
