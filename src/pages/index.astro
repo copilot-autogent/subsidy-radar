@@ -1449,7 +1449,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           foldIcalLine(`SUMMARY:${summary}`),
           foldIcalLine(`LOCATION:${escapeIcalText(agency)}`),
         ];
-        if (url) lines.push(foldIcalLine(`URL:${url.replace(/[\r\n]/g, '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,')}`));
+        // RFC 5545 §3.8.4.6: URL value is a URI, not TEXT — only strip CR/LF
+        // to prevent property injection; do not backslash-escape ; or , which
+        // are valid sub-delimiters in URIs (RFC 3986).
+        if (url) lines.push(foldIcalLine(`URL:${url.replace(/[\r\n]/g, '')}`));;
         lines.push('STATUS:CONFIRMED');
         lines.push('BEGIN:VALARM');
         lines.push('TRIGGER:-P7D');

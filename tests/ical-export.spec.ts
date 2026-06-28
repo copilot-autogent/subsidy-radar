@@ -126,17 +126,17 @@ test.describe('iCal export button', () => {
   test('subsidies without deadlineDate are omitted from the .ics', async ({ page }) => {
     const periodicCard = page.locator('.subsidy-card[data-deadline=""]').first();
     const count = await periodicCard.count();
-    if (count === 0) return; // no periodic subsidies in fixture — skip
+    test.skip(count === 0, 'No periodic (no-deadline) subsidies in fixture — skipping');
 
     const periodicId = await periodicCard.getAttribute('data-id');
-    if (!periodicId) return;
+    expect(periodicId, 'periodic card must have data-id').toBeTruthy();
 
     // Also track a deadline subsidy to make the button visible
     const deadlineCard = page.locator('.subsidy-card[data-deadline]:not([data-deadline=""])').first();
     const deadlineId = await deadlineCard.getAttribute('data-id');
     expect(deadlineId).toBeTruthy();
 
-    await setTrackerItem(page, periodicId, '已申請');
+    await setTrackerItem(page, periodicId!, '已申請');
     await setTrackerItem(page, deadlineId!, '已申請');
     await page.reload();
 
@@ -153,7 +153,7 @@ test.describe('iCal export button', () => {
     const content = readFileSync(path!, 'utf-8');
 
     // The periodic subsidy should NOT appear as a UID
-    expect(content).not.toContain(`subsidy-${periodicId}@`);
+    expect(content).not.toContain(`subsidy-${periodicId!}@`);
     // The deadline subsidy should appear
     expect(content).toContain(`subsidy-${deadlineId}@`);
   });
