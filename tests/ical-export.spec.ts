@@ -29,8 +29,8 @@ test.describe('iCal export button', () => {
     // Find a card that has no data-deadline (periodic subsidy)
     const periodicCard = page.locator('.subsidy-card[data-deadline=""]').first();
     const count = await periodicCard.count();
-    // If no periodic cards exist in fixture, skip gracefully
-    if (count === 0) return;
+    // Mark as skipped explicitly if the fixture has no periodic subsidies
+    test.skip(count === 0, 'No periodic (no-deadline) subsidies in fixture — skipping');
     const periodicId = await periodicCard.getAttribute('data-id');
     if (!periodicId) return;
 

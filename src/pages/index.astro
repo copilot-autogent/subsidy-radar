@@ -1449,7 +1449,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           foldIcalLine(`SUMMARY:${summary}`),
           foldIcalLine(`LOCATION:${escapeIcalText(agency)}`),
         ];
-        if (url) lines.push(foldIcalLine(`URL:${url.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,')}`));
+        if (url) lines.push(foldIcalLine(`URL:${url.replace(/[\r\n]/g, '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,')}`));
         lines.push('STATUS:CONFIRMED');
         lines.push('BEGIN:VALARM');
         lines.push('TRIGGER:-P7D');
@@ -1497,7 +1497,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // Delay revoke so the browser has time to initiate the download
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
       });
     }
 
