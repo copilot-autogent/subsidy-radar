@@ -12,11 +12,11 @@ const subsidies = subsidiesRaw as Subsidy[];
 const DIFFICULTY_ORDER: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
 
 function getRelatedSubsidies(subsidy: Subsidy, all: Subsidy[], max = 3): Subsidy[] {
-  const mySituations = new Set(subsidy.situations ?? []);
+  const mySituations = new Set<string>(subsidy.situations ?? []);
   if (mySituations.size === 0) return [];
   return all
     .filter(s => s.id !== subsidy.id)
-    .map(s => ({ s, shared: (s.situations ?? []).filter(sit => mySituations.has(sit as Situation)).length }))
+    .map(s => ({ s, shared: (s.situations ?? []).filter(sit => mySituations.has(sit)).length }))
     .filter(({ shared }) => shared > 0)
     .sort((a, b) =>
       b.shared - a.shared ||
