@@ -138,14 +138,25 @@ test.describe('Related subsidies panel — build-time algorithm', () => {
     }
     const html = readFileSync(htmlPath, 'utf-8');
     const ids = new Set(subsidies.map(s => s.id));
-    // Match href="#<id>" on related-view-btn links regardless of attribute order
-    const relatedPanelRe = /<a[^>]+class="related-view-btn"[^>]*>/g;
+    // Scan for related-view-btn and extract href from the surrounding tag
+    // (attribute order may vary, so search by class name then extract href separately)
+    const relatedPanelRe = /class="related-view-btn"/g;
     let m: RegExpExecArray | null;
+    let checkedCount = 0;
     while ((m = relatedPanelRe.exec(html)) !== null) {
-      const hrefMatch = m[0].match(/href="#([^"]+)"/);
+      // Walk back to find the opening <a to extract href
+      const tagStart = html.lastIndexOf('<a', m.index);
+      const tagEnd = html.indexOf('>', m.index) + 1;
+      const tag = html.slice(tagStart, tagEnd);
+      const hrefMatch = tag.match(/href="#([^"]+)"/);
       expect(hrefMatch).not.toBeNull();
-      if (hrefMatch) expect(ids.has(hrefMatch[1])).toBe(true);
+      if (hrefMatch) {
+        expect(ids.has(hrefMatch[1])).toBe(true);
+        checkedCount++;
+      }
     }
+    // At least one related link must exist in the built HTML
+    expect(checkedCount).toBeGreaterThan(0);
   });
 
   test('built HTML: card with no situations has no related panel', () => {
@@ -157,10 +168,13 @@ test.describe('Related subsidies panel — build-time algorithm', () => {
     const html = readFileSync(htmlPath, 'utf-8');
     const noSituation = subsidies.find(s => !s.situations || s.situations.length === 0);
     if (!noSituation) return;
-    const cardIdx = html.indexOf(`id="${noSituation.id}"`);
-    expect(cardIdx).toBeGreaterThan(-1);
-    // Find the next <article start after the card opens
-    const nextCardIdx = html.indexOf('<article', cardIdx + 1);
+    // Anchor search to the <article> element with this id
+    const cardArticleRe = new RegExp(`<article[^>]*id="${noSituation.id}"[^>]*>`);
+    const cardMatch = cardArticleRe.exec(html);
+    expect(cardMatch).not.toBeNull();
+    const cardIdx = cardMatch!.index;
+    // Find the next card's <article> opening
+    const nextCardIdx = html.indexOf('<article', cardIdx + cardMatch![0].length);
     const cardSlice = nextCardIdx > -1 ? html.slice(cardIdx, nextCardIdx) : html.slice(cardIdx);
     expect(cardSlice).not.toContain('related-subsidies');
   });

@@ -488,11 +488,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               <ol class="steps-list">
                 {s.steps.map(step => <li>{step}</li>)}
               </ol>
-              {(relatedMap.get(s.id) ?? []).length > 0 && (
+              {relatedMap.get(s.id)!.length > 0 && (
                 <div class="related-subsidies">
                   <h3 class="related-title">💡 你可能也符合</h3>
                   <ul class="related-list">
-                    {(relatedMap.get(s.id) ?? []).map(r => (
+                    {relatedMap.get(s.id)!.map(r => (
                       <li class="related-item">
                         <span class="related-category-pill">{r.category}</span>
                         <span class="related-name">{r.title}</span>
