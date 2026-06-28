@@ -6,6 +6,30 @@ type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-gra
 type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[] };
 const subsidies = subsidiesRaw as Subsidy[];
 
+// ── Related subsidies: build-time pre-computation ─────────────────────────
+// Algorithm: find top 2-3 other subsidies sharing the most `situations` tags.
+// Ties broken by difficulty: easier (easy < medium < hard) comes first.
+const DIFFICULTY_ORDER: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
+
+function getRelatedSubsidies(subsidy: Subsidy, all: Subsidy[], max = 3): Subsidy[] {
+  const mySituations = new Set<string>(subsidy.situations ?? []);
+  if (mySituations.size === 0) return [];
+  return all
+    .filter(s => s.id !== subsidy.id)
+    .map(s => ({ s, shared: (s.situations ?? []).filter(sit => mySituations.has(sit)).length }))
+    .filter(({ shared }) => shared > 0)
+    .sort((a, b) =>
+      b.shared - a.shared ||
+      (DIFFICULTY_ORDER[a.s.difficulty ?? 'medium'] ?? 1) - (DIFFICULTY_ORDER[b.s.difficulty ?? 'medium'] ?? 1)
+    )
+    .map(({ s }) => s)
+    .slice(0, max);
+}
+
+const relatedMap = new Map<string, Subsidy[]>();
+subsidies.forEach(s => relatedMap.set(s.id, getRelatedSubsidies(s, subsidies)));
+// ─────────────────────────────────────────────────────────────────────────
+
 // Compute category counts for filter buttons
 const categoryCounts: Record<string, number> = {};
 subsidies.forEach(s => {
@@ -464,6 +488,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               <ol class="steps-list">
                 {s.steps.map(step => <li>{step}</li>)}
               </ol>
+              {relatedMap.get(s.id)!.length > 0 && (
+                <div class="related-subsidies">
+                  <h3 class="related-title">💡 你可能也符合</h3>
+                  <ul class="related-list">
+                    {relatedMap.get(s.id)!.map(r => (
+                      <li class="related-item">
+                        <span class="related-category-pill">{r.category}</span>
+                        <span class="related-name">{r.title}</span>
+                        <a href={`#${r.id}`} class="related-view-btn" aria-label={`查看 ${r.title}`}>查看 →</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </details>
           )}
           <div class="card-actions">

@@ -1,0 +1,185 @@
+import { test, expect } from '@playwright/test';
+import { readFileSync, existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { resolve, dirname } from 'node:path';
+
+interface Subsidy {
+  id: string;
+  title: string;
+  category: string;
+  situations?: string[];
+  difficulty?: string;
+  steps?: string[];
+}
+
+const DIFFICULTY_ORDER: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
+
+function getRelatedSubsidies(subsidy: Subsidy, all: Subsidy[], max = 3): Subsidy[] {
+  const mySituations = new Set(subsidy.situations ?? []);
+  if (mySituations.size === 0) return [];
+  return all
+    .filter(s => s.id !== subsidy.id)
+    .map(s => ({ s, shared: (s.situations ?? []).filter(sit => mySituations.has(sit)).length }))
+    .filter(({ shared }) => shared > 0)
+    .sort((a, b) =>
+      b.shared - a.shared ||
+      (DIFFICULTY_ORDER[a.s.difficulty ?? 'medium'] ?? 1) -
+      (DIFFICULTY_ORDER[b.s.difficulty ?? 'medium'] ?? 1)
+    )
+    .map(({ s }) => s)
+    .slice(0, max);
+}
+
+test.describe('Related subsidies panel — build-time algorithm', () => {
+  let subsidies: Subsidy[];
+
+  test.beforeAll(() => {
+    const dataPath = resolve(dirname(fileURLToPath(import.meta.url)), '../src/data/subsidies.json');
+    const raw: unknown = JSON.parse(readFileSync(dataPath, 'utf-8'));
+    if (!Array.isArray(raw)) throw new Error('subsidies.json must be an array');
+    subsidies = raw as Subsidy[];
+  });
+
+  test('algorithm returns at most 3 related subsidies', () => {
+    for (const s of subsidies) {
+      const related = getRelatedSubsidies(s, subsidies);
+      expect(related.length).toBeLessThanOrEqual(3);
+    }
+  });
+
+  test('algorithm never returns the card itself', () => {
+    for (const s of subsidies) {
+      const related = getRelatedSubsidies(s, subsidies);
+      expect(related.map(r => r.id)).not.toContain(s.id);
+    }
+  });
+
+  test('algorithm only returns cards sharing at least one situation tag', () => {
+    for (const s of subsidies) {
+      const mySituations = new Set(s.situations ?? []);
+      const related = getRelatedSubsidies(s, subsidies);
+      for (const r of related) {
+        const shared = (r.situations ?? []).some(sit => mySituations.has(sit));
+        expect(shared).toBe(true);
+      }
+    }
+  });
+
+  test('card with no situations returns empty related list', () => {
+    const noSituation = subsidies.find(s => !s.situations || s.situations.length === 0);
+    if (!noSituation) return; // skip if all cards have situations
+    const related = getRelatedSubsidies(noSituation, subsidies);
+    expect(related).toHaveLength(0);
+  });
+
+  test('results are ordered by shared-situation count descending', () => {
+    const multi = subsidies.find(s => (s.situations ?? []).length >= 2);
+    if (!multi) return;
+    const related = getRelatedSubsidies(multi, subsidies);
+    const mySituations = new Set(multi.situations ?? []);
+    const shareCounts = related.map(r => (r.situations ?? []).filter(sit => mySituations.has(sit)).length);
+    for (let i = 0; i < shareCounts.length - 1; i++) {
+      expect(shareCounts[i]).toBeGreaterThanOrEqual(shareCounts[i + 1]);
+    }
+  });
+
+  test('ties are broken by difficulty (easy before medium before hard)', () => {
+    // Find a card whose related results contain a tie in share count
+    let tiedPairsChecked = 0;
+    for (const s of subsidies) {
+      const mySituations = new Set(s.situations ?? []);
+      const withCounts = subsidies
+        .filter(x => x.id !== s.id)
+        .map(x => ({ x, shared: (x.situations ?? []).filter(sit => mySituations.has(sit)).length }))
+        .filter(({ shared }) => shared > 0)
+        .sort((a, b) => b.shared - a.shared); // sort desc to find adjacent ties correctly
+      // Look for a tie (adjacent equal counts in sorted order)
+      const hasTie = withCounts.length > 1 &&
+        withCounts.some(({ shared }, i) => i > 0 && shared === withCounts[i - 1].shared);
+      if (!hasTie) continue;
+      const related = getRelatedSubsidies(s, subsidies);
+      const mySituationsArr = Array.from(mySituations);
+      const relatedWithCounts = related.map(r => ({
+        shared: (r.situations ?? []).filter(sit => mySituationsArr.includes(sit)).length,
+        diffOrder: DIFFICULTY_ORDER[r.difficulty ?? 'medium'] ?? 1,
+      }));
+      for (let i = 0; i < relatedWithCounts.length - 1; i++) {
+        const a = relatedWithCounts[i];
+        const b = relatedWithCounts[i + 1];
+        if (a.shared === b.shared) {
+          expect(a.diffOrder).toBeLessThanOrEqual(b.diffOrder);
+          tiedPairsChecked++;
+        }
+      }
+      if (tiedPairsChecked > 0) break; // verified at least one tie case — done
+    }
+    // Ensure the test actually exercised a tie case (not vacuously passing)
+    expect(tiedPairsChecked).toBeGreaterThan(0);
+  });
+
+  test('built HTML contains related-subsidies panels for cards with situations and steps', () => {
+    const htmlPath = resolve(dirname(fileURLToPath(import.meta.url)), '../dist/index.html');
+    if (!existsSync(htmlPath)) {
+      test.skip(true, 'dist/index.html not found — run `npm run build` first');
+      return;
+    }
+    const html = readFileSync(htmlPath, 'utf-8');
+    // Panel is inside card-steps details, so card must have both situations matches AND steps
+    let expectedPanelCount = 0;
+    for (const s of subsidies) {
+      const related = getRelatedSubsidies(s, subsidies);
+      if (related.length > 0 && s.steps && s.steps.length > 0) expectedPanelCount++;
+    }
+    const panelCount = (html.match(/class="related-subsidies"/g) ?? []).length;
+    expect(panelCount).toBe(expectedPanelCount);
+  });
+
+  test('built HTML: related view links are anchor hrefs pointing to card ids', () => {
+    const htmlPath = resolve(dirname(fileURLToPath(import.meta.url)), '../dist/index.html');
+    if (!existsSync(htmlPath)) {
+      test.skip(true, 'dist/index.html not found — run `npm run build` first');
+      return;
+    }
+    const html = readFileSync(htmlPath, 'utf-8');
+    const ids = new Set(subsidies.map(s => s.id));
+    // Scan for related-view-btn and extract href from the surrounding tag
+    // (attribute order may vary, so search by class name then extract href separately)
+    const relatedPanelRe = /class="related-view-btn"/g;
+    let m: RegExpExecArray | null;
+    let checkedCount = 0;
+    while ((m = relatedPanelRe.exec(html)) !== null) {
+      // Walk back to find the opening <a to extract href
+      const tagStart = html.lastIndexOf('<a', m.index);
+      const tagEnd = html.indexOf('>', m.index) + 1;
+      const tag = html.slice(tagStart, tagEnd);
+      const hrefMatch = tag.match(/href="#([^"]+)"/);
+      expect(hrefMatch).not.toBeNull();
+      if (hrefMatch) {
+        expect(ids.has(hrefMatch[1])).toBe(true);
+        checkedCount++;
+      }
+    }
+    // At least one related link must exist in the built HTML
+    expect(checkedCount).toBeGreaterThan(0);
+  });
+
+  test('built HTML: card with no situations has no related panel', () => {
+    const htmlPath = resolve(dirname(fileURLToPath(import.meta.url)), '../dist/index.html');
+    if (!existsSync(htmlPath)) {
+      test.skip(true, 'dist/index.html not found — run `npm run build` first');
+      return;
+    }
+    const html = readFileSync(htmlPath, 'utf-8');
+    const noSituation = subsidies.find(s => !s.situations || s.situations.length === 0);
+    if (!noSituation) return;
+    // Anchor search to the <article> element with this id
+    const cardArticleRe = new RegExp(`<article[^>]*id="${noSituation.id}"[^>]*>`);
+    const cardMatch = cardArticleRe.exec(html);
+    expect(cardMatch).not.toBeNull();
+    const cardIdx = cardMatch!.index;
+    // Find the next card's <article> opening
+    const nextCardIdx = html.indexOf('<article', cardIdx + cardMatch![0].length);
+    const cardSlice = nextCardIdx > -1 ? html.slice(cardIdx, nextCardIdx) : html.slice(cardIdx);
+    expect(cardSlice).not.toContain('related-subsidies');
+  });
+});
