@@ -161,8 +161,7 @@ main {
   margin-top: 0.15rem;
 }
 .fuzzy-hint[hidden] { display: none; }
-.fuzzy-hint strong { color: var(--color-primary, #2563eb); cursor: pointer; }
-.fuzzy-hint strong:hover { text-decoration: underline; }
+.fuzzy-hint strong { color: var(--color-primary, #2563eb); }
 
 .category-filters {
   display: flex;

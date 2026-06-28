@@ -633,7 +633,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const fuzzyScores = new Map<Element, { exact: boolean; score: number }>();
 
     // ── Debounce ─────────────────────────────────────────────────────────────
-    function debounce<T extends unknown[]>(fn: (...args: T) => void, ms: number) {
+    function debounce<T extends unknown[]>(fn: (...args: T) => void, ms: number): ((...args: T) => void) & { cancel: () => void } {
       let timer: ReturnType<typeof setTimeout> | undefined = undefined;
       const call = (...args: T) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
       call.cancel = () => clearTimeout(timer);
@@ -1363,14 +1363,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           const strong = document.createElement('strong');
           strong.textContent = topFuzzyName;
           strong.style.cursor = 'pointer';
+          strong.setAttribute('role', 'button');
+          strong.setAttribute('tabindex', '0');
           const suffix = document.createTextNode('？');
-          strong.addEventListener('click', () => {
+          const handleSuggestion = () => {
             const suggestion = topFuzzyName.trim();
             debouncedSearch.cancel(); // prevent stale debounce from overwriting
             searchInput.value = suggestion;
             searchQuery = suggestion.toLowerCase();
             updateDisplay();
             applySort();
+          };
+          strong.addEventListener('click', handleSuggestion, { once: true });
+          strong.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSuggestion(); }
           }, { once: true });
           fuzzyHint.append(prefix, strong, suffix);
         }
