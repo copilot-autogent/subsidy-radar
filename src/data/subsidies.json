@@ -133,7 +133,8 @@
     ],
     "situations": [
       "renter",
-      "parent"
+      "parent",
+      "low-income"
     ],
     "difficulty": "medium",
     "updatedAt": "2026-05-09",
@@ -1071,7 +1072,8 @@
     ],
     "situations": [
       "renter",
-      "fresh-grad"
+      "fresh-grad",
+      "low-income"
     ],
     "isYouthHighlight": true,
     "difficulty": "medium",
@@ -1111,7 +1113,8 @@
     "situations": [
       "renter",
       "parent",
-      "disabled"
+      "disabled",
+      "low-income"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1194,7 +1197,8 @@
       "衛福部"
     ],
     "situations": [
-      "senior"
+      "senior",
+      "low-income"
     ],
     "isYouthHighlight": false,
     "difficulty": "hard",
@@ -1468,7 +1472,8 @@
     "situations": [
       "unemployed",
       "disabled",
-      "employed"
+      "employed",
+      "low-income"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -1855,5 +1860,79 @@
     ],
     "addedDate": "2026-06-29",
     "maxAmount": 12000
+  },
+  {
+    "id": "low-income-emergency-relief",
+    "title": "中低收入戶急難救助",
+    "category": "生活",
+    "agency": "衛生福利部社會及家庭署 / 各縣市政府社會局",
+    "summary": "低收入戶或中低收入戶遭遇緊急困難（如重病、意外、失業等），可申請急難救助金，協助度過生活危機。依社會救助法第21條，各縣市政府均設有急難救助制度，補助金額視困難情形核定，申請當日即可受理。",
+    "eligibility": [
+      "戶籍設於申請縣市，且實際居住",
+      "符合低收入戶或中低收入戶認定資格（持有核定通知書）",
+      "遭遇緊急困難，包括重病、重傷、死亡、天災、失業等急迫情形",
+      "急難情形發生後3個月內提出申請（部分縣市有時效規定）"
+    ],
+    "amount": "每次補助 5,000 至 30,000 元（依困難程度及縣市規定核定，部分縣市另有加碼）",
+    "deadline": "全年常態受理，遇緊急情形可當日申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html",
+    "tags": [
+      "急難救助",
+      "低收入戶",
+      "中低收入戶",
+      "社會救助法",
+      "生活補助",
+      "緊急救助"
+    ],
+    "situations": ["low-income"],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-29",
+    "steps": [
+      "確認已取得縣市政府核發之低收入戶或中低收入戶核定通知書（向戶籍地鄉鎮市區公所社會課申請認定）",
+      "備妥身分證、戶口名簿、低/中低收入戶核定通知書及急難事實相關佐證文件（如診斷書、意外報告、失業證明等）",
+      "至戶籍地鄉鎮市區公所或縣市政府社會局填寫急難救助申請書，說明急難事由",
+      "社工人員訪視評估後，核定補助金額並撥款；緊急情形得當日或次日完成初步審核"
+    ],
+    "addedDate": "2026-06-29",
+    "maxAmount": 30000
+  },
+  {
+    "id": "low-income-education-grant",
+    "title": "低收入戶及中低收入戶子女就學補助",
+    "category": "教育",
+    "agency": "教育部",
+    "summary": "低收入戶或中低收入戶家庭的子女就讀大專校院，享有學雜費大幅減免：低收入戶全免，中低收入戶補助60%。國中小及高中職階段亦有雜費減免及學用品補助，由就讀學校代為申請。申請時需備妥縣市政府核發之低/中低收入戶核定通知書（每年應重新認定）。",
+    "eligibility": [
+      "就讀教育部認可之公私立大專校院（含技職院校）",
+      "家長（或學生本人）持有縣市政府核發之低收入戶或中低收入戶核定通知書",
+      "學雜費減免按戶別核定：低收入戶全免，中低收入戶減免60%",
+      "國中小及高中職：向就讀學校申請雜費減免及學用品補助（由學校送教育局核辦）"
+    ],
+    "amount": "大專院校（低收入戶）：學雜費全免，私立約 6 至 12 萬元/學年；（中低收入戶）：學雜費減免 60%，約 3.6 至 7.2 萬元/學年",
+    "deadline": "每學期開學報到期間申請，約每年2月及8月",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://helpdreams.moe.edu.tw/",
+    "tags": [
+      "低收入戶",
+      "中低收入戶",
+      "學雜費減免",
+      "就學補助",
+      "教育補助",
+      "弱勢助學"
+    ],
+    "situations": ["low-income", "parent"],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-29",
+    "steps": [
+      "確認持有縣市政府核發之低收入戶或中低收入戶核定通知書（每年須重新認定，請確認效期）",
+      "大專院校：至就讀學校學務處或財務組填寫「弱勢助學申請書」（可至教育部弱勢助學網 helpdreams.moe.edu.tw 查詢），附上核定通知書及在學證明",
+      "學校核定後辦理學雜費減免或退費；低收入戶全免，中低收入戶減免60%",
+      "國中小至高中職：向就讀學校提出申請（學校代送教育局審核），雜費全免並補助學用品費；縣市另有加碼補助可同步洽縣市教育局"
+    ],
+    "addedDate": "2026-06-29",
+    "maxAmount": 120000
   }
 ]
