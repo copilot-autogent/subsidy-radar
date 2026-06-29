@@ -59,7 +59,7 @@ const NEW_IMMIGRANT_LABEL = '⭐ 新住民';
 const newImmigrantCount = subsidies.filter(s => s.situations?.includes('new-immigrant')).length;
 const INDIGENOUS_LABEL = '⭐ 原住民';
 const indigenousCount = subsidies.filter(s => s.situations?.includes('indigenous')).length;
-const LOW_INCOME_LABEL = '⭐ 低收入戶';
+const LOW_INCOME_LABEL = '⭐ 低/中低收入戶';
 const lowIncomeCount = subsidies.filter(s => s.situations?.includes('low-income')).length;
 const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
 const youthCount = youthHighlightCount;
@@ -148,7 +148,7 @@ const personas = [
   { key: 'parent',      icon: '👶', label: '育兒家庭' },
   { key: 'indigenous',  icon: '🏔️', label: '原住民族' },
   { key: 'disabled',    icon: '♿', label: '身障朋友' },
-  { key: 'low-income',  icon: '💰', label: '低收入戶' },
+  { key: 'low-income',  icon: '💰', label: '低/中低收入戶' },
 ];
 
 // Build JSON-LD ItemList for Google rich results (static, build-time, zero runtime cost)
@@ -732,7 +732,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const DISABILITY_FILTER_LABEL = (document.getElementById('disabilityFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 身障';
     const NEW_IMMIGRANT_FILTER_LABEL = (document.getElementById('newImmigrantFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 新住民';
     const INDIGENOUS_FILTER_LABEL = (document.getElementById('indigenousFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 原住民';
-    const LOW_INCOME_FILTER_LABEL = (document.getElementById('lowIncomeFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 低收入戶';
+    const LOW_INCOME_FILTER_LABEL = (document.getElementById('lowIncomeFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 低/中低收入戶';
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
