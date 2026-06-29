@@ -278,7 +278,8 @@
     ],
     "situations": [
       "renter",
-      "parent"
+      "parent",
+      "disabled"
     ],
     "difficulty": "medium",
     "updatedAt": "2026-05-09",
@@ -1109,7 +1110,8 @@
     ],
     "situations": [
       "renter",
-      "parent"
+      "parent",
+      "disabled"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1815,5 +1817,43 @@
     ],
     "addedDate": "2026-06-29",
     "maxAmount": 500000
+  },
+  {
+    "id": "disability-transport-subsidy",
+    "title": "身心障礙者交通費補助",
+    "category": "生活",
+    "agency": "衛生福利部社會及家庭署 / 各縣市政府",
+    "summary": "領有身心障礙證明者每年可申請定額交通費補助，補助使用大眾運輸、復康巴士等交通工具之費用，部分縣市另有搭乘計程車補助。重度、極重度障礙者補助金額更高，可搭配復康巴士服務使用。",
+    "eligibility": [
+      "領有身心障礙證明（輕度以上皆可申請，重度及極重度補助較高）",
+      "設籍台灣且實際居住當地",
+      "向戶籍所在地鄉鎮市區公所社政課申請",
+      "部分縣市搭乘計程車補助需另行至縣市政府社會局登記"
+    ],
+    "amount": "每年 2,400～12,000 元（依障礙等級及縣市規定不同）",
+    "deadline": "全年常態受理（各縣市核定年度內申請）",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341",
+    "tags": [
+      "身心障礙",
+      "交通補助",
+      "復康巴士",
+      "計程車",
+      "公共交通"
+    ],
+    "situations": [
+      "disabled"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-06-29",
+    "steps": [
+      "確認持有縣市衛生局核發之有效身心障礙證明",
+      "備妥身分證、身心障礙證明正本及影本、存摺封面影本",
+      "至戶籍地鄉鎮市區公所社政課填寫交通費補助申請書（無需預約）",
+      "核准後補助款定期匯入指定帳戶，部分縣市以儲值卡方式提供，可刷卡搭乘復康巴士或大眾運輸"
+    ],
+    "addedDate": "2026-06-29",
+    "maxAmount": 12000
   }
 ]
