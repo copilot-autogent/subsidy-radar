@@ -1824,10 +1824,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     if (printListBtn) {
       printListBtn.addEventListener('click', () => {
-        // Mark currently hidden cards so @media print can skip them
+        // Clear any stale state from a previous aborted print (re-entrancy guard)
+        document.querySelectorAll<HTMLElement>('.print-filtered-hidden').forEach(el => {
+          el.classList.remove('print-filtered-hidden');
+        });
+        document.body.classList.remove('print-filtered');
+
+        // Mark currently hidden cards (use computed style to catch class-based hiding)
         const allCards = document.querySelectorAll<HTMLElement>('.subsidy-card');
         allCards.forEach(card => {
-          if (card.style.display === 'none') {
+          if (getComputedStyle(card).display === 'none') {
             card.classList.add('print-filtered-hidden');
           }
         });
