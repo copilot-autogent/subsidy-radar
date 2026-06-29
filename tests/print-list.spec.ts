@@ -34,15 +34,18 @@ test.describe('print filtered list button', () => {
 
   test('clicking print-list button adds print-filtered class to body and calls window.print()', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    // Mock window.print to prevent dialog and record call
+    // Mock window.print and setTimeout to prevent dialog and skip cleanup delay
     await page.evaluate(() => {
       (window as any).__printCalled = false;
+      (window as any).__origSetTimeout = window.setTimeout;
+      window.setTimeout = (() => 0) as any;
       window.print = () => { (window as any).__printCalled = true; };
     });
     await page.locator('#printListBtn').click();
-    // body.print-filtered should be set at time of print call (before afterprint)
     const printCalled = await page.evaluate(() => (window as any).__printCalled);
+    const hasPrintFiltered = await page.evaluate(() => document.body.classList.contains('print-filtered'));
     expect(printCalled).toBe(true);
+    expect(hasPrintFiltered).toBe(true);
   });
 
   test('afterprint removes print-filtered body class and print-filtered-hidden card classes', async ({ page }) => {
@@ -50,8 +53,11 @@ test.describe('print filtered list button', () => {
     // Apply a filter so some cards are hidden
     const firstFilterBtn = page.locator('.filter-btn').nth(1);
     await firstFilterBtn.click();
-    // Mock print (afterprint won't fire automatically with mocked print)
-    await page.evaluate(() => { window.print = () => {}; });
+    // Mock print and suppress the setTimeout fallback cleanup
+    await page.evaluate(() => {
+      window.print = () => {};
+      window.setTimeout = (() => 0) as any;
+    });
     await page.locator('#printListBtn').click();
 
     // Verify body.print-filtered is set (cleanup not yet run without real afterprint)
@@ -70,23 +76,29 @@ test.describe('print filtered list button', () => {
 
   test('re-entrancy: second click clears stale print-filtered-hidden before re-marking', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.evaluate(() => { window.print = () => {}; });
+    // Mock to prevent actual print and disable setTimeout cleanup
+    await page.evaluate(() => {
+      window.print = () => {};
+      window.setTimeout = (() => 0) as any;
+    });
+
+    // Apply a filter first so that some cards are hidden (first count > 0)
+    const filterBtn = page.locator('.filter-btn').nth(1);
+    await filterBtn.click();
+    await page.waitForFunction(() => {
+      const cards = document.querySelectorAll<HTMLElement>('.subsidy-card');
+      return [...cards].some(c => getComputedStyle(c).display === 'none');
+    });
 
     // First click
     await page.locator('#printListBtn').click();
-    const firstClickClass = await page.evaluate(() => document.body.classList.contains('print-filtered'));
-    expect(firstClickClass).toBe(true);
-
-    // Record how many hidden cards after first click
     const firstCount = await page.evaluate(() => document.querySelectorAll('.print-filtered-hidden').length);
+    expect(firstCount).toBeGreaterThan(0);
 
     // Second click without afterprint (simulates browser that did not fire afterprint)
     await page.locator('#printListBtn').click();
-    const secondClickClass = await page.evaluate(() => document.body.classList.contains('print-filtered'));
-    expect(secondClickClass).toBe(true);
-
-    // Re-entrancy guard: hidden count after second click must equal first count (no duplication)
     const secondCount = await page.evaluate(() => document.querySelectorAll('.print-filtered-hidden').length);
+    // Re-entrancy guard must clear and re-mark — count stays the same, no duplication
     expect(secondCount).toBe(firstCount);
   });
 });

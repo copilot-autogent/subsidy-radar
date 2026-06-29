@@ -1866,7 +1866,7 @@ main {
     color: #475569;
     margin-top: 0.25rem;
   }
-    body.print-filtered .print-filtered-footer {
+  body.print-filtered .print-filtered-footer {
     display: block !important;
     text-align: center;
     font-size: 0.78rem;

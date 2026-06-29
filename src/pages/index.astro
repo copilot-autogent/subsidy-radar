@@ -429,9 +429,6 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     <h1>補助雷達篩選結果</h1>
     <p>列印於 <span id="printFilteredDate"></span></p>
   </div>
-  <div class="print-filtered-footer" id="printFilteredFooter" aria-hidden="true">
-    <span id="printFilteredUrl"></span>
-  </div>
 
   <div class="grid" id="subsidyGrid" tabindex="-1">
     {subsidies.map(s => {
@@ -565,6 +562,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   </div>
 
   <div id="share-toast" class="share-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Print footer: shown only in @media print body.print-filtered -->
+  <div class="print-filtered-footer" id="printFilteredFooter" aria-hidden="true">
+    <span id="printFilteredUrl"></span>
+  </div>
 
   <!-- ── Comparison Bar (sticky bottom) ── -->
   <div id="compareBar" class="compare-bar" role="region" aria-label="比較補助" hidden>
@@ -1849,11 +1851,23 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         }
         const filteredUrlEl = document.getElementById('printFilteredUrl');
         if (filteredUrlEl) {
-          filteredUrlEl.textContent = window.location.origin + window.location.pathname;
+          filteredUrlEl.textContent = window.location.href;
         }
 
         document.body.classList.add('print-filtered');
-        window.print();
+        try {
+          window.print();
+        } finally {
+          // If afterprint does not fire (some browsers), ensure state is cleaned up after a short delay
+          setTimeout(() => {
+            if (document.body.classList.contains('print-filtered')) {
+              document.body.classList.remove('print-filtered');
+              document.querySelectorAll<HTMLElement>('.print-filtered-hidden').forEach(el => {
+                el.classList.remove('print-filtered-hidden');
+              });
+            }
+          }, 3000);
+        }
       });
 
       // Gate cleanup on print-filtered being set to avoid interfering with tracker prints
