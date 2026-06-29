@@ -2092,11 +2092,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           // Silently ignore unknown cat values (acceptance criterion: invalid params ignored)
         }
 
-        // Restore situation filter from URL
+        // Restore situation filter from URL (validate against known situation values)
+        const VALID_SITUATIONS = new Set([
+          'renter', 'homebuyer', 'entrepreneur', 'parent', 'fresh-grad',
+          'unemployed', 'employed', 'senior', 'disabled', 'new-immigrant', 'indigenous',
+        ]);
         const sitParam = params.get('sit') ?? '';
-        if (sitParam) {
+        if (sitParam && VALID_SITUATIONS.has(sitParam)) {
           activeSituation = sitParam;
         }
+        // Silently ignore unknown sit values
 
         if (activeCategory !== '全部' || activeSituation) {
           updateDisplay();

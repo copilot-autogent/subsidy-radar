@@ -104,32 +104,25 @@ test.describe('URL-based shareable filter state', () => {
     expect(decodeURIComponent(page.url())).not.toContain('cat=住宅');
   });
 
-  test('share URL → open in new context → correct cards visible (end-to-end)', async ({ browser }) => {
-    // Build a filter URL for 住宅 category
-    const shareUrl = 'http://localhost:4321/?cat=%E4%BD%8F%E5%AE%85';
-
-    // Simulate sharing: open the URL in a fresh browser context
-    const freshContext = await browser.newContext();
-    const freshPage = await freshContext.newPage();
-    await freshPage.goto(shareUrl);
+  test('share URL → open in fresh browser context → correct cards visible (end-to-end)', async ({ page, baseURL }) => {
+    // Navigate to a shared URL (simulates a recipient opening a shared filter link)
+    await page.goto('/?cat=%E4%BD%8F%E5%AE%85');
 
     // The 住宅 category button should be active
-    const catBtn = freshPage.locator('.filter-btn[data-category="住宅"]');
+    const catBtn = page.locator('.filter-btn[data-category="住宅"]');
     await expect(catBtn).toHaveAttribute('aria-pressed', 'true');
 
     // Only 住宅 cards should be visible
-    const visibleCount = await countVisibleCards(freshPage);
+    const visibleCount = await countVisibleCards(page);
     expect(visibleCount).toBeGreaterThan(0);
 
-    const nonHousingVisible = await freshPage.locator('.subsidy-card').evaluateAll(cards =>
+    const nonHousingVisible = await page.locator('.subsidy-card').evaluateAll(cards =>
       cards.filter(c => {
         const el = c as HTMLElement;
         return el.style.display !== 'none' && el.dataset.category !== '住宅';
       }).length
     );
     expect(nonHousingVisible).toBe(0);
-
-    await freshContext.close();
   });
 
   test('invalid/unknown param values are silently ignored', async ({ page }) => {
