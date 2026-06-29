@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous';
+type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income';
 type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[] };
 const subsidies = subsidiesRaw as Subsidy[];
 
@@ -59,7 +59,9 @@ const NEW_IMMIGRANT_LABEL = '⭐ 新住民';
 const newImmigrantCount = subsidies.filter(s => s.situations?.includes('new-immigrant')).length;
 const INDIGENOUS_LABEL = '⭐ 原住民';
 const indigenousCount = subsidies.filter(s => s.situations?.includes('indigenous')).length;
-const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
+const LOW_INCOME_LABEL = '⭐ 低收入戶';
+const lowIncomeCount = subsidies.filter(s => s.situations?.includes('low-income')).length;
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
 const youthCount = youthHighlightCount;
 
 // Difficulty filter counts
@@ -146,6 +148,7 @@ const personas = [
   { key: 'parent',      icon: '👶', label: '育兒家庭' },
   { key: 'indigenous',  icon: '🏔️', label: '原住民族' },
   { key: 'disabled',    icon: '♿', label: '身障朋友' },
+  { key: 'low-income',  icon: '💰', label: '低收入戶' },
 ];
 
 // Build JSON-LD ItemList for Google rich results (static, build-time, zero runtime cost)
@@ -301,13 +304,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           ? newImmigrantCount
           : cat === INDIGENOUS_LABEL
           ? indigenousCount
+          : cat === LOW_INCOME_LABEL
+          ? lowIncomeCount
           : cat === RECENCY_LABEL
           ? recencyCount
           : categoryCounts[cat] || 0;
         return (
           <button
-            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
-            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : undefined}
+            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
+            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : undefined}
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
@@ -727,6 +732,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const DISABILITY_FILTER_LABEL = (document.getElementById('disabilityFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 身障';
     const NEW_IMMIGRANT_FILTER_LABEL = (document.getElementById('newImmigrantFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 新住民';
     const INDIGENOUS_FILTER_LABEL = (document.getElementById('indigenousFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 原住民';
+    const LOW_INCOME_FILTER_LABEL = (document.getElementById('lowIncomeFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 低收入戶';
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
@@ -1387,6 +1393,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           // Indigenous entries span multiple categories — tag-only matching is intentional.
           : activeCategory === INDIGENOUS_FILTER_LABEL
           ? situations.includes('indigenous')
+          // Low-income entries span multiple categories — tag-only matching is intentional.
+          : activeCategory === LOW_INCOME_FILTER_LABEL
+          ? situations.includes('low-income')
           : activeCategory === RECENCY_FILTER_LABEL
           ? isRecentlyAdded(card)
           : cat === activeCategory;
@@ -2095,7 +2104,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // Restore situation filter from URL (validate against known situation values)
         const VALID_SITUATIONS = new Set([
           'renter', 'homebuyer', 'entrepreneur', 'parent', 'fresh-grad',
-          'unemployed', 'employed', 'senior', 'disabled', 'new-immigrant', 'indigenous',
+          'unemployed', 'employed', 'senior', 'disabled', 'new-immigrant', 'indigenous', 'low-income',
         ]);
         const sitParam = params.get('sit') ?? '';
         if (sitParam && VALID_SITUATIONS.has(sitParam)) {
