@@ -145,6 +145,7 @@ const personas = [
   { key: 'entrepreneur',icon: '💼', label: '想創業' },
   { key: 'parent',      icon: '👶', label: '育兒家庭' },
   { key: 'indigenous',  icon: '🏔️', label: '原住民族' },
+  { key: 'disabled',    icon: '♿', label: '身障朋友' },
 ];
 
 // Build JSON-LD ItemList for Google rich results (static, build-time, zero runtime cost)
@@ -189,7 +190,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   </section>
 
   <section class="quiz-section" aria-label="快速配對">
-    <h2 class="quiz-title">🎯 找出最適合你的補助（3 個問題）</h2>
+    <h2 class="quiz-title">🎯 找出最適合你的補助（4 個問題）</h2>
     
     <div class="quiz-question" data-question="age">
       <label id="quiz-label-age" class="quiz-label">1. 你的年齡是？</label>
@@ -245,6 +246,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         <button class="quiz-option" data-value="other" type="button" role="radio" aria-checked="false">
           <span class="option-icon">✓</span>
           <span class="option-text">其他</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="quiz-question" data-question="disability" style="display:none">
+      <label id="quiz-label-disability" class="quiz-label">4. 你是否持有身心障礙證明？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-disability">
+        <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">♿</span>
+          <span class="option-text">是（領有身心障礙證明）</span>
+        </button>
+        <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">✓</span>
+          <span class="option-text">否</span>
         </button>
       </div>
     </div>
@@ -732,6 +747,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       age:        new Set(['youth', 'adult']),
       employment: new Set(['fresh-grad', 'unemployed', 'employed', 'entrepreneur']),
       housing:    new Set(['renter', 'homebuyer', 'parent', 'other']),
+      disability: new Set(['yes', 'no']),
     };
 
     function updateQuizUrl() {
@@ -739,6 +755,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.set('q1', quizAnswers.age ?? '');
       params.set('q2', quizAnswers.employment ?? '');
       params.set('q3', quizAnswers.housing ?? '');
+      params.set('q4', quizAnswers.disability ?? '');
       history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
     }
 
@@ -747,6 +764,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.delete('q1');
       params.delete('q2');
       params.delete('q3');
+      params.delete('q4');
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
@@ -771,7 +789,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     function matchQuizToSituations(): string[] {
       const situations: string[] = [];
-      const { age, employment, housing } = quizAnswers;
+      const { age, employment, housing, disability } = quizAnswers;
 
       // Map quiz answers to situations
       if (employment === 'fresh-grad') situations.push('fresh-grad');
@@ -781,6 +799,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       if (housing === 'homebuyer') situations.push('homebuyer');
       if (employment === 'entrepreneur' || housing === 'entrepreneur') situations.push('entrepreneur');
       if (housing === 'parent') situations.push('parent');
+      if (disability === 'yes') situations.push('disabled');
       
       return situations;
     }
@@ -1921,12 +1940,17 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const q1 = params.get('q1') ?? '';
       const q2 = params.get('q2') ?? '';
       const q3 = params.get('q3') ?? '';
-      if (
+      const q4 = params.get('q4') ?? '';
+
+      const q123Valid =
         VALID_QUIZ_VALUES.age.has(q1) &&
         VALID_QUIZ_VALUES.employment.has(q2) &&
-        VALID_QUIZ_VALUES.housing.has(q3)
-      ) {
-        quizAnswers = { age: q1, employment: q2, housing: q3 };
+        VALID_QUIZ_VALUES.housing.has(q3);
+      const q4Valid = VALID_QUIZ_VALUES.disability.has(q4);
+
+      if (q123Valid && q4Valid) {
+        // All 4 answers present and valid — restore full quiz state
+        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4 };
         // Mark each answer as selected in the UI; sync roving tabindex per group
         quizQuestions.forEach(q => { q.style.display = 'none'; });
         quizResetContainer.style.display = 'block';
@@ -1957,7 +1981,39 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         currentQuestionIndex = quizQuestions.length;
         applyQuizFilter();
         quizShareContainer.style.display = 'block';
-      } else if (params.has('q1') || params.has('q2') || params.has('q3')) {
+      } else if (q123Valid && q4 === '') {
+        // Old 3-answer share URL (pre-Q4): restore q1–q3 and advance to Q4 so user answers it
+        quizAnswers = { age: q1, employment: q2, housing: q3 };
+        // Mark q1–q3 answers as selected; leave Q4 unselected
+        document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+          const question = group.closest<HTMLElement>('.quiz-question')!;
+          const questionType = question.dataset.question!;
+          const selectedValue = quizAnswers[questionType];
+          if (!selectedValue) return; // Q4 — leave as-is
+          let hasSelected = false;
+          group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach(opt => {
+            if (opt.dataset.value === selectedValue) {
+              opt.classList.add('selected');
+              opt.setAttribute('aria-checked', 'true');
+              opt.setAttribute('tabindex', '0');
+              hasSelected = true;
+            } else {
+              opt.classList.remove('selected');
+              opt.setAttribute('aria-checked', 'false');
+              opt.setAttribute('tabindex', '-1');
+            }
+          });
+          if (!hasSelected) {
+            const first = group.querySelector<HTMLButtonElement>('.quiz-option');
+            if (first) first.setAttribute('tabindex', '0');
+          }
+        });
+        // Show Q4 (index 3) so the user completes the quiz; apply q1–q3 filter immediately
+        currentQuestionIndex = quizQuestions.length - 1;
+        showQuizQuestion(currentQuestionIndex);
+        applyQuizFilter();
+        quizResetContainer.style.display = 'block';
+      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4')) {
         // Stale/partial/invalid params — clear them so the URL matches UI state
         clearQuizUrl();
       }
