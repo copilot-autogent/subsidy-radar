@@ -410,11 +410,24 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     </div>
   </section>
 
-  <p class="results-count" id="resultsCount">共 {subsidies.length} 項補助</p>
+  <div class="results-row">
+    <p class="results-count" id="resultsCount">共 {subsidies.length} 項補助</p>
+    <button
+      class="print-list-btn"
+      id="printListBtn"
+      type="button"
+      aria-label="列印目前補助清單"
+    >🖨️ 列印補助清單</button>
+  </div>
 
   <div class="print-header" id="printHeader" aria-hidden="true">
     <h1>補助追蹤清單</h1>
     <p>列印於 <span id="printDate"></span></p>
+  </div>
+
+  <div class="print-filtered-header" id="printFilteredHeader" aria-hidden="true">
+    <h1>補助雷達篩選結果</h1>
+    <p>列印於 <span id="printFilteredDate"></span></p>
   </div>
 
   <div class="grid" id="subsidyGrid" tabindex="-1">
@@ -1803,6 +1816,38 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       printTrackerBtn.addEventListener('click', () => {
         setCurrentPrintDate();
         window.print();
+      });
+    }
+
+    // ── Print Filtered List ───────────────────────────────────────────────────
+    const printListBtn = document.getElementById('printListBtn') as HTMLButtonElement | null;
+
+    if (printListBtn) {
+      printListBtn.addEventListener('click', () => {
+        // Mark currently hidden cards so @media print can skip them
+        const allCards = document.querySelectorAll<HTMLElement>('.subsidy-card');
+        allCards.forEach(card => {
+          if (card.style.display === 'none') {
+            card.classList.add('print-filtered-hidden');
+          }
+        });
+
+        // Set the print date in the filtered header
+        const filteredDateEl = document.getElementById('printFilteredDate');
+        if (filteredDateEl) {
+          const today = new Date();
+          filteredDateEl.textContent = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
+        }
+
+        document.body.classList.add('print-filtered');
+        window.print();
+      });
+
+      window.addEventListener('afterprint', () => {
+        document.body.classList.remove('print-filtered');
+        document.querySelectorAll<HTMLElement>('.print-filtered-hidden').forEach(el => {
+          el.classList.remove('print-filtered-hidden');
+        });
       });
     }
 
