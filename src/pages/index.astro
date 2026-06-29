@@ -2175,6 +2175,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       sortAmountBtn.classList.remove('active');
       sortAmountBtn.setAttribute('aria-pressed', 'false');
       sortAmountBtn.textContent = '依金額高低';
+      showTrackedOnly = false;
+      updateTrackerFilterLabel();
       // Re-apply state from current URL
       initFromQueryParams();
       updateDisplay();

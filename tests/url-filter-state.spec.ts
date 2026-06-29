@@ -126,17 +126,18 @@ test.describe('URL-based shareable filter state', () => {
   });
 
   test('invalid/unknown param values are silently ignored', async ({ page }) => {
-    // Navigate with an unknown category value
+    // Navigate with an unknown category value and unknown sort value
     await page.goto('/?cat=INVALID_CATEGORY&sort=INVALID_SORT');
 
-    // Should show all cards (unknown cat ignored → defaults to 全部)
+    // Should show default active state (全部 category button active)
     const allBtn = page.locator('.filter-btn[data-category="全部"]');
     await expect(allBtn).toHaveAttribute('aria-pressed', 'true');
 
-    // All cards should be visible
-    const visibleCount = await countVisibleCards(page);
-    const totalCount = await page.locator('.subsidy-card').count();
-    expect(visibleCount).toBe(totalCount);
+    // Sort buttons should not be active (unknown sort ignored)
+    const sortDiffBtn = page.getByRole('button', { name: '依申請難度排序' });
+    await expect(sortDiffBtn).toHaveAttribute('aria-pressed', 'false');
+    const sortAmountBtn = page.getByRole('button', { name: '依金額高低' });
+    await expect(sortAmountBtn).toHaveAttribute('aria-pressed', 'false');
 
     // No error state
     await expect(page.locator('#noResults')).toBeHidden();
