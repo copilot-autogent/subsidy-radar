@@ -780,6 +780,36 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
 
+    function updateFilterUrl() {
+      const params = new URLSearchParams(window.location.search);
+      if (activeCategory && activeCategory !== '全部') {
+        params.set('cat', activeCategory);
+      } else {
+        params.delete('cat');
+      }
+      if (activeSituation) {
+        params.set('sit', activeSituation);
+      } else {
+        params.delete('sit');
+      }
+      if (sortByDifficulty) {
+        params.set('sort', 'difficulty');
+      } else if (sortAmountState === 1) {
+        params.set('sort', 'amount-desc');
+      } else if (sortAmountState === 2) {
+        params.set('sort', 'amount-asc');
+      } else {
+        params.delete('sort');
+      }
+      if (searchQuery) {
+        params.set('q', searchQuery);
+      } else {
+        params.delete('q');
+      }
+      const qs = params.toString();
+      history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
+    }
+
     function showQuizQuestion(index: number) {
       quizQuestions.forEach((q, i) => {
         q.style.display = i === index ? 'block' : 'none';
@@ -1495,6 +1525,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       searchQuery = value;
       updateDisplay();
       applySort();
+      updateFilterUrl();
     }, 200);
 
     searchInput.addEventListener('input', () => {
@@ -1514,6 +1545,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         activeCategory = btn.dataset.category ?? '全部';
         activeSituation = '';
         updateDisplay();
+        updateFilterUrl();
       });
     });
 
@@ -1555,6 +1587,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           btn.setAttribute('aria-pressed', 'true');
         }
         updateDisplay();
+        updateFilterUrl();
       });
     });
 
@@ -1611,6 +1644,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       sortBtn.setAttribute('aria-pressed', String(sortByDifficulty));
       sortBtn.textContent = sortByDifficulty ? '✓ 🟢 簡單優先' : '依申請難度排序';
       applySort();
+      updateFilterUrl();
     });
 
     sortAmountBtn.addEventListener('click', () => {
@@ -1629,6 +1663,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         sortBtn.textContent = '依申請難度排序';
       }
       applySort();
+      updateFilterUrl();
     });
 
     trackerFilterBtn.addEventListener('click', () => {
@@ -1683,6 +1718,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
       updateTrackerFilterLabel();
       updateCountyUrl();
+      updateFilterUrl();
       updateDisplay();
     });
 
@@ -2036,7 +2072,116 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           }
         }
       }
+
+      // Restore category filter from URL (only when quiz was not applied)
+      if (!isQuizActive) {
+        const catParam = params.get('cat') ?? '';
+        if (catParam && catParam !== '全部') {
+          const catBtn = Array.from(filterBtns).find(b => b.dataset.category === catParam);
+          if (catBtn) {
+            filterBtns.forEach(b => {
+              b.classList.remove('active');
+              b.setAttribute('aria-pressed', 'false');
+              b.setAttribute('tabindex', '-1');
+            });
+            catBtn.classList.add('active');
+            catBtn.setAttribute('aria-pressed', 'true');
+            catBtn.setAttribute('tabindex', '0');
+            activeCategory = catParam;
+          }
+          // Silently ignore unknown cat values (acceptance criterion: invalid params ignored)
+        }
+
+        // Restore situation filter from URL (validate against known situation values)
+        const VALID_SITUATIONS = new Set([
+          'renter', 'homebuyer', 'entrepreneur', 'parent', 'fresh-grad',
+          'unemployed', 'employed', 'senior', 'disabled', 'new-immigrant', 'indigenous',
+        ]);
+        const sitParam = params.get('sit') ?? '';
+        if (sitParam && VALID_SITUATIONS.has(sitParam)) {
+          activeSituation = sitParam;
+        }
+        // Silently ignore unknown sit values
+
+        if (activeCategory !== '全部' || activeSituation) {
+          updateDisplay();
+        }
+      }
+
+      // Restore sort from URL
+      const sortParam = params.get('sort') ?? '';
+      if (sortParam === 'difficulty') {
+        sortByDifficulty = true;
+        sortBtn.classList.add('active');
+        sortBtn.setAttribute('aria-pressed', 'true');
+        sortBtn.textContent = '✓ 🟢 簡單優先';
+        applySort();
+      } else if (sortParam === 'amount-desc') {
+        sortAmountState = 1;
+        sortAmountBtn.textContent = '✓ 💰 金額高→低';
+        sortAmountBtn.classList.add('active');
+        sortAmountBtn.setAttribute('aria-pressed', 'true');
+        applySort();
+      } else if (sortParam === 'amount-asc') {
+        sortAmountState = 2;
+        sortAmountBtn.textContent = '✓ 💰 金額低→高';
+        sortAmountBtn.classList.add('active');
+        sortAmountBtn.setAttribute('aria-pressed', 'true');
+        applySort();
+      }
+      // Silently ignore unknown sort values
+
+      // Restore search query from URL
+      const qParam = params.get('q') ?? '';
+      if (qParam) {
+        searchInput.value = qParam;
+        searchQuery = qParam.toLowerCase();
+        updateDisplay();
+        applySort();
+      }
     }
+
+    // ── popstate: sync filter state on browser back/forward ──────────────────
+    window.addEventListener('popstate', () => {
+      // Reset all filter state to defaults
+      activeCategory = '全部';
+      activeSituation = '';
+      activeDifficulty = '';
+      searchQuery = '';
+      sortByDifficulty = false;
+      sortAmountState = 0;
+      isQuizActive = false;
+      activeCounty = '';
+      activeUrgency = 0;
+      // Reset UI
+      searchInput.value = '';
+      if (countySelect) countySelect.value = '';
+      filterBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+        b.setAttribute('tabindex', '-1');
+      });
+      const allBtn2 = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
+      if (allBtn2) {
+        allBtn2.classList.add('active');
+        allBtn2.setAttribute('aria-pressed', 'true');
+        allBtn2.setAttribute('tabindex', '0');
+      }
+      difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
+      sortBtn.classList.remove('active');
+      sortBtn.setAttribute('aria-pressed', 'false');
+      sortBtn.textContent = '依申請難度排序';
+      sortAmountBtn.classList.remove('active');
+      sortAmountBtn.setAttribute('aria-pressed', 'false');
+      sortAmountBtn.textContent = '依金額高低';
+      showTrackedOnly = false;
+      updateTrackerFilterLabel();
+      // Re-apply state from current URL
+      initFromQueryParams();
+      updateDisplay();
+      applySort();
+    });
 
     // ── Init ─────────────────────────────────────────────────────────────────
     initTracker();
