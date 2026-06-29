@@ -2008,9 +2008,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             if (first) first.setAttribute('tabindex', '0');
           }
         });
-        // Show Q4 (index 3) so the user completes the quiz
+        // Show Q4 (index 3) so the user completes the quiz; apply q1–q3 filter immediately
         currentQuestionIndex = quizQuestions.length - 1;
         showQuizQuestion(currentQuestionIndex);
+        applyQuizFilter();
+        quizResetContainer.style.display = 'block';
       } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4')) {
         // Stale/partial/invalid params — clear them so the URL matches UI state
         clearQuizUrl();
