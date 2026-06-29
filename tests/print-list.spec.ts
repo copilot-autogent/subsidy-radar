@@ -77,22 +77,16 @@ test.describe('print filtered list button', () => {
     const firstClickClass = await page.evaluate(() => document.body.classList.contains('print-filtered'));
     expect(firstClickClass).toBe(true);
 
+    // Record how many hidden cards after first click
+    const firstCount = await page.evaluate(() => document.querySelectorAll('.print-filtered-hidden').length);
+
     // Second click without afterprint (simulates browser that did not fire afterprint)
     await page.locator('#printListBtn').click();
     const secondClickClass = await page.evaluate(() => document.body.classList.contains('print-filtered'));
     expect(secondClickClass).toBe(true);
 
-    // Classes are cleaned and re-applied — no stale accumulation
-    const staleCount = await page.evaluate(() => {
-      const all = document.querySelectorAll('.print-filtered-hidden');
-      return all.length;
-    });
-    // After second click, each hidden card should appear exactly once
-    const uniqueIds = await page.evaluate(() => {
-      const ids = new Set<string>();
-      document.querySelectorAll('.print-filtered-hidden').forEach(el => ids.add(el.id));
-      return ids.size;
-    });
-    expect(staleCount).toBe(uniqueIds); // no duplicates
+    // Re-entrancy guard: hidden count after second click must equal first count (no duplication)
+    const secondCount = await page.evaluate(() => document.querySelectorAll('.print-filtered-hidden').length);
+    expect(secondCount).toBe(firstCount);
   });
 });

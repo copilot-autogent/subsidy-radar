@@ -429,6 +429,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     <h1>補助雷達篩選結果</h1>
     <p>列印於 <span id="printFilteredDate"></span></p>
   </div>
+  <div class="print-filtered-footer" id="printFilteredFooter" aria-hidden="true">
+    <span id="printFilteredUrl"></span>
+  </div>
 
   <div class="grid" id="subsidyGrid" tabindex="-1">
     {subsidies.map(s => {
@@ -1838,18 +1841,24 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           }
         });
 
-        // Set the print date in the filtered header
+        // Set the print date and URL in the filtered header/footer
         const filteredDateEl = document.getElementById('printFilteredDate');
         if (filteredDateEl) {
           const today = new Date();
           filteredDateEl.textContent = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
+        }
+        const filteredUrlEl = document.getElementById('printFilteredUrl');
+        if (filteredUrlEl) {
+          filteredUrlEl.textContent = window.location.origin + window.location.pathname;
         }
 
         document.body.classList.add('print-filtered');
         window.print();
       });
 
+      // Gate cleanup on print-filtered being set to avoid interfering with tracker prints
       window.addEventListener('afterprint', () => {
+        if (!document.body.classList.contains('print-filtered')) return;
         document.body.classList.remove('print-filtered');
         document.querySelectorAll<HTMLElement>('.print-filtered-hidden').forEach(el => {
           el.classList.remove('print-filtered-hidden');

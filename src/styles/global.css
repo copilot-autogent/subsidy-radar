@@ -1822,8 +1822,9 @@ main {
   display: none;
 }
 
-/* ── Print Filtered Header (shown only in @media print when body.print-filtered) ── */
-.print-filtered-header {
+/* ── Print Filtered Header / Footer (shown only in @media print when body.print-filtered) ── */
+.print-filtered-header,
+.print-filtered-footer {
   display: none;
 }
 
@@ -1865,9 +1866,8 @@ main {
     color: #475569;
     margin-top: 0.25rem;
   }
-  body.print-filtered::after {
-    content: "補助雷達 — https://copilot-autogent.github.io/subsidy-radar/";
-    display: block;
+    body.print-filtered .print-filtered-footer {
+    display: block !important;
     text-align: center;
     font-size: 0.78rem;
     color: #64748b;
@@ -1889,7 +1889,6 @@ main {
   .tracker-summary-banner,
   .deadline-panel,
   .results-row,
-  .no-results,
   .share-toast,
   .card-tags,
   .card-summary,
@@ -1903,10 +1902,12 @@ main {
   .youth-badge,
   .card-badges { display: none !important; }
 
-  /* Tracker mode: hide non-tracked cards */
+  /* Tracker mode: hide non-tracked cards and no-results */
   body:not(.print-filtered) .subsidy-card:not(.tracker-state-tracked) { display: none !important; }
+  body:not(.print-filtered) .no-results { display: none !important; }
 
   /* Filtered mode: hide cards that were not visible when print was triggered */
+  /* Also hide the footer used for tracker mode (the print-filtered-footer is shown instead) */
   body.print-filtered .subsidy-card.print-filtered-hidden { display: none !important; }
 
   /* Single-column layout */
