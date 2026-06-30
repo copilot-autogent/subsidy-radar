@@ -391,7 +391,8 @@
     ],
     "situations": [
       "parent",
-      "single-parent"
+      "single-parent",
+      "young-child"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -466,7 +467,8 @@
       "生育友善"
     ],
     "situations": [
-      "parent"
+      "parent",
+      "young-child"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -502,7 +504,8 @@
       "育兒"
     ],
     "situations": [
-      "parent"
+      "parent",
+      "young-child"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -2117,5 +2120,80 @@
     ],
     "addedDate": "2026-06-30",
     "maxAmount": 48000
+  },
+  {
+    "id": "private-nursery-subsidy",
+    "title": "0-2 歲托育補助（私立托嬰中心）",
+    "category": "育兒",
+    "agency": "衛生福利部社會及家庭署",
+    "summary": "2 歲以下嬰幼兒送托私立托嬰中心，政府依家庭收入每月補助最高 5,000 元，減輕雙薪家庭托育費用負擔。",
+    "eligibility": [
+      "嬰幼兒年齡 0 至未滿 2 歲",
+      "家庭年所得符合規定標準",
+      "送托合法立案私立托嬰中心（非準公共化）",
+      "未同時請領其他重複性托育補助"
+    ],
+    "amount": "每月最高 5,000 元（依家庭收入分級補助）",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383",
+    "tags": [
+      "育兒",
+      "托育",
+      "托嬰",
+      "私立托嬰中心"
+    ],
+    "situations": [
+      "parent",
+      "young-child"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-30",
+    "steps": [
+      "確認嬰幼兒就托的私立托嬰中心已合法立案",
+      "備妥托育合約、繳費收據、出生證明及家長銀行帳戶資料",
+      "至戶籍地公所或社會局申請補助",
+      "審核通過後補貼直接匯入家長帳戶"
+    ],
+    "addedDate": "2026-06-30",
+    "maxAmount": 60000
+  },
+  {
+    "id": "preschool-county-subsidy",
+    "title": "幼兒園就讀費用補助（縣市加碼）",
+    "category": "育兒",
+    "agency": "各縣市政府教育局",
+    "summary": "中央補助之外，各縣市政府另提供加碼補助（每月 500-3,000 元），台北市、新北市等大都市加碼最豐厚，實質降低 2-6 歲幼兒就讀費用。",
+    "eligibility": [
+      "幼兒年齡 2 至未滿 6 歲（各縣市略有不同）",
+      "設籍並就讀於該縣市公立或私立幼兒園",
+      "未重複領取同性質補助"
+    ],
+    "amount": "每月 500-3,000 元（依縣市、家庭收入及就讀公私立有所差異）",
+    "deadline": "每學期開學後 1 個月內受理",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://www.ece.moe.edu.tw/",
+    "tags": [
+      "育兒",
+      "幼兒園",
+      "學費",
+      "縣市加碼"
+    ],
+    "situations": [
+      "parent",
+      "young-child"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-30",
+    "steps": [
+      "確認所在縣市加碼補助辦法（各縣市教育局網站）",
+      "向幼兒園索取申請表或至縣市線上平台申辦",
+      "附上幼兒在籍證明、繳費收據及家長身分證影本",
+      "審核通過後補助款折抵學費或匯入帳戶"
+    ],
+    "addedDate": "2026-06-30",
+    "maxAmount": 36000
   }
 ]
