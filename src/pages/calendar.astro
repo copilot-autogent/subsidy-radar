@@ -72,10 +72,13 @@ interface CalendarEntry {
 const monthKeys = new Set(months.map(m => `${m.year}-${m.month}`));
 
 const calendarEntries: CalendarEntry[] = [];
-// Rolling section: only subsidies with NO fixed deadline (no valid deadlineDate) that are still open.
-// Subsidies with a fixed deadline outside the 3-month window are omitted from both sections
-// (they will appear on the main list, which also shows upcoming deadlines).
-const rollingSubsidies: { id: string; title: string; category: string; deadline: string; deadlineStatus: string; agency: string; situations: string[]; isYouthHighlight: boolean; difficulty: string; counties: string[] }[] = [];
+// Rolling section: subsidies with NO valid fixed deadline that are still open,
+// PLUS subsidies with a fixed deadline that falls after the 3-month window (labeled "即將開放").
+// Subsidies whose fixed deadline is in the past are omitted from both sections.
+const rollingSubsidies: { id: string; title: string; category: string; deadline: string; deadlineStatus: string; agency: string; situations: string[]; isYouthHighlight: boolean; difficulty: string; counties: string[]; rollingLabel: string }[] = [];
+
+const windowStart = new Date(months[0].year, months[0].month, 1);
+const windowEnd = new Date(months[months.length - 1].year, months[months.length - 1].month + 1, 0); // last day of last month
 
 for (const s of subsidies) {
   if (s.deadlineStatus === 'closed') continue;
@@ -97,13 +100,18 @@ for (const s of subsidies) {
   const hasValidDate = s.deadlineDate && isValidDeadlineDate(s.deadlineDate);
   if (hasValidDate) {
     const parsed = parseDeadlineDate(s.deadlineDate!)!;
+    const dl = new Date(parsed.year, parsed.month, parsed.day);
     if (monthKeys.has(`${parsed.year}-${parsed.month}`)) {
+      // In the 3-month window — goes in the grid
       calendarEntries.push({ ...entry, deadlineDate: s.deadlineDate!, day: parsed.day });
+    } else if (dl > windowEnd) {
+      // Future deadline beyond the 3-month window — show in rolling with "即將開放" label
+      rollingSubsidies.push({ ...entry, rollingLabel: `即將開放：${s.deadlineDate}` });
     }
-    // If the date is outside the 3-month window (past or future), omit from both sections.
+    // Past deadlines (before window start) are omitted entirely.
   } else {
     // No valid fixed deadline — goes in the rolling section.
-    rollingSubsidies.push(entry);
+    rollingSubsidies.push({ ...entry, rollingLabel: s.deadlineStatus === 'ongoing' ? '長期辦理' : s.deadlineStatus === 'periodic' ? '定期開放' : s.deadlineStatus === 'seasonal' ? '定期開放' : '開放申請中' });
   }
 }
 
@@ -236,7 +244,7 @@ const mainPageUrl = base;
   <!-- Rolling / no fixed deadline section -->
   <section class="cal-rolling" aria-label="長期辦理補助">
     <h2 class="cal-rolling-title">🔄 長期辦理 / 無固定截止日</h2>
-    <p class="cal-rolling-desc">以下補助常態受理或截止日未定，請點擊查看詳情。</p>
+    <p class="cal-rolling-desc">以下補助常態受理、截止日未定，或截止日在3個月後，請點擊查看詳情。</p>
     <ul class="cal-rolling-list" id="calRollingList" role="list">
       {rollingSubsidies.map(s => (
         <li
@@ -251,12 +259,12 @@ const mainPageUrl = base;
           <a href={`${mainPageUrl}#${s.id}`} class="cal-rolling-link" data-entry-link>
             <span class="cal-rolling-cat">{s.category}</span>
             <span class="cal-rolling-name">{s.title}</span>
-            <span class="cal-rolling-status">{s.deadlineStatus === 'ongoing' ? '長期辦理' : s.deadlineStatus === 'periodic' ? '定期開放' : s.deadlineStatus === 'seasonal' ? '定期開放' : '開放申請中'}</span>
+            <span class="cal-rolling-status">{s.rollingLabel}</span>
           </a>
         </li>
       ))}
     </ul>
-    <p class="cal-rolling-empty" id="calRollingEmpty" style="display:none">（目前篩選條件下無長期辦理補助）</p>
+    <p class="cal-rolling-empty" id="calRollingEmpty" style="display:none">（目前篩選條件下無補助）</p>
   </section>
 
   <!-- No results message -->
@@ -595,7 +603,9 @@ const mainPageUrl = base;
   const SINGLE_PARENT_FILTER_LABEL = '⭐ 單親';
   const YOUNG_CHILD_FILTER_LABEL = '⭐ 育兒';
 
-  const hasFilters = filterCat !== '' || filterSit !== '' || filterCounty !== '' || filterQ !== '';
+  // hasFilters: true when cat/sit/county are active (these are applied to entries).
+  // filterQ is propagated to links but not applied to calendar entries.
+  const hasFilters = filterCat !== '' || filterSit !== '' || filterCounty !== '';
 
   // ── Filter bar UI ──────────────────────────────────────────────────────────
   if (hasFilters) {
@@ -603,12 +613,14 @@ const mainPageUrl = base;
     const pillsContainer = document.getElementById('calFilterPills')!;
     filterBar.style.display = 'flex';
 
-    // Build pills safely using DOM — no innerHTML with user data
+    // Build pills safely using DOM — no innerHTML with user data.
+    // Note: filterQ is NOT shown as a pill because it's not applied to calendar entries
+    // (the calendar doesn't duplicate fuzzy search logic). It is still propagated through
+    // links so the main list opens with the search pre-filled.
     const pillLabels: string[] = [];
     if (filterCat) pillLabels.push(filterCat);
     if (filterSit) pillLabels.push(`人物誌: ${filterSit}`);
     if (filterCounty) pillLabels.push(`縣市: ${filterCounty}`);
-    if (filterQ) pillLabels.push(`搜尋: ${filterQ}`);
     for (const label of pillLabels) {
       const span = document.createElement('span');
       span.className = 'cal-filter-pill';
@@ -721,7 +733,8 @@ const mainPageUrl = base;
   }
 
   // ── Update entry links to include filter params on main-page URLs ──────────
-  if (hasFilters) {
+  // Always run (even when only filterQ is set) so text-search is restored on click.
+  if (hasFilters || filterQ) {
     const entryLinks = document.querySelectorAll<HTMLAnchorElement>('a[data-entry-link]');
     entryLinks.forEach(link => {
       const originalHref = link.getAttribute('href') ?? '';

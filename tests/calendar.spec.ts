@@ -71,11 +71,10 @@ test.describe('Calendar view', () => {
     const hiddenCount = await hiddenEntries.count();
     const visibleCount = await visibleEntries.count();
 
-    // For each visible entry, its category should be 就業 or it should be youth-highlighted
+    // For each visible entry, its category should be 就業
     for (let i = 0; i < visibleCount; i++) {
       const cat = await visibleEntries.nth(i).getAttribute('data-category');
-      const youth = await visibleEntries.nth(i).getAttribute('data-youth');
-      expect(cat === '就業' || youth === 'true').toBe(true);
+      expect(cat).toBe('就業');
     }
 
     // Some entries should have been hidden (unless all happen to be 就業)
