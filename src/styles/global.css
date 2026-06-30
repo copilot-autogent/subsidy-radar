@@ -1040,7 +1040,65 @@ main {
   line-height: 1.55;
 }
 
-/* ── Related subsidies panel (inside card-steps expander) ── */
+/* ── Application documents checklist expander ── */
+.card-docs {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 0 0.85rem;
+}
+
+.card-docs[open] {
+  padding-bottom: 0.75rem;
+}
+
+.card-docs summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #16a34a;
+  user-select: none;
+  padding: 0.55rem 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.card-docs summary::-webkit-details-marker { display: none; }
+
+.card-docs summary::before {
+  content: '📄 ';
+}
+
+.card-docs summary::after {
+  content: ' ▸';
+  font-size: 0.75rem;
+  transition: transform 0.15s;
+  display: inline-block;
+}
+
+.card-docs[open] summary::after {
+  transform: rotate(90deg);
+}
+
+.docs-list {
+  margin-top: 0.4rem;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.docs-list li::before {
+  content: '✅ ';
+}
+
+
 .related-subsidies {
   margin-top: 1rem;
   padding-top: 0.75rem;
@@ -2059,6 +2117,7 @@ main {
   .card-tags,
   .card-summary,
   .card-eligibility,
+  .card-docs,
   .card-steps,
   .tracker-btn,
   .share-link-btn,

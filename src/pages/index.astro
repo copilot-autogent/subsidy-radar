@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
 type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child';
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[] };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[] };
 const subsidies = subsidiesRaw as Subsidy[];
 
 // ── Related subsidies: build-time pre-computation ─────────────────────────
@@ -585,6 +585,14 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               {s.eligibility.map(e => <li>{e}</li>)}
             </ul>
           </details>
+          {s.requiredDocs && s.requiredDocs.length > 0 && (
+            <details class="card-docs">
+              <summary>查看申請文件</summary>
+              <ul class="docs-list">
+                {s.requiredDocs.map(doc => <li>{doc}</li>)}
+              </ul>
+            </details>
+          )}
           <div class="card-tags">
             {s.tags.map(tag => <span class="tag">{tag}</span>)}
           </div>
