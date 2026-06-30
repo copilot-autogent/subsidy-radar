@@ -1,0 +1,754 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import subsidiesRaw from '../data/subsidies.json';
+
+type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child';
+type Subsidy = typeof subsidiesRaw[number] & {
+  deadlineDate?: string;
+  situations?: Situation[];
+  isYouthHighlight?: boolean;
+  difficulty?: string;
+  counties?: string[];
+  addedDate?: string;
+};
+const subsidies = subsidiesRaw as Subsidy[];
+
+// Build months: current + next 2.
+// NOTE: `now` here is build-time only and is used solely to compute which months
+// to render in the grid layout. Urgency classes and the "today" highlight are
+// computed at runtime by the client-side script so they never go stale.
+const now = new Date();
+now.setHours(0, 0, 0, 0);
+const months: { year: number; month: number; label: string }[] = [];
+for (let i = 0; i < 3; i++) {
+  const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+  months.push({
+    year: d.getFullYear(),
+    month: d.getMonth(), // 0-indexed
+    label: `${d.getFullYear()} 年 ${d.getMonth() + 1} 月`,
+  });
+}
+
+// Validate deadline date string (YYYY-MM-DD).
+// Rejects impossible dates like 2026-02-31 by round-tripping through Date.
+function isValidDeadlineDate(ds: string): boolean {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ds);
+  if (!m) return false;
+  const year = parseInt(m[1], 10);
+  const month = parseInt(m[2], 10) - 1;
+  const day = parseInt(m[3], 10);
+  if (month < 0 || month > 11 || day < 1 || day > 31) return false;
+  const dt = new Date(year, month, day);
+  return dt.getFullYear() === year && dt.getMonth() === month && dt.getDate() === day;
+}
+
+function parseDeadlineDate(ds: string): { year: number; month: number; day: number } | null {
+  if (!isValidDeadlineDate(ds)) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ds)!;
+  return {
+    year: parseInt(m[1], 10),
+    month: parseInt(m[2], 10) - 1,
+    day: parseInt(m[3], 10),
+  };
+}
+
+// Group subsidies by (year, month): only those with a valid deadlineDate in our 3-month window
+// and not closed.
+interface CalendarEntry {
+  id: string;
+  title: string;
+  category: string;
+  deadlineDate: string;
+  deadline: string;
+  deadlineStatus: string;
+  agency: string;
+  situations: string[];
+  isYouthHighlight: boolean;
+  difficulty: string;
+  counties: string[];
+  day: number;
+}
+
+const monthKeys = new Set(months.map(m => `${m.year}-${m.month}`));
+
+const calendarEntries: CalendarEntry[] = [];
+// Rolling section: subsidies with NO valid fixed deadline that are still open,
+// PLUS subsidies with a fixed deadline that falls after the 3-month window (labeled "即將開放").
+// Subsidies whose fixed deadline is in the past are omitted from both sections.
+const rollingSubsidies: { id: string; title: string; category: string; deadline: string; deadlineStatus: string; agency: string; situations: string[]; isYouthHighlight: boolean; difficulty: string; counties: string[]; rollingLabel: string }[] = [];
+
+const windowStart = new Date(months[0].year, months[0].month, 1);
+const windowEnd = new Date(months[months.length - 1].year, months[months.length - 1].month + 1, 0); // last day of last month
+
+for (const s of subsidies) {
+  if (s.deadlineStatus === 'closed') continue;
+  const situations = (s.situations ?? []) as string[];
+  const counties = (s.counties ?? []) as string[];
+  const entry = {
+    id: s.id,
+    title: s.title,
+    category: s.category,
+    deadline: s.deadline,
+    deadlineStatus: s.deadlineStatus ?? 'ongoing',
+    agency: s.agency,
+    situations,
+    isYouthHighlight: s.isYouthHighlight ?? false,
+    difficulty: s.difficulty ?? 'medium',
+    counties,
+  };
+
+  const hasValidDate = s.deadlineDate && isValidDeadlineDate(s.deadlineDate);
+  if (hasValidDate) {
+    const parsed = parseDeadlineDate(s.deadlineDate!)!;
+    const dl = new Date(parsed.year, parsed.month, parsed.day);
+    if (monthKeys.has(`${parsed.year}-${parsed.month}`)) {
+      // In the 3-month window — goes in the grid
+      calendarEntries.push({ ...entry, deadlineDate: s.deadlineDate!, day: parsed.day });
+    } else if (dl > windowEnd) {
+      // Future deadline beyond the 3-month window — show in rolling with "即將開放" label
+      rollingSubsidies.push({ ...entry, rollingLabel: `即將開放：${s.deadlineDate}` });
+    }
+    // Past deadlines (before window start) are omitted entirely.
+  } else {
+    // No valid fixed deadline — goes in the rolling section.
+    rollingSubsidies.push({ ...entry, rollingLabel: s.deadlineStatus === 'ongoing' ? '長期辦理' : s.deadlineStatus === 'periodic' ? '定期開放' : s.deadlineStatus === 'seasonal' ? '定期開放' : '開放申請中' });
+  }
+}
+
+// Build month→day→entries structure
+const byMonth: Map<string, Map<number, CalendarEntry[]>> = new Map();
+for (const m of months) {
+  byMonth.set(`${m.year}-${m.month}`, new Map());
+}
+for (const e of calendarEntries) {
+  const parsed = parseDeadlineDate(e.deadlineDate)!;
+  const key = `${parsed.year}-${parsed.month}`;
+  const map = byMonth.get(key)!;
+  if (!map.has(parsed.day)) map.set(parsed.day, []);
+  map.get(parsed.day)!.push(e);
+}
+
+// Build per-month grid: weeks array where each week is 7 slots (null or day number)
+function buildMonthGrid(year: number, month: number): (number | null)[][] {
+  const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const slots: (number | null)[] = Array(firstDay).fill(null);
+  for (let d = 1; d <= daysInMonth; d++) slots.push(d);
+  while (slots.length % 7 !== 0) slots.push(null);
+  const weeks: (number | null)[][] = [];
+  for (let i = 0; i < slots.length; i += 7) weeks.push(slots.slice(i, i + 7));
+  return weeks;
+}
+
+const weekdayLabels = ['日', '一', '二', '三', '四', '五', '六'];
+
+const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+const mainPageUrl = base;
+---
+
+<BaseLayout
+  title="截止日曆 — 補助雷達"
+  description="月曆檢視台灣政府補助申請截止日，按月掌握申請期限。"
+>
+  <section class="cal-hero">
+    <div class="cal-hero-inner">
+      <h1>📅 截止日曆</h1>
+      <p class="cal-hero-subtitle">掌握補助申請截止日，不錯過任何期限</p>
+      <a href={mainPageUrl} class="cal-back-link" id="calBackLink">← 返回補助清單</a>
+    </div>
+  </section>
+
+  <!-- Filter state pills (populated by JS from URL params) -->
+  <div class="cal-filter-bar" id="calFilterBar" style="display:none">
+    <span class="cal-filter-label">已套用篩選：</span>
+    <span class="cal-filter-pills" id="calFilterPills"></span>
+    <a href={base + 'calendar'} class="cal-clear-filters">✕ 清除篩選</a>
+  </div>
+
+  <!-- Month grid sections -->
+  {months.map((m) => {
+    const key = `${m.year}-${m.month}`;
+    const dayMap = byMonth.get(key)!;
+    const weeks = buildMonthGrid(m.year, m.month);
+    const hasEntries = dayMap.size > 0;
+    return (
+      <section class="cal-month" data-month-key={key} aria-label={m.label}>
+        <h2 class="cal-month-title">{m.label}</h2>
+        {!hasEntries && (
+          <p class="cal-month-empty" data-empty-msg>本月無固定截止補助</p>
+        )}
+        <div class="cal-grid-wrapper">
+          <table class="cal-table" role="grid" aria-label={m.label}>
+            <thead>
+              <tr>
+                {weekdayLabels.map(wd => (
+                  <th class="cal-weekday" scope="col">{wd}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {weeks.map(week => (
+                <tr>
+                  {week.map(day => {
+                    const entries = day ? (dayMap.get(day) ?? []) : [];
+                    return (
+                      <td
+                        class={`cal-cell ${day === null ? 'cal-cell-empty' : ''}`}
+                        data-day={day ?? ''}
+                        data-cal-year={day !== null ? m.year : ''}
+                        data-cal-month={day !== null ? m.month : ''}
+                      >
+                        {day !== null && (
+                          <>
+                            <span class="cal-day-num">{day}</span>
+                            {entries.length > 0 && (
+                              <ul class="cal-entries" role="list">
+                                {entries.map(e => (
+                                  <li
+                                    class="cal-entry"
+                                    data-id={e.id}
+                                    data-situations={JSON.stringify(e.situations)}
+                                    data-category={e.category}
+                                    data-youth={e.isYouthHighlight ? 'true' : 'false'}
+                                    data-difficulty={e.difficulty}
+                                    data-counties={JSON.stringify(e.counties)}
+                                    data-deadline-date={e.deadlineDate}
+                                  >
+                                    <a
+                                      href={`${mainPageUrl}#${e.id}`}
+                                      class="cal-entry-link"
+                                      data-entry-link
+                                      aria-label={`${e.title} — 截止 ${e.deadlineDate}`}
+                                    >
+                                      <span class="cal-entry-cat">{e.category}</span>
+                                      <span class="cal-entry-title">{e.title}</span>
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    );
+  })}
+
+  <!-- Rolling / no fixed deadline section -->
+  <section class="cal-rolling" aria-label="長期辦理補助">
+    <h2 class="cal-rolling-title">🔄 長期辦理 / 無固定截止日</h2>
+    <p class="cal-rolling-desc">以下補助常態受理、截止日未定，或截止日在3個月後，請點擊查看詳情。</p>
+    <ul class="cal-rolling-list" id="calRollingList" role="list">
+      {rollingSubsidies.map(s => (
+        <li
+          class="cal-rolling-item"
+          data-id={s.id}
+          data-situations={JSON.stringify(s.situations)}
+          data-category={s.category}
+          data-youth={s.isYouthHighlight ? 'true' : 'false'}
+          data-difficulty={s.difficulty}
+          data-counties={JSON.stringify(s.counties)}
+        >
+          <a href={`${mainPageUrl}#${s.id}`} class="cal-rolling-link" data-entry-link>
+            <span class="cal-rolling-cat">{s.category}</span>
+            <span class="cal-rolling-name">{s.title}</span>
+            <span class="cal-rolling-status">{s.rollingLabel}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="cal-rolling-empty" id="calRollingEmpty" style="display:none">（目前篩選條件下無補助）</p>
+  </section>
+
+  <!-- No results message -->
+  <div class="cal-no-results" id="calNoResults" style="display:none" role="status" aria-live="polite">
+    <span>😕 目前篩選條件下沒有符合的補助</span>
+    <a href={base + 'calendar'} class="cal-clear-filters-inline">清除篩選</a>
+  </div>
+</BaseLayout>
+
+<style>
+  /* ── Hero ─────────────────────────────────────────── */
+  .cal-hero {
+    background: var(--color-primary);
+    color: white;
+    padding: 2rem 0 1.5rem;
+  }
+  .cal-hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .cal-hero h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .cal-hero-subtitle { opacity: 0.9; font-size: 0.95rem; margin-bottom: 0.75rem; }
+  .cal-back-link {
+    display: inline-block;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+  .cal-back-link:hover { color: white; text-decoration: underline; }
+
+  /* ── Filter bar ───────────────────────────────────── */
+  .cal-filter-bar {
+    max-width: 1100px;
+    margin: 0.75rem auto 0;
+    padding: 0.5rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+  .cal-filter-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .cal-filter-pill {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: 999px;
+    padding: 0.15rem 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .cal-clear-filters, .cal-clear-filters-inline {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .cal-clear-filters:hover, .cal-clear-filters-inline:hover { color: var(--color-text); }
+
+  /* ── Month section ────────────────────────────────── */
+  .cal-month {
+    max-width: 1100px;
+    margin: 1.5rem auto 0;
+    padding: 0 1.5rem;
+  }
+  .cal-month-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.75rem;
+    border-left: 4px solid var(--color-primary);
+    padding-left: 0.75rem;
+  }
+  .cal-month-empty {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── Calendar table ───────────────────────────────── */
+  .cal-grid-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cal-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    min-width: 320px;
+  }
+  .cal-weekday {
+    padding: 0.4rem 0.25rem;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    background: var(--color-tag);
+    border: 1px solid var(--color-border);
+  }
+  .cal-cell {
+    vertical-align: top;
+    border: 1px solid var(--color-border);
+    padding: 0.35rem 0.3rem;
+    min-height: 4.5rem;
+    background: var(--color-surface);
+  }
+  .cal-cell-empty { background: var(--color-bg); }
+  .cal-cell-today { background: #eff6ff; border-color: var(--color-primary); }
+  .cal-day-num {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-bottom: 0.2rem;
+  }
+  .cal-cell-today .cal-day-num {
+    color: var(--color-primary);
+    font-weight: 700;
+  }
+
+  /* ── Calendar entries ─────────────────────────────── */
+  .cal-entries {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .cal-entry {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .cal-entry-link {
+    display: block;
+    padding: 0.2rem 0.3rem;
+    border-radius: 4px;
+    background: var(--color-primary-light);
+    text-decoration: none;
+    font-size: 0.7rem;
+    line-height: 1.3;
+    color: var(--color-primary);
+    border-left: 3px solid var(--color-primary);
+    transition: background 0.15s;
+  }
+  .cal-entry-link:hover { background: #bfdbfe; text-decoration: none; }
+  .cal-entry-cat {
+    display: block;
+    font-size: 0.65rem;
+    opacity: 0.75;
+    margin-bottom: 0.1rem;
+  }
+  .cal-entry-title {
+    display: block;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Urgency variants */
+  .cal-entry.cal-urgent-7 .cal-entry-link {
+    background: #fee2e2;
+    border-left-color: #ef4444;
+    color: #b91c1c;
+  }
+  .cal-entry.cal-urgent-7 .cal-entry-link:hover { background: #fecaca; }
+  .cal-entry.cal-urgent-30 .cal-entry-link {
+    background: #fef9c3;
+    border-left-color: #eab308;
+    color: #854d0e;
+  }
+  .cal-entry.cal-urgent-30 .cal-entry-link:hover { background: #fef08a; }
+  .cal-entry.cal-urgent-60 .cal-entry-link {
+    background: #e0f2fe;
+    border-left-color: #0284c7;
+    color: #0369a1;
+  }
+  .cal-entry.cal-expired .cal-entry-link {
+    background: var(--color-tag);
+    border-left-color: var(--color-border);
+    color: var(--color-text-muted);
+    opacity: 0.7;
+  }
+
+  /* ── Rolling section ──────────────────────────────── */
+  .cal-rolling {
+    max-width: 1100px;
+    margin: 2.5rem auto 0;
+    padding: 0 1.5rem;
+  }
+  .cal-rolling-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .cal-rolling-desc {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+  }
+  .cal-rolling-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .cal-rolling-item { border-radius: var(--radius); overflow: hidden; }
+  .cal-rolling-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: box-shadow 0.15s;
+    font-size: 0.85rem;
+  }
+  .cal-rolling-link:hover { box-shadow: var(--shadow-hover); text-decoration: none; }
+  .cal-rolling-cat {
+    font-size: 0.75rem;
+    background: var(--color-tag);
+    color: var(--color-text-muted);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cal-rolling-name { flex: 1; color: var(--color-text); font-weight: 500; }
+  .cal-rolling-status {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cal-rolling-empty {
+    color: var(--color-text-muted);
+    font-style: italic;
+    font-size: 0.875rem;
+  }
+
+  /* ── No results ───────────────────────────────────── */
+  .cal-no-results {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--color-text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+  }
+
+  /* ── Mobile responsive ────────────────────────────── */
+  @media (max-width: 640px) {
+    .cal-hero { padding: 1.25rem 0 1rem; }
+    .cal-hero h1 { font-size: 1.35rem; }
+    .cal-month { padding: 0 0.75rem; margin-top: 1rem; }
+    .cal-rolling { padding: 0 0.75rem; }
+    .cal-cell { padding: 0.25rem 0.15rem; min-height: 3rem; }
+    .cal-entry-link { font-size: 0.62rem; padding: 0.15rem 0.2rem; }
+    .cal-rolling-list { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 400px) {
+    .cal-entry-cat { display: none; }
+    .cal-entry-title { font-size: 0.62rem; }
+    .cal-day-num { font-size: 0.7rem; }
+  }
+
+  /* ── Hidden entries (filtered out) ───────────────── */
+  .cal-entry[hidden], .cal-rolling-item[hidden] { display: none !important; }
+</style>
+
+<script>
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+  const mainPage = base;
+
+  // ── Runtime "today" and urgency ────────────────────────────────────────────
+  // Computed client-side so urgency classes and today-highlight never go stale
+  // regardless of how old the static build is.
+  const clientNow = new Date();
+  clientNow.setHours(0, 0, 0, 0);
+  const todayYear = clientNow.getFullYear();
+  const todayMonth = clientNow.getMonth(); // 0-indexed
+  const todayDay = clientNow.getDate();
+
+  function calDayDiff(deadlineDate: string): number | null {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(deadlineDate);
+    if (!m) return null;
+    const dl = new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10));
+    // Calendar-day diff (avoids DST off-by-one): compare year/month/day components
+    const dlNoon = new Date(dl.getFullYear(), dl.getMonth(), dl.getDate(), 12);
+    const nowNoon = new Date(todayYear, todayMonth, todayDay, 12);
+    return Math.round((dlNoon.getTime() - nowNoon.getTime()) / 86400000);
+  }
+
+  // Apply today highlight to cells
+  document.querySelectorAll<HTMLElement>('.cal-cell[data-day]').forEach(cell => {
+    const day = parseInt(cell.dataset.day ?? '', 10);
+    const year = parseInt(cell.dataset.calYear ?? '', 10);
+    const month = parseInt(cell.dataset.calMonth ?? '', 10);
+    if (day && year === todayYear && month === todayMonth && day === todayDay) {
+      cell.classList.add('cal-cell-today');
+    }
+  });
+
+  // Apply urgency classes to entries
+  document.querySelectorAll<HTMLElement>('.cal-entry[data-deadline-date]').forEach(el => {
+    const dl = el.dataset.deadlineDate ?? '';
+    const diff = calDayDiff(dl);
+    if (diff === null) return;
+    if (diff < 0) el.classList.add('cal-expired');
+    else if (diff <= 7) el.classList.add('cal-urgent-7');
+    else if (diff <= 30) el.classList.add('cal-urgent-30');
+    else if (diff <= 60) el.classList.add('cal-urgent-60');
+  });
+
+  // ── Read URL params ────────────────────────────────────────────────────────
+  const params = new URLSearchParams(window.location.search);
+  const filterCat = params.get('cat') ?? '';
+  const filterSit = params.get('sit') ?? '';
+  const filterCounty = params.get('county') ?? '';
+  const filterQ = params.get('q') ?? '';
+
+  const SENIOR_FILTER_LABEL = '⭐ 長者照護';
+  const DISABILITY_FILTER_LABEL = '⭐ 身障';
+  const NEW_IMMIGRANT_FILTER_LABEL = '⭐ 新住民';
+  const INDIGENOUS_FILTER_LABEL = '⭐ 原住民';
+  const LOW_INCOME_FILTER_LABEL = '⭐ 低/中低收入戶';
+  const SINGLE_PARENT_FILTER_LABEL = '⭐ 單親';
+  const YOUNG_CHILD_FILTER_LABEL = '⭐ 育兒';
+
+  // hasFilters: true when cat/sit/county are active (these are applied to entries).
+  // filterQ is propagated to links but not applied to calendar entries.
+  const hasFilters = filterCat !== '' || filterSit !== '' || filterCounty !== '';
+
+  // ── Filter bar UI ──────────────────────────────────────────────────────────
+  if (hasFilters) {
+    const filterBar = document.getElementById('calFilterBar')!;
+    const pillsContainer = document.getElementById('calFilterPills')!;
+    filterBar.style.display = 'flex';
+
+    // Build pills safely using DOM — no innerHTML with user data.
+    // Note: filterQ is NOT shown as a pill because it's not applied to calendar entries
+    // (the calendar doesn't duplicate fuzzy search logic). It is still propagated through
+    // links so the main list opens with the search pre-filled.
+    const pillLabels: string[] = [];
+    if (filterCat) pillLabels.push(filterCat);
+    if (filterSit) pillLabels.push(`人物誌: ${filterSit}`);
+    if (filterCounty) pillLabels.push(`縣市: ${filterCounty}`);
+    for (const label of pillLabels) {
+      const span = document.createElement('span');
+      span.className = 'cal-filter-pill';
+      span.textContent = label; // safe: textContent, not innerHTML
+      pillsContainer.appendChild(span);
+    }
+
+    // Update back link to restore filter state on main page
+    const backLink = document.getElementById('calBackLink') as HTMLAnchorElement | null;
+    if (backLink) {
+      const mainParams = new URLSearchParams();
+      if (filterCat) mainParams.set('cat', filterCat);
+      if (filterSit) mainParams.set('sit', filterSit);
+      if (filterCounty) mainParams.set('county', filterCounty);
+      if (filterQ) mainParams.set('q', filterQ);
+      backLink.href = `${mainPage}?${mainParams.toString()}`;
+    }
+  }
+
+  // ── Filter helper ──────────────────────────────────────────────────────────
+  function matchesCategoryFilter(el: HTMLElement, cat: string): boolean {
+    if (!cat || cat === '全部') return true;
+    const elCat = el.dataset.category ?? '';
+    const youth = el.dataset.youth === 'true';
+    const situations: string[] = JSON.parse(el.dataset.situations ?? '[]');
+
+    if (cat === '⭐ 青年必看') return youth;
+    if (cat === SENIOR_FILTER_LABEL) return situations.includes('senior') || elCat === '長者';
+    if (cat === DISABILITY_FILTER_LABEL) return situations.includes('disabled');
+    if (cat === NEW_IMMIGRANT_FILTER_LABEL) return situations.includes('new-immigrant');
+    if (cat === INDIGENOUS_FILTER_LABEL) return situations.includes('indigenous');
+    if (cat === LOW_INCOME_FILTER_LABEL) return situations.includes('low-income');
+    if (cat === SINGLE_PARENT_FILTER_LABEL) return situations.includes('single-parent');
+    if (cat === YOUNG_CHILD_FILTER_LABEL) return situations.includes('young-child') || elCat === '育兒';
+    // plain category match
+    return elCat === cat;
+  }
+
+  function matchesSituationFilter(el: HTMLElement, sit: string): boolean {
+    if (!sit) return true;
+    const situations: string[] = JSON.parse(el.dataset.situations ?? '[]');
+    return situations.includes(sit);
+  }
+
+  function matchesCountyFilter(el: HTMLElement, county: string): boolean {
+    if (!county) return true;
+    const counties: string[] = JSON.parse(el.dataset.counties ?? '[]');
+    if (counties.length === 0) return true; // national subsidy — visible in all counties
+    return counties.some(c => c.replace(/臺/g, '台') === county.replace(/臺/g, '台'));
+  }
+
+  function matchesEntry(el: HTMLElement): boolean {
+    return matchesCategoryFilter(el, filterCat)
+      && matchesSituationFilter(el, filterSit)
+      && matchesCountyFilter(el, filterCounty);
+    // Note: text search (filterQ) is propagated to entry links and the back link
+    // but not applied here — the calendar doesn't duplicate fuzzy search logic.
+  }
+
+  // ── Apply filters to calendar entries ─────────────────────────────────────
+  // Track dynamically inserted empty-month messages so we never duplicate them.
+  const insertedEmptyMsgs = new WeakSet<Element>();
+
+  if (hasFilters) {
+    // Filter calendar grid entries
+    const calEntries = document.querySelectorAll<HTMLElement>('.cal-entry[data-id]');
+    let visibleCalCount = 0;
+    calEntries.forEach(el => {
+      const show = matchesEntry(el);
+      el.hidden = !show;
+      if (show) visibleCalCount++;
+    });
+
+    // Show/hide "this month has no entries" message dynamically
+    document.querySelectorAll<HTMLElement>('.cal-month').forEach(section => {
+      const visibleInMonth = section.querySelectorAll('.cal-entry:not([hidden])').length;
+      const emptyMsg = section.querySelector<HTMLElement>('[data-empty-msg]');
+      if (emptyMsg) {
+        emptyMsg.style.display = visibleInMonth === 0 ? 'block' : 'none';
+      } else if (visibleInMonth === 0) {
+        // No entries in this month for these filters — insert a message (once only).
+        const gridWrapper = section.querySelector('.cal-grid-wrapper');
+        if (gridWrapper && !insertedEmptyMsgs.has(gridWrapper)) {
+          const msg = document.createElement('p');
+          msg.className = 'cal-month-empty';
+          msg.textContent = '本月無符合篩選的截止補助';
+          section.insertBefore(msg, gridWrapper);
+          insertedEmptyMsgs.add(gridWrapper);
+        }
+      }
+    });
+
+    // Filter rolling list
+    const rollingItems = document.querySelectorAll<HTMLElement>('.cal-rolling-item[data-id]');
+    let visibleRollingCount = 0;
+    rollingItems.forEach(el => {
+      const show = matchesEntry(el);
+      el.hidden = !show;
+      if (show) visibleRollingCount++;
+    });
+
+    const rollingEmpty = document.getElementById('calRollingEmpty');
+    if (rollingEmpty) rollingEmpty.style.display = visibleRollingCount === 0 ? 'block' : 'none';
+
+    // Show no-results message only when BOTH sections are empty
+    const noResults = document.getElementById('calNoResults');
+    if (noResults && visibleCalCount === 0 && visibleRollingCount === 0) {
+      noResults.style.display = 'flex';
+    }
+  }
+
+  // ── Update entry links to include filter params on main-page URLs ──────────
+  // Always run (even when only filterQ is set) so text-search is restored on click.
+  if (hasFilters || filterQ) {
+    const entryLinks = document.querySelectorAll<HTMLAnchorElement>('a[data-entry-link]');
+    entryLinks.forEach(link => {
+      const originalHref = link.getAttribute('href') ?? '';
+      // Server-rendered hrefs are plain page#id; split safely on first #
+      const hashIdx = originalHref.indexOf('#');
+      const pagePart = hashIdx >= 0 ? originalHref.slice(0, hashIdx) : originalHref;
+      const hashPart = hashIdx >= 0 ? originalHref.slice(hashIdx + 1) : '';
+      const mainParams = new URLSearchParams();
+      if (filterCat) mainParams.set('cat', filterCat);
+      if (filterSit) mainParams.set('sit', filterSit);
+      if (filterCounty) mainParams.set('county', filterCounty);
+      if (filterQ) mainParams.set('q', filterQ);
+      const qs = mainParams.toString();
+      link.href = `${pagePart}${qs ? '?' + qs : ''}${hashPart ? '#' + hashPart : ''}`;
+    });
+  }
+</script>

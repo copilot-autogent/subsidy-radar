@@ -197,6 +197,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         📅 訂閱截止日曆
       </a>
       <span class="calendar-hint">加入你的日曆 App，不錯過申請期限（自動更新）</span>
+      <a href={import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'calendar'} id="calendarViewLink" class="calendar-view-link">
+        🗓️ 月曆檢視
+      </a>
     </div>
   </section>
 
@@ -883,6 +886,23 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
+
+      // Keep calendar view link in sync with active filters
+      const calViewLink = document.getElementById('calendarViewLink') as HTMLAnchorElement | null;
+      const navCalLink = document.querySelector<HTMLAnchorElement>('.nav-calendar-link');
+      const calBase = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+      function updateCalendarLinks() {
+        const calParams = new URLSearchParams();
+        if (activeCategory && activeCategory !== '全部') calParams.set('cat', activeCategory);
+        if (activeSituation) calParams.set('sit', activeSituation);
+        if (activeCounty) calParams.set('county', activeCounty);
+        if (searchQuery) calParams.set('q', searchQuery);
+        const calQs = calParams.toString();
+        const calHref = `${calBase}calendar${calQs ? '?' + calQs : ''}`;
+        if (calViewLink) calViewLink.href = calHref;
+        if (navCalLink) navCalLink.href = calHref;
+      }
+      updateCalendarLinks();
     }
 
     function showQuizQuestion(index: number) {
@@ -2384,6 +2404,32 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     initShareLinks();
     initFromQueryParams();
     initUrgencyCounts();
+
+    // ── Sync calendar view link with initial filter state from URL ────────────
+    // updateFilterUrl() keeps it in sync on subsequent changes; this handles the
+    // first-paint case where URL params are present but no filter was clicked yet.
+    {
+      const calViewLink = document.getElementById('calendarViewLink') as HTMLAnchorElement | null;
+      if (calViewLink) {
+        const initParams = new URLSearchParams(window.location.search);
+        const initCat = initParams.get('cat') ?? '';
+        const initSit = initParams.get('sit') ?? '';
+        const initCounty = initParams.get('county') ?? '';
+        const initQ = initParams.get('q') ?? '';
+        if (initCat || initSit || initCounty || initQ) {
+          const calParams = new URLSearchParams();
+          if (initCat) calParams.set('cat', initCat);
+          if (initSit) calParams.set('sit', initSit);
+          if (initCounty) calParams.set('county', initCounty);
+          if (initQ) calParams.set('q', initQ);
+          const calBase = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+          const calHref = `${calBase}calendar?${calParams.toString()}`;
+          calViewLink.href = calHref;
+          const navCalLinkInit = document.querySelector<HTMLAnchorElement>('.nav-calendar-link');
+          if (navCalLinkInit) navCalLinkInit.href = calHref;
+        }
+      }
+    }
 
     // ── Calendar Subscribe Link ───────────────────────────────────────────────
     // Rewrite to webcal:// so the user's calendar app prompts to subscribe
