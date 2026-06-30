@@ -396,6 +396,29 @@ main {
   background: rgba(255, 255, 255, 0.3);
 }
 
+.filter-btn.single-parent-filter {
+  border-color: #d97706;
+  color: #78350f;
+  background: #fff7ed;
+  font-weight: 600;
+}
+
+.filter-btn.single-parent-filter:hover,
+.filter-btn.single-parent-filter.active {
+  background: #d97706;
+  border-color: #d97706;
+  color: white;
+}
+
+.filter-btn.single-parent-filter .count-badge {
+  background: rgba(217, 119, 6, 0.2);
+}
+
+.filter-btn.single-parent-filter:hover .count-badge,
+.filter-btn.single-parent-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .subsidy-card.youth-highlight {
   border-color: #fbbf24;
   background: linear-gradient(to bottom right, #fffbeb, #ffffff);
@@ -2241,7 +2264,8 @@ main {
   .filter-btn.senior-filter,
   .filter-btn.disability-filter,
   .filter-btn.new-immigrant-filter,
-  .filter-btn.low-income-filter {
+  .filter-btn.low-income-filter,
+  .filter-btn.single-parent-filter {
     border: 2px solid ButtonText;
     background: ButtonFace;
     color: ButtonText;

@@ -134,10 +134,11 @@
     "situations": [
       "renter",
       "parent",
-      "low-income"
+      "low-income",
+      "single-parent"
     ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-30",
     "steps": [
       "確認符合資格：有合法租約（非親屬）、無自有住宅、符合收入限制",
       "前往「300億元中央擴大租金補貼申請平台」建立帳號",
@@ -280,10 +281,11 @@
     "situations": [
       "renter",
       "parent",
-      "disabled"
+      "disabled",
+      "single-parent"
     ],
     "difficulty": "medium",
-    "updatedAt": "2026-05-09",
+    "updatedAt": "2026-06-30",
     "steps": [
       "至各縣市政府住宅處或「全國社會住宅資訊整合平臺」查詢開放公告",
       "備妥身分證、戶籍資料、全家財產及所得證明（需最新年度）",
@@ -388,11 +390,12 @@
       "托嬰"
     ],
     "situations": [
-      "parent"
+      "parent",
+      "single-parent"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-05-14",
+    "updatedAt": "2026-06-30",
     "steps": [
       "確認子女就讀「準公共化托育機構」或使用登記居家保母",
       "至戶籍地社會局或線上「育兒津貼申請系統」填寫申請表",
@@ -809,11 +812,12 @@
       "教育補助"
     ],
     "situations": [
-      "parent"
+      "parent",
+      "single-parent"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
-    "updatedAt": "2026-06-17",
+    "updatedAt": "2026-06-30",
     "steps": [
       "確認資格：父（母）屬非自願離職，已辦理失業認定並曾領取失業給付",
       "準備文件：失業認定通知書或失業給付紀錄、子女在學證明及學費繳費收據",
@@ -846,7 +850,10 @@
       "就學補助",
       "原民會"
     ],
-    "situations": ["indigenous", "fresh-grad"],
+    "situations": [
+      "indigenous",
+      "fresh-grad"
+    ],
     "isYouthHighlight": true,
     "difficulty": "easy",
     "updatedAt": "2026-06-17",
@@ -1114,11 +1121,12 @@
       "renter",
       "parent",
       "disabled",
-      "low-income"
+      "low-income",
+      "single-parent"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-06-24",
+    "updatedAt": "2026-06-30",
     "steps": [
       "確認弱勢身分：備齊身分證明文件（如育兒證明、身心障礙手冊、低收入戶通知書等），確認符合縣市公告的優先類別",
       "至「全國社會住宅資訊整合平臺」(socialhousing.tw) 查詢目前開放申請的社宅案場及弱勢加分規定",
@@ -1817,7 +1825,10 @@
       "原民會",
       "創業輔導"
     ],
-    "situations": ["indigenous", "entrepreneur"],
+    "situations": [
+      "indigenous",
+      "entrepreneur"
+    ],
     "difficulty": "medium",
     "updatedAt": "2026-06-29",
     "steps": [
@@ -1852,7 +1863,10 @@
       "原住民族地區",
       "原民會"
     ],
-    "situations": ["indigenous", "homebuyer"],
+    "situations": [
+      "indigenous",
+      "homebuyer"
+    ],
     "difficulty": "medium",
     "updatedAt": "2026-06-29",
     "steps": [
@@ -1888,7 +1902,9 @@
       "補助計畫",
       "原文會"
     ],
-    "situations": ["indigenous"],
+    "situations": [
+      "indigenous"
+    ],
     "difficulty": "hard",
     "updatedAt": "2026-06-29",
     "steps": [
@@ -1962,10 +1978,13 @@
       "生活補助",
       "緊急救助"
     ],
-    "situations": ["low-income"],
+    "situations": [
+      "low-income",
+      "single-parent"
+    ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-06-29",
+    "updatedAt": "2026-06-30",
     "steps": [
       "確認已取得縣市政府核發之低收入戶或中低收入戶核定通知書（向戶籍地鄉鎮市區公所社會課申請認定）",
       "備妥身分證、戶口名簿、低/中低收入戶核定通知書及急難事實相關佐證文件（如診斷書、意外報告、失業證明等）",
@@ -1999,10 +2018,14 @@
       "教育補助",
       "弱勢助學"
     ],
-    "situations": ["low-income", "parent"],
+    "situations": [
+      "low-income",
+      "parent",
+      "single-parent"
+    ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-06-29",
+    "updatedAt": "2026-06-30",
     "steps": [
       "確認持有縣市政府核發之低收入戶或中低收入戶核定通知書（每年須重新認定，請確認效期）",
       "大專院校：至就讀學校學務處或財務組填寫「弱勢助學申請書」（可至教育部弱勢助學網 helpdreams.moe.edu.tw 查詢），附上核定通知書及在學證明",
@@ -2011,5 +2034,88 @@
     ],
     "addedDate": "2026-06-29",
     "maxAmount": 120000
+  },
+  {
+    "id": "special-circumstance-living-allowance",
+    "title": "特殊境遇家庭生活扶助",
+    "category": "生活",
+    "agency": "衛生福利部社會及家庭署 / 各縣市政府社會局",
+    "summary": "依特殊境遇家庭扶助條例第7條，單親家庭（含離婚、喪偶、未婚生子）若符合一定所得及財產條件，可申請每月生活扶助金，協助維持家庭基本生活。",
+    "eligibility": [
+      "年滿15歲至65歲，且有實際照顧子女之本國籍單親或特殊境遇家庭成員",
+      "最近一年遭遇特殊境遇（配偶死亡、離婚、失蹤，或遭家暴需保護安置等情形）",
+      "家庭年所得低於規定標準（各縣市依最低生活費公告）",
+      "未領取其他同性質政府補助（如低收入戶生活補助）"
+    ],
+    "amount": "每人每月 4,000 至 8,000 元（依縣市規定及家庭人口核定，部分縣市另有加碼）",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html",
+    "tags": [
+      "特殊境遇家庭",
+      "單親",
+      "生活扶助",
+      "特殊境遇家庭扶助條例",
+      "離婚",
+      "喪偶",
+      "生活補助"
+    ],
+    "situations": [
+      "single-parent",
+      "parent"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-30",
+    "steps": [
+      "確認符合特殊境遇情形（如離婚、喪偶、配偶失蹤、家暴安置等），備妥身分證、戶口名簿及相關佐證文件（離婚判決書或調解書、配偶死亡戶籍謄本等）",
+      "至戶籍地鄉鎮市區公所或縣市政府社會局（處）填寫特殊境遇家庭扶助申請書",
+      "社工人員訪視確認家庭狀況及所得、財產是否符合規定",
+      "核定後每月匯入指定帳戶；需每年重新申請確認資格"
+    ],
+    "addedDate": "2026-06-30",
+    "maxAmount": 96000
+  },
+  {
+    "id": "single-parent-afterschool-subsidy",
+    "title": "單親家庭兒童課後照顧補助",
+    "category": "教育",
+    "agency": "教育部 / 各縣市政府教育局（處）",
+    "summary": "單親家庭子女就讀國民小學，可申請課後照顧服務費用補助，減輕單親家長在工作與照顧子女間的負擔。依縣市規定，低收入戶全額免費、中低收入戶半額補助，特殊境遇家庭亦可適用。",
+    "eligibility": [
+      "就讀國民小學（1至6年級）之學童",
+      "家庭為低收入戶、中低收入戶，或符合特殊境遇家庭扶助條例之單親家庭",
+      "已報名就讀學校或鄉鎮市區公所辦理之課後照顧班",
+      "部分縣市需持有縣市政府核發之補助資格核定通知書"
+    ],
+    "amount": "低收入戶：全額免費；中低收入戶及特殊境遇家庭：補助 1/2 至全額費用（每月約 2,000 至 4,000 元）",
+    "deadline": "每學期開學報到期間申請，約每年2月及8月",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://www.edu.tw/Default.aspx",
+    "tags": [
+      "單親",
+      "課後照顧",
+      "兒童",
+      "國小",
+      "特殊境遇家庭",
+      "教育補助",
+      "低收入戶"
+    ],
+    "situations": [
+      "single-parent",
+      "parent",
+      "low-income"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-06-30",
+    "steps": [
+      "確認子女就讀之學校是否開設課後照顧班（或查詢鄉鎮公所辦理情形）",
+      "備妥低中低收入戶核定通知書或特殊境遇家庭扶助核定通知書、戶口名簿及在學證明",
+      "向就讀學校課後照顧班承辦人員或學校教務處提出補助申請",
+      "學校教育局核定後，費用直接減免或事後退費；每學期需重新申請確認"
+    ],
+    "addedDate": "2026-06-30",
+    "maxAmount": 48000
   }
 ]
