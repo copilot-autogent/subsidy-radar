@@ -1067,7 +1067,6 @@ main {
 }
 
 .card-docs summary::-webkit-details-marker { display: none; }
-.card-docs summary { list-style: none; }
 
 .card-docs summary::before {
   content: '📄 ';
@@ -1093,10 +1092,6 @@ main {
   gap: 0.35rem;
   color: var(--color-text);
   line-height: 1.5;
-}
-
-.docs-list li::before {
-  content: '✅ ';
 }
 
 

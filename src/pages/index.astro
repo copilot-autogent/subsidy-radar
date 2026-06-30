@@ -589,7 +589,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             <details class="card-docs">
               <summary>查看申請文件</summary>
               <ul class="docs-list">
-                {s.requiredDocs.map(doc => <li>{doc}</li>)}
+                {s.requiredDocs.map(doc => <li>✅ {doc}</li>)}
               </ul>
             </details>
           )}

@@ -54,11 +54,10 @@ test.describe('Required documents checklist on subsidy cards', () => {
   });
 
   test('at least 10 cards have the checklist', async ({ page }) => {
-    // The dataset has 12 subsidies populated; this verifies the feature is wired
-    // to multiple cards, not just a single hardcoded one.
+    // The dataset has 12 subsidies populated; use >=12 to catch accidental removals.
     const allDocsDetails = page.locator('.subsidy-card details.card-docs');
     const count = await allDocsDetails.count();
-    expect(count).toBeGreaterThanOrEqual(10);
+    expect(count).toBeGreaterThanOrEqual(12);
   });
 
   test('disability-living-allowance checklist items are present and visible', async ({ page }) => {
