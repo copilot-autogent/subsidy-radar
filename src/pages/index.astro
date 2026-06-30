@@ -2130,6 +2130,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         VALID_QUIZ_VALUES.housing.has(q3);
       const q4Valid = VALID_QUIZ_VALUES.disability.has(q4);
       const q5Valid = VALID_QUIZ_VALUES['single-parent'].has(q5);
+      // q6 is optional: empty string means user hadn't reached this question yet (backward-compat
+      // with URLs shared before the young-child question was added in #106).
       const q6Valid = q6 === '' || VALID_QUIZ_VALUES['young-child'].has(q6);
 
       if (q123Valid && q4Valid && q5Valid && q6Valid) {
