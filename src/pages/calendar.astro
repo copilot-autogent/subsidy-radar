@@ -13,7 +13,10 @@ type Subsidy = typeof subsidiesRaw[number] & {
 };
 const subsidies = subsidiesRaw as Subsidy[];
 
-// Build months: current + next 2
+// Build months: current + next 2.
+// NOTE: `now` here is build-time only and is used solely to compute which months
+// to render in the grid layout. Urgency classes and the "today" highlight are
+// computed at runtime by the client-side script so they never go stale.
 const now = new Date();
 now.setHours(0, 0, 0, 0);
 const months: { year: number; month: number; label: string }[] = [];
@@ -26,19 +29,31 @@ for (let i = 0; i < 3; i++) {
   });
 }
 
-// Normalize deadline date to (year, month 0-indexed, day)
-function parseDeadlineDate(ds: string): { year: number; month: number; day: number } | null {
+// Validate deadline date string (YYYY-MM-DD).
+// Rejects impossible dates like 2026-02-31 by round-tripping through Date.
+function isValidDeadlineDate(ds: string): boolean {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ds);
-  if (!m) return null;
+  if (!m) return false;
   const year = parseInt(m[1], 10);
   const month = parseInt(m[2], 10) - 1;
   const day = parseInt(m[3], 10);
-  if (month < 0 || month > 11 || day < 1 || day > 31) return null;
-  return { year, month, day };
+  if (month < 0 || month > 11 || day < 1 || day > 31) return false;
+  const dt = new Date(year, month, day);
+  return dt.getFullYear() === year && dt.getMonth() === month && dt.getDate() === day;
+}
+
+function parseDeadlineDate(ds: string): { year: number; month: number; day: number } | null {
+  if (!isValidDeadlineDate(ds)) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ds)!;
+  return {
+    year: parseInt(m[1], 10),
+    month: parseInt(m[2], 10) - 1,
+    day: parseInt(m[3], 10),
+  };
 }
 
 // Group subsidies by (year, month): only those with a valid deadlineDate in our 3-month window
-// and not closed
+// and not closed.
 interface CalendarEntry {
   id: string;
   title: string;
@@ -57,9 +72,13 @@ interface CalendarEntry {
 const monthKeys = new Set(months.map(m => `${m.year}-${m.month}`));
 
 const calendarEntries: CalendarEntry[] = [];
+// Rolling section: only subsidies with NO fixed deadline (no valid deadlineDate) that are still open.
+// Subsidies with a fixed deadline outside the 3-month window are omitted from both sections
+// (they will appear on the main list, which also shows upcoming deadlines).
 const rollingSubsidies: { id: string; title: string; category: string; deadline: string; deadlineStatus: string; agency: string; situations: string[]; isYouthHighlight: boolean; difficulty: string; counties: string[] }[] = [];
 
 for (const s of subsidies) {
+  if (s.deadlineStatus === 'closed') continue;
   const situations = (s.situations ?? []) as string[];
   const counties = (s.counties ?? []) as string[];
   const entry = {
@@ -75,15 +94,15 @@ for (const s of subsidies) {
     counties,
   };
 
-  if (s.deadlineDate && /^\d{4}-\d{2}-\d{2}$/.test(s.deadlineDate)) {
-    const parsed = parseDeadlineDate(s.deadlineDate);
-    if (parsed && monthKeys.has(`${parsed.year}-${parsed.month}`)) {
-      calendarEntries.push({ ...entry, deadlineDate: s.deadlineDate, day: parsed.day });
-    } else if (s.deadlineStatus !== 'closed') {
-      // Has a date but outside window — still rolling/future
-      rollingSubsidies.push(entry);
+  const hasValidDate = s.deadlineDate && isValidDeadlineDate(s.deadlineDate);
+  if (hasValidDate) {
+    const parsed = parseDeadlineDate(s.deadlineDate!)!;
+    if (monthKeys.has(`${parsed.year}-${parsed.month}`)) {
+      calendarEntries.push({ ...entry, deadlineDate: s.deadlineDate!, day: parsed.day });
     }
-  } else if (s.deadlineStatus !== 'closed') {
+    // If the date is outside the 3-month window (past or future), omit from both sections.
+  } else {
+    // No valid fixed deadline — goes in the rolling section.
     rollingSubsidies.push(entry);
   }
 }
@@ -114,19 +133,6 @@ function buildMonthGrid(year: number, month: number): (number | null)[][] {
 }
 
 const weekdayLabels = ['日', '一', '二', '三', '四', '五', '六'];
-
-// Urgency CSS class reusing the same logic as index.astro
-function urgencyClass(deadlineDate: string): string {
-  const parsed = parseDeadlineDate(deadlineDate);
-  if (!parsed) return '';
-  const dl = new Date(parsed.year, parsed.month, parsed.day);
-  const diffDays = Math.floor((dl.getTime() - now.getTime()) / 86400000);
-  if (diffDays < 0) return 'cal-expired';
-  if (diffDays <= 7) return 'cal-urgent-7';
-  if (diffDays <= 30) return 'cal-urgent-30';
-  if (diffDays <= 60) return 'cal-urgent-60';
-  return '';
-}
 
 const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
 const mainPageUrl = base;
@@ -177,14 +183,12 @@ const mainPageUrl = base;
                 <tr>
                   {week.map(day => {
                     const entries = day ? (dayMap.get(day) ?? []) : [];
-                    const isToday = day !== null
-                      && m.year === now.getFullYear()
-                      && m.month === now.getMonth()
-                      && day === now.getDate();
                     return (
                       <td
-                        class={`cal-cell ${day === null ? 'cal-cell-empty' : ''} ${isToday ? 'cal-cell-today' : ''}`}
+                        class={`cal-cell ${day === null ? 'cal-cell-empty' : ''}`}
                         data-day={day ?? ''}
+                        data-cal-year={day !== null ? m.year : ''}
+                        data-cal-month={day !== null ? m.month : ''}
                       >
                         {day !== null && (
                           <>
@@ -193,7 +197,7 @@ const mainPageUrl = base;
                               <ul class="cal-entries" role="list">
                                 {entries.map(e => (
                                   <li
-                                    class={`cal-entry ${urgencyClass(e.deadlineDate)}`}
+                                    class="cal-entry"
                                     data-id={e.id}
                                     data-situations={JSON.stringify(e.situations)}
                                     data-category={e.category}
@@ -536,6 +540,46 @@ const mainPageUrl = base;
   const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
   const mainPage = base;
 
+  // ── Runtime "today" and urgency ────────────────────────────────────────────
+  // Computed client-side so urgency classes and today-highlight never go stale
+  // regardless of how old the static build is.
+  const clientNow = new Date();
+  clientNow.setHours(0, 0, 0, 0);
+  const todayYear = clientNow.getFullYear();
+  const todayMonth = clientNow.getMonth(); // 0-indexed
+  const todayDay = clientNow.getDate();
+
+  function calDayDiff(deadlineDate: string): number | null {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(deadlineDate);
+    if (!m) return null;
+    const dl = new Date(parseInt(m[1], 10), parseInt(m[2], 10) - 1, parseInt(m[3], 10));
+    // Calendar-day diff (avoids DST off-by-one): compare year/month/day components
+    const dlNoon = new Date(dl.getFullYear(), dl.getMonth(), dl.getDate(), 12);
+    const nowNoon = new Date(todayYear, todayMonth, todayDay, 12);
+    return Math.round((dlNoon.getTime() - nowNoon.getTime()) / 86400000);
+  }
+
+  // Apply today highlight to cells
+  document.querySelectorAll<HTMLElement>('.cal-cell[data-day]').forEach(cell => {
+    const day = parseInt(cell.dataset.day ?? '', 10);
+    const year = parseInt(cell.dataset.calYear ?? '', 10);
+    const month = parseInt(cell.dataset.calMonth ?? '', 10);
+    if (day && year === todayYear && month === todayMonth && day === todayDay) {
+      cell.classList.add('cal-cell-today');
+    }
+  });
+
+  // Apply urgency classes to entries
+  document.querySelectorAll<HTMLElement>('.cal-entry[data-deadline-date]').forEach(el => {
+    const dl = el.dataset.deadlineDate ?? '';
+    const diff = calDayDiff(dl);
+    if (diff === null) return;
+    if (diff < 0) el.classList.add('cal-expired');
+    else if (diff <= 7) el.classList.add('cal-urgent-7');
+    else if (diff <= 30) el.classList.add('cal-urgent-30');
+    else if (diff <= 60) el.classList.add('cal-urgent-60');
+  });
+
   // ── Read URL params ────────────────────────────────────────────────────────
   const params = new URLSearchParams(window.location.search);
   const filterCat = params.get('cat') ?? '';
@@ -550,7 +594,6 @@ const mainPageUrl = base;
   const LOW_INCOME_FILTER_LABEL = '⭐ 低/中低收入戶';
   const SINGLE_PARENT_FILTER_LABEL = '⭐ 單親';
   const YOUNG_CHILD_FILTER_LABEL = '⭐ 育兒';
-  const RECENCY_FILTER_LABEL = '🆕 最新';
 
   const hasFilters = filterCat !== '' || filterSit !== '' || filterCounty !== '' || filterQ !== '';
 
@@ -559,14 +602,19 @@ const mainPageUrl = base;
     const filterBar = document.getElementById('calFilterBar')!;
     const pillsContainer = document.getElementById('calFilterPills')!;
     filterBar.style.display = 'flex';
-    const pills: string[] = [];
-    if (filterCat) pills.push(filterCat);
-    if (filterSit) pills.push(`人物誌: ${filterSit}`);
-    if (filterCounty) pills.push(`縣市: ${filterCounty}`);
-    if (filterQ) pills.push(`搜尋: ${filterQ}`);
-    pillsContainer.innerHTML = pills.map(p =>
-      `<span class="cal-filter-pill">${p}</span>`
-    ).join('');
+
+    // Build pills safely using DOM — no innerHTML with user data
+    const pillLabels: string[] = [];
+    if (filterCat) pillLabels.push(filterCat);
+    if (filterSit) pillLabels.push(`人物誌: ${filterSit}`);
+    if (filterCounty) pillLabels.push(`縣市: ${filterCounty}`);
+    if (filterQ) pillLabels.push(`搜尋: ${filterQ}`);
+    for (const label of pillLabels) {
+      const span = document.createElement('span');
+      span.className = 'cal-filter-pill';
+      span.textContent = label; // safe: textContent, not innerHTML
+      pillsContainer.appendChild(span);
+    }
 
     // Update back link to restore filter state on main page
     const backLink = document.getElementById('calBackLink') as HTMLAnchorElement | null;
@@ -608,7 +656,7 @@ const mainPageUrl = base;
   function matchesCountyFilter(el: HTMLElement, county: string): boolean {
     if (!county) return true;
     const counties: string[] = JSON.parse(el.dataset.counties ?? '[]');
-    if (counties.length === 0) return true; // national
+    if (counties.length === 0) return true; // national subsidy — visible in all counties
     return counties.some(c => c.replace(/臺/g, '台') === county.replace(/臺/g, '台'));
   }
 
@@ -616,12 +664,14 @@ const mainPageUrl = base;
     return matchesCategoryFilter(el, filterCat)
       && matchesSituationFilter(el, filterSit)
       && matchesCountyFilter(el, filterCounty);
-    // Note: text search (filterQ) is intentionally not applied to calendar entries
-    // because it would require duplicating fuzzy search logic. The back link restores
-    // the search on the main list instead.
+    // Note: text search (filterQ) is propagated to entry links and the back link
+    // but not applied here — the calendar doesn't duplicate fuzzy search logic.
   }
 
   // ── Apply filters to calendar entries ─────────────────────────────────────
+  // Track dynamically inserted empty-month messages so we never duplicate them.
+  const insertedEmptyMsgs = new WeakSet<Element>();
+
   if (hasFilters) {
     // Filter calendar grid entries
     const calEntries = document.querySelectorAll<HTMLElement>('.cal-entry[data-id]');
@@ -639,13 +689,14 @@ const mainPageUrl = base;
       if (emptyMsg) {
         emptyMsg.style.display = visibleInMonth === 0 ? 'block' : 'none';
       } else if (visibleInMonth === 0) {
-        // No entries at all in this month for these filters — insert message
+        // No entries in this month for these filters — insert a message (once only).
         const gridWrapper = section.querySelector('.cal-grid-wrapper');
-        if (gridWrapper) {
+        if (gridWrapper && !insertedEmptyMsgs.has(gridWrapper)) {
           const msg = document.createElement('p');
           msg.className = 'cal-month-empty';
           msg.textContent = '本月無符合篩選的截止補助';
           section.insertBefore(msg, gridWrapper);
+          insertedEmptyMsgs.add(gridWrapper);
         }
       }
     });
@@ -674,7 +725,10 @@ const mainPageUrl = base;
     const entryLinks = document.querySelectorAll<HTMLAnchorElement>('a[data-entry-link]');
     entryLinks.forEach(link => {
       const originalHref = link.getAttribute('href') ?? '';
-      const [pagePart, hashPart] = originalHref.split('#');
+      // Server-rendered hrefs are plain page#id; split safely on first #
+      const hashIdx = originalHref.indexOf('#');
+      const pagePart = hashIdx >= 0 ? originalHref.slice(0, hashIdx) : originalHref;
+      const hashPart = hashIdx >= 0 ? originalHref.slice(hashIdx + 1) : '';
       const mainParams = new URLSearchParams();
       if (filterCat) mainParams.set('cat', filterCat);
       if (filterSit) mainParams.set('sit', filterSit);

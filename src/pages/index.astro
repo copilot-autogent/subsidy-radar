@@ -2401,6 +2401,29 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     initFromQueryParams();
     initUrgencyCounts();
 
+    // ── Sync calendar view link with initial filter state from URL ────────────
+    // updateFilterUrl() keeps it in sync on subsequent changes; this handles the
+    // first-paint case where URL params are present but no filter was clicked yet.
+    {
+      const calViewLink = document.getElementById('calendarViewLink') as HTMLAnchorElement | null;
+      if (calViewLink) {
+        const initParams = new URLSearchParams(window.location.search);
+        const initCat = initParams.get('cat') ?? '';
+        const initSit = initParams.get('sit') ?? '';
+        const initCounty = initParams.get('county') ?? '';
+        const initQ = initParams.get('q') ?? '';
+        if (initCat || initSit || initCounty || initQ) {
+          const calParams = new URLSearchParams();
+          if (initCat) calParams.set('cat', initCat);
+          if (initSit) calParams.set('sit', initSit);
+          if (initCounty) calParams.set('county', initCounty);
+          if (initQ) calParams.set('q', initQ);
+          const calBase = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+          calViewLink.href = `${calBase}calendar?${calParams.toString()}`;
+        }
+      }
+    }
+
     // ── Calendar Subscribe Link ───────────────────────────────────────────────
     // Rewrite to webcal:// so the user's calendar app prompts to subscribe
     // (live updates) instead of downloading a one-shot snapshot.
