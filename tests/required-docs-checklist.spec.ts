@@ -53,11 +53,11 @@ test.describe('Required documents checklist on subsidy cards', () => {
     await expect(docsDetails).toHaveCount(0);
   });
 
-  test('at least 10 cards have the checklist', async ({ page }) => {
-    // The dataset has 12 subsidies populated; use >=12 to catch accidental removals.
+  test('all 12 populated cards have the checklist', async ({ page }) => {
+    // Asserts exact count so accidental data removals are caught immediately.
     const allDocsDetails = page.locator('.subsidy-card details.card-docs');
     const count = await allDocsDetails.count();
-    expect(count).toBeGreaterThanOrEqual(12);
+    expect(count).toBe(12);
   });
 
   test('disability-living-allowance checklist items are present and visible', async ({ page }) => {
