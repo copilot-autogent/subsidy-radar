@@ -2162,7 +2162,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         showQuizQuestion(currentQuestionIndex);
         applyQuizFilter();
         quizResetContainer.style.display = 'block';
-      } else if (q123Valid && q4 === '' && (q5 === '' || q5Valid)) {
+      } else if (q123Valid && q4 === '' && q5 === '') {
         // Old 3-answer share URL (pre-Q4): restore q1–q3 and advance to Q4 so user answers it
         quizAnswers = { age: q1, employment: q2, housing: q3 };
         // Mark q1–q3 answers as selected; leave Q4/Q5 unselected
