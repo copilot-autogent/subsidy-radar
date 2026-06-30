@@ -633,7 +633,8 @@
       "縣市政府評點審查（約2個月）；評分合格者收到補貼證明，6個月內至承辦銀行申辦修繕貸款",
       "撥款後6個月內完成修繕工程，並將施工前後照片送交承辦銀行備查"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "deadlineDate": "2026-09-30"
   },
   {
     "id": "self-use-housing-tax-reduction",
@@ -671,7 +672,8 @@
       "地價稅：每年9月22日前申請，當年11月即以千分之十優惠稅率課稅",
       "房屋稅：完成設籍並申請後，7月1日後次一年適用1.2%優惠稅率"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "deadlineDate": "2026-09-22"
   },
   {
     "id": "sbir-sme-innovation",
@@ -828,7 +830,8 @@
       "確認申請期間（每年2月或9月），逾期不受理；核准後補助直接匯入指定帳戶"
     ],
     "addedDate": "2026-06-20",
-    "maxAmount": 20000
+    "maxAmount": 20000,
+    "deadlineDate": "2026-09-30"
   },
   {
     "id": "indigenous-student-scholarship",
@@ -867,7 +870,8 @@
       "每學期依學校公告期間提出申請，逾期不補申請；核准後補助於學期中匯入"
     ],
     "addedDate": "2026-06-20",
-    "maxAmount": 60000
+    "maxAmount": 60000,
+    "deadlineDate": "2026-10-31"
   },
   {
     "id": "employment-promotion-subsidy",
@@ -2036,7 +2040,8 @@
       "國中小至高中職：向就讀學校提出申請（學校代送教育局審核），雜費全免並補助學用品費；縣市另有加碼補助可同步洽縣市教育局"
     ],
     "addedDate": "2026-06-29",
-    "maxAmount": 120000
+    "maxAmount": 120000,
+    "deadlineDate": "2026-08-31"
   },
   {
     "id": "special-circumstance-living-allowance",
@@ -2119,7 +2124,8 @@
       "學校教育局核定後，費用直接減免或事後退費；每學期需重新申請確認"
     ],
     "addedDate": "2026-06-30",
-    "maxAmount": 48000
+    "maxAmount": 48000,
+    "deadlineDate": "2026-08-31"
   },
   {
     "id": "private-nursery-subsidy",

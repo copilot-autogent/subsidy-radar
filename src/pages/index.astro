@@ -197,6 +197,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         📅 訂閱截止日曆
       </a>
       <span class="calendar-hint">加入你的日曆 App，不錯過申請期限（自動更新）</span>
+      <a href={import.meta.env.BASE_URL.replace(/\/?$/, '/') + 'calendar'} id="calendarViewLink" class="calendar-view-link">
+        🗓️ 月曆檢視
+      </a>
     </div>
   </section>
 
@@ -883,6 +886,19 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
+
+      // Keep calendar view link in sync with active filters
+      const calViewLink = document.getElementById('calendarViewLink') as HTMLAnchorElement | null;
+      if (calViewLink) {
+        const calParams = new URLSearchParams();
+        if (activeCategory && activeCategory !== '全部') calParams.set('cat', activeCategory);
+        if (activeSituation) calParams.set('sit', activeSituation);
+        if (activeCounty) calParams.set('county', activeCounty);
+        if (searchQuery) calParams.set('q', searchQuery);
+        const calQs = calParams.toString();
+        const calBase = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+        calViewLink.href = `${calBase}calendar${calQs ? '?' + calQs : ''}`;
+      }
     }
 
     function showQuizQuestion(index: number) {
