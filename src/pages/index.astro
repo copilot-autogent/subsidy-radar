@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income';
+type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent';
 type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[] };
 const subsidies = subsidiesRaw as Subsidy[];
 
@@ -61,7 +61,9 @@ const INDIGENOUS_LABEL = '⭐ 原住民';
 const indigenousCount = subsidies.filter(s => s.situations?.includes('indigenous')).length;
 const LOW_INCOME_LABEL = '⭐ 低/中低收入戶';
 const lowIncomeCount = subsidies.filter(s => s.situations?.includes('low-income')).length;
-const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
+const SINGLE_PARENT_LABEL = '⭐ 單親';
+const singleParentCount = subsidies.filter(s => s.situations?.includes('single-parent')).length;
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
 const youthCount = youthHighlightCount;
 
 // Difficulty filter counts
@@ -141,15 +143,16 @@ const difficultyLabel: Record<string, { text: string; cls: string; tooltip: stri
 };
 
 const personas = [
-  { key: 'fresh-grad',  icon: '🎓', label: '應屆畢業生' },
-  { key: 'renter',      icon: '🏠', label: '找租屋' },
-  { key: 'homebuyer',   icon: '🏡', label: '想買房' },
-  { key: 'entrepreneur',icon: '💼', label: '想創業' },
-  { key: 'parent',      icon: '👶', label: '育兒家庭' },
-  { key: 'senior',      icon: '👴', label: '長者' },
-  { key: 'indigenous',  icon: '🏔️', label: '原住民族' },
-  { key: 'disabled',    icon: '♿', label: '身障朋友' },
-  { key: 'low-income',  icon: '💰', label: '低/中低收入戶' },
+  { key: 'fresh-grad',    icon: '🎓', label: '應屆畢業生' },
+  { key: 'renter',        icon: '🏠', label: '找租屋' },
+  { key: 'homebuyer',     icon: '🏡', label: '想買房' },
+  { key: 'entrepreneur',  icon: '💼', label: '想創業' },
+  { key: 'parent',        icon: '👶', label: '育兒家庭' },
+  { key: 'single-parent', icon: '👩‍👧', label: '單親家庭' },
+  { key: 'senior',        icon: '👴', label: '長者' },
+  { key: 'indigenous',    icon: '🏔️', label: '原住民族' },
+  { key: 'disabled',      icon: '♿', label: '身障朋友' },
+  { key: 'low-income',    icon: '💰', label: '低/中低收入戶' },
 ];
 
 // Build JSON-LD ItemList for Google rich results (static, build-time, zero runtime cost)
@@ -194,7 +197,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   </section>
 
   <section class="quiz-section" aria-label="快速配對">
-    <h2 class="quiz-title">🎯 找出最適合你的補助（4 個問題）</h2>
+    <h2 class="quiz-title">🎯 找出最適合你的補助（5 個問題）</h2>
     
     <div class="quiz-question" data-question="age">
       <label id="quiz-label-age" class="quiz-label">1. 你的年齡是？</label>
@@ -272,6 +275,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       </div>
     </div>
 
+    <div class="quiz-question" data-question="single-parent" style="display:none">
+      <label id="quiz-label-single-parent" class="quiz-label">5. 是否為單親家庭？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-single-parent">
+        <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">👩‍👧</span>
+          <span class="option-text">是（離婚、喪偶或未婚生子）</span>
+        </button>
+        <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">✓</span>
+          <span class="option-text">否</span>
+        </button>
+      </div>
+    </div>
+
     <div class="quiz-reset" style="display:none">
       <button class="reset-btn" id="quizReset" type="button">↺ 重新開始</button>
     </div>
@@ -328,13 +345,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           ? indigenousCount
           : cat === LOW_INCOME_LABEL
           ? lowIncomeCount
+          : cat === SINGLE_PARENT_LABEL
+          ? singleParentCount
           : cat === RECENCY_LABEL
           ? recencyCount
           : categoryCounts[cat] || 0;
         return (
           <button
-            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
-            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : undefined}
+            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === SINGLE_PARENT_LABEL ? 'single-parent-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
+            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : cat === SINGLE_PARENT_LABEL ? 'singleParentFilterBtn' : undefined}
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
@@ -755,6 +774,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const NEW_IMMIGRANT_FILTER_LABEL = (document.getElementById('newImmigrantFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 新住民';
     const INDIGENOUS_FILTER_LABEL = (document.getElementById('indigenousFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 原住民';
     const LOW_INCOME_FILTER_LABEL = (document.getElementById('lowIncomeFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 低/中低收入戶';
+    const SINGLE_PARENT_FILTER_LABEL = (document.getElementById('singleParentFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 單親';
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
@@ -772,10 +792,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     // Valid answer sets for each question key
     const VALID_QUIZ_VALUES: Record<string, Set<string>> = {
-      age:        new Set(['youth', 'adult', 'senior']),
-      employment: new Set(['fresh-grad', 'unemployed', 'employed', 'entrepreneur']),
-      housing:    new Set(['renter', 'homebuyer', 'parent', 'other']),
-      disability: new Set(['yes', 'no']),
+      age:           new Set(['youth', 'adult', 'senior']),
+      employment:    new Set(['fresh-grad', 'unemployed', 'employed', 'entrepreneur']),
+      housing:       new Set(['renter', 'homebuyer', 'parent', 'other']),
+      disability:    new Set(['yes', 'no']),
+      'single-parent': new Set(['yes', 'no']),
     };
 
     function updateQuizUrl() {
@@ -784,6 +805,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.set('q2', quizAnswers.employment ?? '');
       params.set('q3', quizAnswers.housing ?? '');
       params.set('q4', quizAnswers.disability ?? '');
+      params.set('q5', quizAnswers['single-parent'] ?? '');
       history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
     }
 
@@ -793,6 +815,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.delete('q2');
       params.delete('q3');
       params.delete('q4');
+      params.delete('q5');
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
@@ -848,6 +871,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     function matchQuizToSituations(): string[] {
       const situations: string[] = [];
       const { age, employment, housing, disability } = quizAnswers;
+      const singleParent = quizAnswers['single-parent'];
 
       // Map quiz answers to situations
       if (age === 'senior') situations.push('senior');
@@ -859,6 +883,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       if (employment === 'entrepreneur' || housing === 'entrepreneur') situations.push('entrepreneur');
       if (housing === 'parent') situations.push('parent');
       if (disability === 'yes') situations.push('disabled');
+      if (singleParent === 'yes') situations.push('single-parent');
       
       return situations;
     }
@@ -1420,6 +1445,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           // Low-income entries span multiple categories — tag-only matching is intentional.
           : activeCategory === LOW_INCOME_FILTER_LABEL
           ? situations.includes('low-income')
+          // Single-parent entries span multiple categories — tag-only matching is intentional.
+          : activeCategory === SINGLE_PARENT_FILTER_LABEL
+          ? situations.includes('single-parent')
           : activeCategory === RECENCY_FILTER_LABEL
           ? isRecentlyAdded(card)
           : cat === activeCategory;
@@ -2056,16 +2084,18 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const q2 = params.get('q2') ?? '';
       const q3 = params.get('q3') ?? '';
       const q4 = params.get('q4') ?? '';
+      const q5 = params.get('q5') ?? '';
 
       const q123Valid =
         VALID_QUIZ_VALUES.age.has(q1) &&
         VALID_QUIZ_VALUES.employment.has(q2) &&
         VALID_QUIZ_VALUES.housing.has(q3);
       const q4Valid = VALID_QUIZ_VALUES.disability.has(q4);
+      const q5Valid = VALID_QUIZ_VALUES['single-parent'].has(q5);
 
-      if (q123Valid && q4Valid) {
-        // All 4 answers present and valid — restore full quiz state
-        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4 };
+      if (q123Valid && q4Valid && q5Valid) {
+        // All 5 answers present and valid — restore full quiz state
+        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5 };
         // Mark each answer as selected in the UI; sync roving tabindex per group
         quizQuestions.forEach(q => { q.style.display = 'none'; });
         quizResetContainer.style.display = 'block';
@@ -2096,15 +2126,47 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         currentQuestionIndex = quizQuestions.length;
         applyQuizFilter();
         quizShareContainer.style.display = 'block';
-      } else if (q123Valid && q4 === '') {
-        // Old 3-answer share URL (pre-Q4): restore q1–q3 and advance to Q4 so user answers it
-        quizAnswers = { age: q1, employment: q2, housing: q3 };
-        // Mark q1–q3 answers as selected; leave Q4 unselected
+      } else if (q123Valid && q4Valid && q5 === '') {
+        // Old 4-answer share URL (pre-Q5): restore q1–q4 and advance to Q5 so user answers it
+        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4 };
+        // Mark q1–q4 answers as selected; leave Q5 unselected
         document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
           const question = group.closest<HTMLElement>('.quiz-question')!;
           const questionType = question.dataset.question!;
           const selectedValue = quizAnswers[questionType];
-          if (!selectedValue) return; // Q4 — leave as-is
+          if (!selectedValue) return; // Q5 — leave as-is
+          let hasSelected = false;
+          group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach(opt => {
+            if (opt.dataset.value === selectedValue) {
+              opt.classList.add('selected');
+              opt.setAttribute('aria-checked', 'true');
+              opt.setAttribute('tabindex', '0');
+              hasSelected = true;
+            } else {
+              opt.classList.remove('selected');
+              opt.setAttribute('aria-checked', 'false');
+              opt.setAttribute('tabindex', '-1');
+            }
+          });
+          if (!hasSelected) {
+            const first = group.querySelector<HTMLButtonElement>('.quiz-option');
+            if (first) first.setAttribute('tabindex', '0');
+          }
+        });
+        // Show Q5 (index 4) so the user completes the quiz; apply q1–q4 filter immediately
+        currentQuestionIndex = quizQuestions.length - 1;
+        showQuizQuestion(currentQuestionIndex);
+        applyQuizFilter();
+        quizResetContainer.style.display = 'block';
+      } else if (q123Valid && q4 === '') {
+        // Old 3-answer share URL (pre-Q4): restore q1–q3 and advance to Q4 so user answers it
+        quizAnswers = { age: q1, employment: q2, housing: q3 };
+        // Mark q1–q3 answers as selected; leave Q4/Q5 unselected
+        document.querySelectorAll<HTMLElement>('.quiz-options[role="radiogroup"]').forEach(group => {
+          const question = group.closest<HTMLElement>('.quiz-question')!;
+          const questionType = question.dataset.question!;
+          const selectedValue = quizAnswers[questionType];
+          if (!selectedValue) return; // Q4/Q5 — leave as-is
           let hasSelected = false;
           group.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach(opt => {
             if (opt.dataset.value === selectedValue) {
@@ -2124,11 +2186,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           }
         });
         // Show Q4 (index 3) so the user completes the quiz; apply q1–q3 filter immediately
-        currentQuestionIndex = quizQuestions.length - 1;
+        currentQuestionIndex = 3;
         showQuizQuestion(currentQuestionIndex);
         applyQuizFilter();
         quizResetContainer.style.display = 'block';
-      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4')) {
+      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4') || params.has('q5')) {
         // Stale/partial/invalid params — clear them so the URL matches UI state
         clearQuizUrl();
       }
@@ -2175,6 +2237,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const VALID_SITUATIONS = new Set([
           'renter', 'homebuyer', 'entrepreneur', 'parent', 'fresh-grad',
           'unemployed', 'employed', 'senior', 'disabled', 'new-immigrant', 'indigenous', 'low-income',
+          'single-parent',
         ]);
         const sitParam = params.get('sit') ?? '';
         if (sitParam && VALID_SITUATIONS.has(sitParam)) {
