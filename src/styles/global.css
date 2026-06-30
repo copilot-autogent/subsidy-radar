@@ -1067,6 +1067,7 @@ main {
 }
 
 .card-docs summary::-webkit-details-marker { display: none; }
+.card-docs summary { list-style: none; }
 
 .card-docs summary::before {
   content: '📄 ';
