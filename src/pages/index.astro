@@ -64,8 +64,9 @@ const lowIncomeCount = subsidies.filter(s => s.situations?.includes('low-income'
 const SINGLE_PARENT_LABEL = '⭐ 單親';
 const singleParentCount = subsidies.filter(s => s.situations?.includes('single-parent')).length;
 const YOUNG_CHILD_LABEL = '⭐ 育兒';
-const youngChildCount = subsidies.filter(s => s.situations?.includes('young-child')).length;
-const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY))];
+const YOUNG_CHILD_CATEGORY = '育兒';
+const youngChildCount = subsidies.filter(s => s.situations?.includes('young-child') || s.category === YOUNG_CHILD_CATEGORY).length;
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY))];
 const youthCount = youthHighlightCount;
 
 // Difficulty filter counts
@@ -1481,9 +1482,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           // Single-parent entries span multiple categories — tag-only matching is intentional.
           : activeCategory === SINGLE_PARENT_FILTER_LABEL
           ? situations.includes('single-parent')
-          // Young-child entries span multiple categories — tag-only matching is intentional.
+          // Young-child entries: match by situation tag OR 育兒 category (same as 長者照護 pattern).
           : activeCategory === YOUNG_CHILD_FILTER_LABEL
-          ? situations.includes('young-child')
+          ? (situations.includes('young-child') || cat === '育兒')
           : activeCategory === RECENCY_FILTER_LABEL
           ? isRecentlyAdded(card)
           : cat === activeCategory;
