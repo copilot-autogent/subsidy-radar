@@ -146,6 +146,7 @@ const personas = [
   { key: 'homebuyer',   icon: '🏡', label: '想買房' },
   { key: 'entrepreneur',icon: '💼', label: '想創業' },
   { key: 'parent',      icon: '👶', label: '育兒家庭' },
+  { key: 'senior',      icon: '👴', label: '長者' },
   { key: 'indigenous',  icon: '🏔️', label: '原住民族' },
   { key: 'disabled',    icon: '♿', label: '身障朋友' },
   { key: 'low-income',  icon: '💰', label: '低/中低收入戶' },
@@ -204,7 +205,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         </button>
         <button class="quiz-option" data-value="adult" type="button" role="radio" aria-checked="false">
           <span class="option-icon">👤</span>
-          <span class="option-text">30 歲以上</span>
+          <span class="option-text">30-64 歲</span>
+        </button>
+        <button class="quiz-option" data-value="senior" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">👴</span>
+          <span class="option-text">65 歲以上（長者）</span>
         </button>
       </div>
     </div>
@@ -277,6 +282,23 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       </button>
     </div>
   </section>
+
+  <!-- ── Persona Strip ── -->
+  <div class="persona-strip" role="group" aria-label="快速人物誌篩選">
+    <span class="persona-strip-label">我是：</span>
+    {personas.map(p => (
+      <button
+        class="persona-btn"
+        data-persona={p.key}
+        type="button"
+        aria-pressed="false"
+        aria-label={`${p.label} — 只看 ${p.label} 相關補助`}
+      >
+        <span class="persona-icon">{p.icon}</span>
+        <span class="persona-label">{p.label}</span>
+      </button>
+    ))}
+  </div>
 
   <div class="controls">
     <div class="search-box">
@@ -750,7 +772,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     // Valid answer sets for each question key
     const VALID_QUIZ_VALUES: Record<string, Set<string>> = {
-      age:        new Set(['youth', 'adult']),
+      age:        new Set(['youth', 'adult', 'senior']),
       employment: new Set(['fresh-grad', 'unemployed', 'employed', 'entrepreneur']),
       housing:    new Set(['renter', 'homebuyer', 'parent', 'other']),
       disability: new Set(['yes', 'no']),
@@ -828,6 +850,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const { age, employment, housing, disability } = quizAnswers;
 
       // Map quiz answers to situations
+      if (age === 'senior') situations.push('senior');
       if (employment === 'fresh-grad') situations.push('fresh-grad');
       if (employment === 'unemployed') situations.push('unemployed');
       if (employment === 'employed') situations.push('employed');
@@ -988,6 +1011,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       activeUrgency = 0;
       urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
+      personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
@@ -1553,6 +1577,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         btn.setAttribute('tabindex', '0');
         activeCategory = btn.dataset.category ?? '全部';
         activeSituation = '';
+        personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
         updateDisplay();
         updateFilterUrl();
       });
@@ -1595,6 +1620,50 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           btn.classList.add('active');
           btn.setAttribute('aria-pressed', 'true');
         }
+        updateDisplay();
+        updateFilterUrl();
+      });
+    });
+
+    // ── Persona Strip ─────────────────────────────────────────────────────────
+    const personaBtns = document.querySelectorAll<HTMLButtonElement>('.persona-btn');
+    const PERSONA_SITUATION_MAP: Record<string, string> = {
+      'fresh-grad':   'fresh-grad',
+      'renter':       'renter',
+      'homebuyer':    'homebuyer',
+      'entrepreneur': 'entrepreneur',
+      'parent':       'parent',
+      'senior':       'senior',
+      'indigenous':   'indigenous',
+      'disabled':     'disabled',
+      'low-income':   'low-income',
+    };
+
+    personaBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.dataset.persona ?? '';
+        const sit = PERSONA_SITUATION_MAP[key] ?? key;
+        if (activeSituation === sit) {
+          // Toggle off
+          activeSituation = '';
+          btn.classList.remove('active');
+          btn.setAttribute('aria-pressed', 'false');
+        } else {
+          personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+          activeSituation = sit;
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+        }
+        // Clear quiz & category filters
+        isQuizActive = false;
+        activeCategory = '全部';
+        filterBtns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+          b.setAttribute('tabindex', '-1');
+        });
+        const allBtn = document.querySelector<HTMLButtonElement>('.filter-btn[data-category="全部"]');
+        if (allBtn) { allBtn.classList.add('active'); allBtn.setAttribute('aria-pressed', 'true'); allBtn.setAttribute('tabindex', '0'); }
         updateDisplay();
         updateFilterUrl();
       });
@@ -1725,6 +1794,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       activeUrgency = 0;
       urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
+      personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       updateTrackerFilterLabel();
       updateCountyUrl();
       updateFilterUrl();
@@ -2109,6 +2179,12 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const sitParam = params.get('sit') ?? '';
         if (sitParam && VALID_SITUATIONS.has(sitParam)) {
           activeSituation = sitParam;
+          // Sync persona chip visual
+          const matchingPersonaBtn = Array.from(personaBtns).find(b => b.dataset.persona === sitParam);
+          if (matchingPersonaBtn) {
+            matchingPersonaBtn.classList.add('active');
+            matchingPersonaBtn.setAttribute('aria-pressed', 'true');
+          }
         }
         // Silently ignore unknown sit values
 
@@ -2178,6 +2254,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       difficultyBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
+      personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       sortBtn.classList.remove('active');
       sortBtn.setAttribute('aria-pressed', 'false');
       sortBtn.textContent = '依申請難度排序';
