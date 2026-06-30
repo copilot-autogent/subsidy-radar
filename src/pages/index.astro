@@ -889,16 +889,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
       // Keep calendar view link in sync with active filters
       const calViewLink = document.getElementById('calendarViewLink') as HTMLAnchorElement | null;
-      if (calViewLink) {
+      const navCalLink = document.querySelector<HTMLAnchorElement>('.nav-calendar-link');
+      const calBase = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+      function updateCalendarLinks() {
         const calParams = new URLSearchParams();
         if (activeCategory && activeCategory !== '全部') calParams.set('cat', activeCategory);
         if (activeSituation) calParams.set('sit', activeSituation);
         if (activeCounty) calParams.set('county', activeCounty);
         if (searchQuery) calParams.set('q', searchQuery);
         const calQs = calParams.toString();
-        const calBase = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
-        calViewLink.href = `${calBase}calendar${calQs ? '?' + calQs : ''}`;
+        const calHref = `${calBase}calendar${calQs ? '?' + calQs : ''}`;
+        if (calViewLink) calViewLink.href = calHref;
+        if (navCalLink) navCalLink.href = calHref;
       }
+      updateCalendarLinks();
     }
 
     function showQuizQuestion(index: number) {
@@ -2419,7 +2423,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           if (initCounty) calParams.set('county', initCounty);
           if (initQ) calParams.set('q', initQ);
           const calBase = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
-          calViewLink.href = `${calBase}calendar?${calParams.toString()}`;
+          const calHref = `${calBase}calendar?${calParams.toString()}`;
+          calViewLink.href = calHref;
+          const navCalLinkInit = document.querySelector<HTMLAnchorElement>('.nav-calendar-link');
+          if (navCalLinkInit) navCalLinkInit.href = calHref;
         }
       }
     }

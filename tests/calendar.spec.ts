@@ -135,11 +135,18 @@ test.describe('Calendar view', () => {
 
   test('calendar entry urgency classes applied correctly', async ({ page }) => {
     await page.goto('/calendar');
-    // urgency classes should be present on entries (may be empty if all far out)
-    const urgentEntries = page.locator('.cal-entry.cal-urgent-7, .cal-entry.cal-urgent-30, .cal-entry.cal-urgent-60');
-    // This is soft — we just check the classes can exist without errors
-    const count = await urgentEntries.count();
-    expect(count).toBeGreaterThanOrEqual(0);
+    // Urgency classes are applied client-side based on current date vs deadlineDate.
+    // The page has entries with known deadlines; check that no entry has BOTH urgent
+    // and non-urgent classes simultaneously (i.e., at most one urgency class per entry).
+    const allEntries = page.locator('.cal-entry[data-deadline-date]');
+    const count = await allEntries.count();
+    for (let i = 0; i < count; i++) {
+      const cls = await allEntries.nth(i).getAttribute('class') ?? '';
+      const urgencyClasses = ['cal-urgent-7', 'cal-urgent-30', 'cal-urgent-60', 'cal-expired'];
+      const matched = urgencyClasses.filter(uc => cls.includes(uc));
+      // Each entry should have at most one urgency class
+      expect(matched.length).toBeLessThanOrEqual(1);
+    }
   });
 
   test('clicking a calendar entry link reaches a valid URL', async ({ page }) => {
