@@ -950,6 +950,42 @@ main {
   font-size: 1rem;
 }
 
+/* ── LINE share button ── */
+.line-share-btn {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 0.9rem;
+  background: #06C755;
+  color: #1a2e1a;
+  border: 1px solid #05b04b;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.line-share-btn:hover {
+  background: #05a849;
+  border-color: #04943f;
+  color: #1a2e1a;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.line-share-btn:focus-visible {
+  outline: 3px solid #1e293b;
+  outline-offset: 2px;
+}
+
+.line-share-icon {
+  display: flex;
+  align-items: center;
+}
+
 /* ── Share toast notification ── */
 .share-toast {
   position: fixed;
@@ -2153,6 +2189,7 @@ main {
   .card-steps,
   .tracker-select,
   .share-link-btn,
+  .line-share-btn,
   .countdown-badge,
   .difficulty-badge,
   .recency-badge,
