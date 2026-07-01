@@ -460,6 +460,29 @@ main {
   background: rgba(255, 255, 255, 0.3);
 }
 
+.filter-btn.student-filter {
+  border-color: #2563eb;
+  color: #1e3a8a;
+  background: #eff6ff;
+  font-weight: 600;
+}
+
+.filter-btn.student-filter:hover,
+.filter-btn.student-filter.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.filter-btn.student-filter .count-badge {
+  background: rgba(37, 99, 235, 0.2);
+}
+
+.filter-btn.student-filter:hover .count-badge,
+.filter-btn.student-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .subsidy-card.youth-highlight {
   border-color: #fbbf24;
   background: linear-gradient(to bottom right, #fffbeb, #ffffff);

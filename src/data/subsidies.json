@@ -330,7 +330,8 @@
       "還款減壓"
     ],
     "situations": [
-      "fresh-grad"
+      "fresh-grad",
+      "student"
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
@@ -904,7 +905,8 @@
     ],
     "situations": [
       "indigenous",
-      "fresh-grad"
+      "fresh-grad",
+      "student"
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
@@ -2100,7 +2102,8 @@
     "situations": [
       "low-income",
       "parent",
-      "single-parent"
+      "single-parent",
+      "student"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -2279,5 +2282,176 @@
     ],
     "addedDate": "2026-06-30",
     "maxAmount": 36000
+  },
+  {
+    "id": "moe-disadvantaged-scholarship",
+    "title": "教育部弱勢助學金",
+    "category": "教育",
+    "agency": "教育部",
+    "summary": "針對就讀大專校院之低收入戶及中低收入戶學生，提供每學期最高 6,500 元生活費補助，減輕就學經濟壓力。",
+    "eligibility": [
+      "就讀國內公私立大專校院（含研究所）",
+      "低收入戶或中低收入戶身分",
+      "每學期向就讀學校申請"
+    ],
+    "amount": "每學期最高 6,500 元",
+    "deadline": "每學期開學後受理，詳洽各校",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://helpdreams.moe.edu.tw/",
+    "tags": [
+      "學生",
+      "助學金",
+      "低收入",
+      "大專"
+    ],
+    "situations": [
+      "student",
+      "low-income"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "向就讀學校學生事務處詢問申請期程",
+      "準備低/中低收入戶證明及在學證明",
+      "填寫申請表，繳交學校審核",
+      "核定後補助款項撥入指定帳戶"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 6500,
+    "requiredDocs": [
+      "在學學生證明",
+      "低/中低收入戶證明文件",
+      "銀行帳戶資料"
+    ]
+  },
+  {
+    "id": "university-tuition-subsidy",
+    "title": "私立大學學費補助（就學費用減免）",
+    "category": "教育",
+    "agency": "教育部",
+    "summary": "就讀私立大學或技術院校的學生，可申請學費補助，每學年最高補助 3 萬元，減輕就學負擔。",
+    "eligibility": [
+      "就讀國內私立大專校院（含技術學院）",
+      "符合教育部公告之補助資格",
+      "每學年向學校提出申請"
+    ],
+    "amount": "每學年最高 30,000 元",
+    "deadline": "每學年受理，各校公告時程",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://helpdreams.moe.edu.tw/",
+    "tags": [
+      "學生",
+      "學費補助",
+      "私立大學",
+      "技術院校"
+    ],
+    "situations": [
+      "student"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "至教育部圓夢助學網查詢補助資格",
+      "填寫線上申請表並上傳相關文件",
+      "由學校審核後轉送教育部核定",
+      "補助款由學校代為抄扣或匯入帳戶"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 30000,
+    "requiredDocs": [
+      "在學學生證明",
+      "學費繳費收據",
+      "身分證影本",
+      "銀行帳戶資料"
+    ]
+  },
+  {
+    "id": "graduate-scholarship",
+    "title": "研究生獎助學金（教育部）",
+    "category": "教育",
+    "agency": "教育部",
+    "summary": "針對就讀國內碩博士班研究生，由教育部或各大學提供每月 5,000–15,000 元獎助學金，鼓勵優秀人才投入學術研究。",
+    "eligibility": [
+      "就讀國內公私立大學碩士或博士班",
+      "成績或研究表現符合各校標準",
+      "向就讀學校獎助學金委員會申請"
+    ],
+    "amount": "每月 5,000–15,000 元（依核定級別）",
+    "deadline": "每學年開學初受理，各校公告",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://www.edu.tw/",
+    "tags": [
+      "研究生",
+      "碩博士",
+      "獎助學金",
+      "學術"
+    ],
+    "situations": [
+      "student"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "向就讀學校研究生事務組查詢申請資格",
+      "準備研究計畫摘要或成績單",
+      "填寫申請表格繳交系所推薦",
+      "核定後每月匯入指定帳戶"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 180000,
+    "requiredDocs": [
+      "研究生在學證明",
+      "最近一學期成績單",
+      "指導教授推薦函（視各校規定）",
+      "銀行帳戶資料"
+    ]
+  },
+  {
+    "id": "student-employment-program",
+    "title": "大專生就業學程補助",
+    "category": "教育",
+    "agency": "勞動部勞動力發展署",
+    "summary": "協助大學生在學期間取得職場實作經驗，提供每月最高 26,400 元薪資補助，透過政府補助企業聘用在學學生實習。",
+    "eligibility": [
+      "就讀國內大專校院（含研究所）在學學生",
+      "年滿 18 歲",
+      "透過勞動部認可之就業學程計畫媒合實習"
+    ],
+    "amount": "每月最高 26,400 元（按基本工資比例補助）",
+    "deadline": "全年常態受理，各縣市分署定期公告",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://kys.wda.gov.tw/",
+    "tags": [
+      "學生",
+      "實習",
+      "就業學程",
+      "薪資補助"
+    ],
+    "situations": [
+      "student"
+    ],
+    "isYouthHighlight": true,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "至台灣就業通查詢就業學程計畫",
+      "選擇符合科系的合作企業，提出媒合申請",
+      "完成面試後由雇主與勞動署簽訂補助契約",
+      "實習期間每月薪資由雇主發放，政府補助差額"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 316800,
+    "requiredDocs": [
+      "在學學生證或在學證明",
+      "身分證影本",
+      "最高學曆成績單"
+    ]
   }
 ]
