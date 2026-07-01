@@ -56,7 +56,7 @@ test.describe('student persona — data & filter logic', () => {
     expect(educationStudentEntries.length).toBeGreaterThanOrEqual(4);
   });
 
-  // ── 2. Combined student + low-income filter (AND logic) ─────────────────
+  // ── 2. Combined student + low-income filter (AND logic) ───────────────────
   // When both situations are active simultaneously (e.g., via quiz), BOTH must
   // appear in the card's situations array. Test verifies at least one subsidy
   // satisfies this combination so the overlap is surfaceable.
@@ -79,7 +79,7 @@ test.describe('student persona — data & filter logic', () => {
     expect(entry!.situations).toContain('low-income');
   });
 
-  // ── 3. Existing entries correctly tagged ────────────────────────
+  // ── 3. Existing entries correctly tagged ────────────────────────────────
   test('student-loan-interest-relief tagged with student', () => {
     const entry = subsidies.find(s => s.id === 'student-loan-interest-relief');
     expect(entry).toBeDefined();
@@ -98,7 +98,7 @@ test.describe('student persona — data & filter logic', () => {
     expect(entry!.situations).toContain('student');
   });
 
-  // ── 4. Total entry count target ──────────────────────────────────────
+  // ── 4. Total entry count target ──────────────────────────────────────────
   test('total subsidies reaches target of ~61', () => {
     expect(subsidies.length).toBeGreaterThanOrEqual(61);
   });

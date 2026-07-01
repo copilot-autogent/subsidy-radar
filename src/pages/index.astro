@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child';
+type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student';
 type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[] };
 const subsidies = subsidiesRaw as Subsidy[];
 
@@ -66,7 +66,9 @@ const singleParentCount = subsidies.filter(s => s.situations?.includes('single-p
 const YOUNG_CHILD_LABEL = '⭐ 育兒';
 const YOUNG_CHILD_CATEGORY = '育兒';
 const youngChildCount = subsidies.filter(s => s.situations?.includes('young-child') || s.category === YOUNG_CHILD_CATEGORY).length;
-const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY))];
+const STUDENT_LABEL = '⭐ 學生補助';
+const studentCount = subsidies.filter(s => s.situations?.includes('student')).length;
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY))];
 const youthCount = youthHighlightCount;
 
 // Difficulty filter counts
@@ -147,6 +149,7 @@ const difficultyLabel: Record<string, { text: string; cls: string; tooltip: stri
 
 const personas = [
   { key: 'fresh-grad',    icon: '🎓', label: '應屆畢業生' },
+  { key: 'student',       icon: '📚', label: '在學學生' },
   { key: 'renter',        icon: '🏠', label: '找租屋' },
   { key: 'homebuyer',     icon: '🏡', label: '想買房' },
   { key: 'entrepreneur',  icon: '💼', label: '想創業' },
@@ -310,6 +313,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       </div>
     </div>
 
+    <div class="quiz-question" data-question="student" style="display:none">
+      <label id="quiz-label-student" class="quiz-label">7. 您目前是在學學生（大學／研究所）嗎？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-student">
+        <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">📚</span>
+          <span class="option-text">是（大學或研究所在學）</span>
+        </button>
+        <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">✓</span>
+          <span class="option-text">否</span>
+        </button>
+      </div>
+    </div>
+
     <div class="quiz-reset" style="display:none">
       <button class="reset-btn" id="quizReset" type="button">↺ 重新開始</button>
     </div>
@@ -370,13 +387,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           ? singleParentCount
           : cat === YOUNG_CHILD_LABEL
           ? youngChildCount
+          : cat === STUDENT_LABEL
+          ? studentCount
           : cat === RECENCY_LABEL
           ? recencyCount
           : categoryCounts[cat] || 0;
         return (
           <button
-            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === SINGLE_PARENT_LABEL ? 'single-parent-filter' : ''} ${cat === YOUNG_CHILD_LABEL ? 'young-child-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
-            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : cat === SINGLE_PARENT_LABEL ? 'singleParentFilterBtn' : cat === YOUNG_CHILD_LABEL ? 'youngChildFilterBtn' : undefined}
+            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === SINGLE_PARENT_LABEL ? 'single-parent-filter' : ''} ${cat === YOUNG_CHILD_LABEL ? 'young-child-filter' : ''} ${cat === STUDENT_LABEL ? 'student-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
+            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : cat === SINGLE_PARENT_LABEL ? 'singleParentFilterBtn' : cat === YOUNG_CHILD_LABEL ? 'youngChildFilterBtn' : cat === STUDENT_LABEL ? 'studentFilterBtn' : undefined}
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
@@ -807,6 +826,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const LOW_INCOME_FILTER_LABEL = (document.getElementById('lowIncomeFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 低/中低收入戶';
     const SINGLE_PARENT_FILTER_LABEL = (document.getElementById('singleParentFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 單親';
     const YOUNG_CHILD_FILTER_LABEL = (document.getElementById('youngChildFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 育兒';
+    const STUDENT_FILTER_LABEL = (document.getElementById('studentFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 學生補助';
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
@@ -830,6 +850,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       disability:    new Set(['yes', 'no']),
       'single-parent': new Set(['yes', 'no']),
       'young-child':   new Set(['yes', 'no']),
+      'student':       new Set(['yes', 'no']),
     };
 
     function updateQuizUrl() {
@@ -840,6 +861,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.set('q4', quizAnswers.disability ?? '');
       params.set('q5', quizAnswers['single-parent'] ?? '');
       params.set('q6', quizAnswers['young-child'] ?? '');
+      params.set('q7', quizAnswers['student'] ?? '');
       history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
     }
 
@@ -851,6 +873,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.delete('q4');
       params.delete('q5');
       params.delete('q6');
+      params.delete('q7');
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
@@ -925,6 +948,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const { age, employment, housing, disability } = quizAnswers;
       const singleParent = quizAnswers['single-parent'];
       const youngChild = quizAnswers['young-child'];
+      const student = quizAnswers['student'];
 
       // Map quiz answers to situations
       if (age === 'senior') situations.push('senior');
@@ -945,6 +969,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         situations.push('young-child');
         // 0–6 parents also qualify for broad parent-tagged subsidies
         if (!situations.includes('parent')) situations.push('parent');
+      }
+      if (student === 'yes') {
+        situations.push('student');
       }
       
       return situations;
@@ -1513,6 +1540,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           // Young-child entries: match by situation tag OR 育兒 category (same as 長者照護 pattern).
           : activeCategory === YOUNG_CHILD_FILTER_LABEL
           ? (situations.includes('young-child') || cat === '育兒')
+          // Student entries span multiple categories — tag-only matching is intentional.
+          : activeCategory === STUDENT_FILTER_LABEL
+          ? situations.includes('student')
           : activeCategory === RECENCY_FILTER_LABEL
           ? isRecentlyAdded(card)
           : cat === activeCategory;
@@ -1722,6 +1752,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const personaBtns = document.querySelectorAll<HTMLButtonElement>('.persona-btn');
     const PERSONA_SITUATION_MAP: Record<string, string> = {
       'fresh-grad':   'fresh-grad',
+      'student':      'student',
       'renter':       'renter',
       'homebuyer':    'homebuyer',
       'entrepreneur': 'entrepreneur',
@@ -2152,6 +2183,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const q4 = params.get('q4') ?? '';
       const q5 = params.get('q5') ?? '';
       const q6 = params.get('q6') ?? '';
+      const q7 = params.get('q7') ?? '';
 
       const q123Valid =
         VALID_QUIZ_VALUES.age.has(q1) &&
@@ -2162,10 +2194,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // q6 is optional: empty string means user hadn't reached this question yet (backward-compat
       // with URLs shared before the young-child question was added in #106).
       const q6Valid = q6 === '' || VALID_QUIZ_VALUES['young-child'].has(q6);
+      // q7 is optional: empty string means user hadn't reached this question yet (backward-compat
+      // with URLs shared before the student question was added in #114).
+      const q7Valid = q7 === '' || VALID_QUIZ_VALUES['student'].has(q7);
 
-      if (q123Valid && q4Valid && q5Valid && q6Valid) {
+      if (q123Valid && q4Valid && q5Valid && q6Valid && q7Valid) {
         // All answers present and valid — restore full quiz state
-        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5, ...(q6 ? { 'young-child': q6 } : {}) };
+        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5, ...(q6 ? { 'young-child': q6 } : {}), ...(q7 ? { 'student': q7 } : {}) };
         // Mark each answer as selected in the UI; sync roving tabindex per group
         quizQuestions.forEach(q => { q.style.display = 'none'; });
         quizResetContainer.style.display = 'block';
@@ -2224,7 +2259,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           }
         });
         // Show Q5 (index 4) so the user completes the quiz; apply q1–q4 filter immediately
-        currentQuestionIndex = quizQuestions.length - 1;
+        currentQuestionIndex = 4;
         showQuizQuestion(currentQuestionIndex);
         applyQuizFilter();
         quizResetContainer.style.display = 'block';
@@ -2307,7 +2342,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const VALID_SITUATIONS = new Set([
           'renter', 'homebuyer', 'entrepreneur', 'parent', 'fresh-grad',
           'unemployed', 'employed', 'senior', 'disabled', 'new-immigrant', 'indigenous', 'low-income',
-          'single-parent', 'young-child',
+          'single-parent', 'young-child', 'student',
         ]);
         const sitParam = params.get('sit') ?? '';
         if (sitParam && VALID_SITUATIONS.has(sitParam)) {
