@@ -1477,24 +1477,33 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
     }
 
-    // ── LINE share: update href just before navigation (covers left-click,
-    //    middle-click, right-click "copy link", and keyboard activation) ──────
+    // ── LINE share: update href just before navigation ────────────────────────
+    // Covers left-click, middle-click, touch tap, and keyboard activation.
     function updateLineShareHref(link: HTMLAnchorElement) {
       const id = link.dataset.id;
       if (!id) return;
       const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${id}`;
       link.href = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(currentUrl)}`;
     }
-    // Event delegation on document: fires before click/auxclick and before
-    // context-menu reads the href, so even "open in new tab" gets a fresh URL.
-    document.addEventListener('mousedown', (e) => {
-      const link = (e.target as Element).closest<HTMLAnchorElement>('a.line-share-btn');
+    function getLineShareLink(target: EventTarget | null): HTMLAnchorElement | null {
+      return target instanceof Element ? target.closest<HTMLAnchorElement>('a.line-share-btn') : null;
+    }
+    // pointerdown covers mouse, touch, and stylus before navigation resolves.
+    document.addEventListener('pointerdown', (e) => {
+      const link = getLineShareLink(e.target);
       if (link) updateLineShareHref(link);
     }, true);
+    // focusin handles keyboard users (Tab to focus, then Enter/Space).
     document.addEventListener('focusin', (e) => {
-      const link = (e.target as Element).closest<HTMLAnchorElement>('a.line-share-btn');
+      const link = getLineShareLink(e.target);
       if (link) updateLineShareHref(link);
     });
+    // keydown ensures fresh href if filters changed after initial focus.
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const link = getLineShareLink(e.target);
+      if (link) updateLineShareHref(link);
+    }, true);
 
     // ── Sort ─────────────────────────────────────────────────────────────────
     function applySort() {

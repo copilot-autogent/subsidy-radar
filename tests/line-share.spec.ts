@@ -23,8 +23,10 @@ test.describe('LINE share button', () => {
     expect(href).toBeTruthy();
     expect(href).toContain('https://social-plugins.line.me/lineit/share?url=');
     // The encoded URL should contain the subsidy anchor
-    const decoded = decodeURIComponent(href!.split('?url=')[1]);
-    expect(decoded).toContain('#');
+    const parsed = new URL(href!);
+    const sharedUrl = parsed.searchParams.get('url');
+    expect(sharedUrl).toBeTruthy();
+    expect(sharedUrl).toContain('#');
   });
 
   test('LINE share button is accessible with aria-label', async ({ page }) => {
