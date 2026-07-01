@@ -2204,7 +2204,7 @@ main {
     color: #1d4ed8;
   }
 
-  /* Status badge: show in print, hide the select */
+  /* Status badge: show in print, hide the select; hide badge for 未申請 (default/untracked) */
   .tracker-print-badge {
     display: inline-block !important;
     padding: 0.15rem 0.5rem;
@@ -2213,7 +2213,7 @@ main {
     font-weight: 700;
     border: 1px solid currentColor;
   }
-  .tracker-print-badge.ts-none      { background: #f1f5f9; color: #64748b; border-color: #cbd5e1; }
+  .tracker-print-badge.ts-none      { display: none !important; }
   .tracker-print-badge.ts-applying  { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
   .tracker-print-badge.ts-approved  { background: #dcfce7; color: #15803d; border-color: #86efac; }
   .tracker-print-badge.ts-received  { background: #dcfce7; color: #15803d; border-color: #86efac; }

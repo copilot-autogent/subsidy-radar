@@ -1290,8 +1290,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // Only include items explicitly present in the tracker (user has interacted)
         if (!(id in tracker)) return;
         const status = tracker[id];
-        // Only show for 未申請 or 申請中 (not final states)
-        if (status !== '未申請' && status !== '申請中') return;
+        // Only show for 未申請, 申請中, or 已核准 (still potentially actionable before deadline)
+        if (status !== '未申請' && status !== '申請中' && status !== '已核准') return;
         const days = daysUntilDate(deadline);
         if (days === null || days < 0 || days > 30) return;
         const title = card.querySelector('.card-title')?.textContent?.trim() ?? id;
