@@ -34,7 +34,7 @@ test.describe('iCal export button', () => {
     const periodicId = await periodicCard.getAttribute('data-id');
     expect(periodicId, 'periodic card must have data-id').toBeTruthy();
 
-    await setTrackerItem(page, periodicId, '已申請');
+    await setTrackerItem(page, periodicId, '申請中');
     await page.reload();
     const btn = page.locator('#icalExportBtn');
     await expect(btn).toBeHidden();
@@ -47,20 +47,19 @@ test.describe('iCal export button', () => {
     const id = await deadlineCard.getAttribute('data-id');
     expect(id).toBeTruthy();
 
-    await setTrackerItem(page, id!, '已申請');
+    await setTrackerItem(page, id!, '申請中');
     await page.reload();
     const btn = page.locator('#icalExportBtn');
     await expect(btn).toBeVisible();
   });
 
   test('export button appears dynamically (without reload) when tracker status is updated via UI', async ({ page }) => {
-    // Find a card with a deadline and click its tracker button twice to get to 已申請
+    // Find a card with a deadline and use its tracker select to set status to 申請中
     const deadlineCard = page.locator('.subsidy-card[data-deadline]:not([data-deadline=""])').first();
     await expect(deadlineCard).toHaveCount(1);
 
-    const trackerBtn = deadlineCard.locator('.tracker-btn');
-    // Click to cycle from 未申請 → 已申請
-    await trackerBtn.click();
+    const trackerSelect = deadlineCard.locator('.tracker-select');
+    await trackerSelect.selectOption('申請中');
     const btn = page.locator('#icalExportBtn');
     await expect(btn).toBeVisible();
   });
@@ -70,7 +69,7 @@ test.describe('iCal export button', () => {
     const deadlineCard = page.locator('.subsidy-card[data-deadline]:not([data-deadline=""])').first();
     const id = await deadlineCard.getAttribute('data-id');
     expect(id).toBeTruthy();
-    await setTrackerItem(page, id!, '已申請');
+    await setTrackerItem(page, id!, '申請中');
     await page.reload();
 
     const btn = page.locator('#icalExportBtn');
@@ -95,7 +94,7 @@ test.describe('iCal export button', () => {
     const deadlineDate = await deadlineCard.getAttribute('data-deadline');
     expect(deadlineDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
-    await setTrackerItem(page, id!, '已申請');
+    await setTrackerItem(page, id!, '申請中');
     await page.reload();
 
     const btn = page.locator('#icalExportBtn');
@@ -136,8 +135,8 @@ test.describe('iCal export button', () => {
     const deadlineId = await deadlineCard.getAttribute('data-id');
     expect(deadlineId).toBeTruthy();
 
-    await setTrackerItem(page, periodicId!, '已申請');
-    await setTrackerItem(page, deadlineId!, '已申請');
+    await setTrackerItem(page, periodicId!, '申請中');
+    await setTrackerItem(page, deadlineId!, '申請中');
     await page.reload();
 
     const btn = page.locator('#icalExportBtn');

@@ -495,7 +495,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   </div>
 
   <div class="tracker-summary-banner" id="trackerSummaryBanner" style="display:none" role="status" aria-live="polite">
-    <span class="tracker-summary-text">📌 已追蹤 <strong><span id="trackerSummaryCount">0</span></strong> 項補助</span>
+    <span class="tracker-summary-text">📌 已追蹤 <strong><span id="trackerSummaryCount">0</span></strong> 項補助<span id="trackerStatusBreakdown" class="tracker-status-breakdown"></span></span>
     <div class="tracker-summary-actions">
       <button class="ical-export-btn" id="icalExportBtn" type="button" style="display:none" aria-label="匯出追蹤補助截止日期至行事曆">📅 匯出行事曆</button>
       <button class="print-tracker-btn" id="printTrackerBtn" type="button">🖨️ 列印追蹤清單</button>
@@ -580,9 +580,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               <span class="recency-badge" data-recency-badge style="display:none">🆕 最新</span>
               <span class="category-badge">{s.category}</span>
             </div>
-            <button class="tracker-btn" data-id={s.id} title="點擊更新申請進度" type="button" aria-label={`申請狀態：未申請，點擊切換 — ${s.title}`}>
-              <span class="tracker-label">未申請</span>
-            </button>
+            <div class="tracker-control">
+              <select class="tracker-select ts-none" data-id={s.id} aria-label={`申請狀態：未申請 — ${s.title}`}>
+                <option value="未申請">未申請</option>
+                <option value="申請中">申請中</option>
+                <option value="已核准">已核准</option>
+                <option value="已領取">已領取</option>
+                <option value="不符資格">不符資格</option>
+              </select>
+              <span class="tracker-print-badge ts-none" aria-hidden="true">未申請</span>
+            </div>
           </div>
           <p class="card-agency">📋 {s.agency}</p>
           <div class="card-amount-highlight">
@@ -1135,17 +1142,35 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     // ── Tracker ──────────────────────────────────────────────────────────────
     const TRACKER_KEY = 'subsidy-tracker-v1';
-    const STATUS_CYCLE = ['未申請', '已申請', '進行中', '已完成'] as const;
+    const STATUS_CYCLE = ['未申請', '申請中', '已核准', '已領取', '不符資格'] as const;
     type TrackerStatus = typeof STATUS_CYCLE[number];
     const STATUS_CLASS: Record<TrackerStatus, string> = {
-      '未申請': 'ts-none',
-      '已申請': 'ts-applied',
-      '進行中': 'ts-inprogress',
-      '已完成': 'ts-done',
+      '未申請':   'ts-none',
+      '申請中':   'ts-applying',
+      '已核准':   'ts-approved',
+      '已領取':   'ts-received',
+      '不符資格': 'ts-ineligible',
     };
 
     function loadTracker(): Record<string, TrackerStatus> {
-      try { return JSON.parse(localStorage.getItem(TRACKER_KEY) ?? '{}'); }
+      try {
+        const raw = JSON.parse(localStorage.getItem(TRACKER_KEY) ?? '{}') as Record<string, unknown>;
+        const validSet = new Set<string>(STATUS_CYCLE);
+        // Migration map: legacy values → closest new status (preserves user intent)
+        const LEGACY_MIGRATION: Record<string, TrackerStatus> = {
+          '已申請': '申請中',
+          '進行中': '申請中',
+          '已完成': '已領取',
+        };
+        const result: Record<string, TrackerStatus> = {};
+        for (const [id, val] of Object.entries(raw)) {
+          if (typeof val !== 'string') continue;  // drop corrupt/non-string entries
+          if (validSet.has(val)) { result[id] = val as TrackerStatus; }
+          else if (val in LEGACY_MIGRATION) { result[id] = LEGACY_MIGRATION[val]; }
+          // completely unknown strings are silently dropped (no phantom tracker entries)
+        }
+        return result;
+      }
       catch { return {}; }
     }
 
@@ -1153,36 +1178,36 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       localStorage.setItem(TRACKER_KEY, JSON.stringify(tracker));
     }
 
-    function applyTrackerToBtn(btn: HTMLButtonElement, status: TrackerStatus) {
-      const label = btn.querySelector<HTMLElement>('.tracker-label')!;
-      label.textContent = status;
-      btn.className = `tracker-btn ${STATUS_CLASS[status]}`;
-      btn.title = `申請進度：${status}（點擊切換）`;
-      // Update aria-label with current status and subsidy name
-      const card = btn.closest<HTMLElement>('.subsidy-card');
+    function applyTrackerToSelect(sel: HTMLSelectElement, status: TrackerStatus) {
+      sel.value = status;
+      sel.className = `tracker-select ${STATUS_CLASS[status]}`;
+      // Update aria-label with current status for screen readers
+      const card = sel.closest<HTMLElement>('.subsidy-card');
       const cardTitle = card?.querySelector<HTMLElement>('.card-title')?.textContent?.trim() ?? '';
-      btn.setAttribute('aria-label', `申請狀態：${status}，點擊切換${cardTitle ? ` — ${cardTitle}` : ''}`);
+      sel.setAttribute('aria-label', `申請狀態：${status}${cardTitle ? ` — ${cardTitle}` : ''}`);
+      const printBadge = sel.parentElement?.querySelector<HTMLElement>('.tracker-print-badge');
+      if (printBadge) {
+        printBadge.textContent = status;
+        printBadge.className = `tracker-print-badge ${STATUS_CLASS[status]}`;
+      }
     }
 
     function initTracker() {
       const tracker = loadTracker();
-      document.querySelectorAll<HTMLButtonElement>('.tracker-btn').forEach(btn => {
-        const id = btn.dataset.id!;
+      document.querySelectorAll<HTMLSelectElement>('.tracker-select').forEach(sel => {
+        const id = sel.dataset.id!;
         const status: TrackerStatus = tracker[id] ?? '未申請';
-        applyTrackerToBtn(btn, status);
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+        applyTrackerToSelect(sel, status);
+        sel.addEventListener('change', () => {
           const t = loadTracker();
-          const cur: TrackerStatus = t[id] ?? '未申請';
-          const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur) + 1) % STATUS_CYCLE.length];
+          const next = sel.value as TrackerStatus;
           t[id] = next;
           saveTracker(t);
-          applyTrackerToBtn(btn, next);
+          applyTrackerToSelect(sel, next);
           updateTrackerFilterLabel();
-          // Only clear session dismissal if this item is now newly at-risk (未申請 or 進行中 with deadline ≤ 30d)
-          if (next === '未申請' || next === '進行中') {
-            const deadline = (btn.closest('[data-deadline]') as HTMLElement | null)?.dataset.deadline ?? '';
+          // Clear session dismissal if this item is now newly at-risk (未申請 or 申請中 with deadline ≤ 30d)
+          if (next === '未申請' || next === '申請中') {
+            const deadline = (sel.closest('[data-deadline]') as HTMLElement | null)?.dataset.deadline ?? '';
             const days = daysUntilDate(deadline);
             if (days !== null && days >= 0 && days <= 30) {
               try { sessionStorage.removeItem(TRACKER_BANNER_DISMISSED_KEY); } catch { /* blocked */ }
@@ -1201,14 +1226,25 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     }
 
     function updateTrackerSummaryBanner() {
-      const n = countTracked();
+      const tracker = loadTracker();
+      const trackedValues = Object.values(tracker).filter(s => s !== '未申請');
+      const n = trackedValues.length;
       const banner = document.getElementById('trackerSummaryBanner');
       const countEl = document.getElementById('trackerSummaryCount');
+      const breakdownEl = document.getElementById('trackerStatusBreakdown');
       if (!banner) return;
       if (countEl) countEl.textContent = String(n);
       banner.style.display = n > 0 ? '' : 'none';
+      // Build breakdown: 申請中 2 / 已核准 1
+      if (breakdownEl) {
+        const counts: Partial<Record<TrackerStatus, number>> = {};
+        for (const s of trackedValues) { counts[s] = (counts[s] ?? 0) + 1; }
+        const parts = (['申請中', '已核准', '已領取', '不符資格'] as TrackerStatus[])
+          .filter(s => counts[s])
+          .map(s => `${s} ${counts[s]}`);
+        breakdownEl.textContent = parts.length > 0 ? `（${parts.join(' / ')}）` : '';
+      }
       // Sync tracker-state-tracked class on all cards for @media print targeting
-      const tracker = loadTracker();
       cards.forEach(card => {
         const id = card.dataset.id ?? '';
         if (!id) return;
@@ -1254,8 +1290,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // Only include items explicitly present in the tracker (user has interacted)
         if (!(id in tracker)) return;
         const status = tracker[id];
-        // Only show for 未申請 or 進行中 (not 已申請 or 已完成)
-        if (status !== '未申請' && status !== '進行中') return;
+        // Only show for 未申請, 申請中, or 已核准 (still potentially actionable before deadline)
+        if (status !== '未申請' && status !== '申請中' && status !== '已核准') return;
         const days = daysUntilDate(deadline);
         if (days === null || days < 0 || days > 30) return;
         const title = card.querySelector('.card-title')?.textContent?.trim() ?? id;
@@ -2609,7 +2645,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const id = card.dataset.id ?? '';
         const deadline = card.dataset.deadline ?? '';
         const status = tracker[id];
-        if (!status || status === '未申請' || status === '已完成') return;
+        if (!status || status === '未申請' || status === '已領取' || status === '不符資格') return;
         const days = daysUntilDate(deadline);
         if (days !== null && days <= 7) {
           const title = card.querySelector('.card-title')?.textContent ?? id;
