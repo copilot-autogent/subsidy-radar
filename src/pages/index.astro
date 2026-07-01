@@ -2258,8 +2258,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             if (first) first.setAttribute('tabindex', '0');
           }
         });
-        // Show Q5 (index 4) so the user completes the quiz; apply q1–q4 filter immediately
-        currentQuestionIndex = 4;
+        // Show Q5 (single-parent) so the user completes the quiz; apply q1–q4 filter immediately
+        currentQuestionIndex = Array.from(quizQuestions).findIndex(q => q.dataset.question === 'single-parent');
+        if (currentQuestionIndex < 0) currentQuestionIndex = 4; // fallback
         showQuizQuestion(currentQuestionIndex);
         applyQuizFilter();
         quizResetContainer.style.display = 'block';

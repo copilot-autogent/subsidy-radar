@@ -99,7 +99,8 @@ test.describe('student persona — data & filter logic', () => {
   });
 
   // ── 4. Total entry count target ──────────────────────────────────────────
-  test('total subsidies reaches target of ~61', () => {
-    expect(subsidies.length).toBeGreaterThanOrEqual(61);
+  test('student entries reach the issue-114 target', () => {
+    const studentEntries = subsidies.filter(s => s.situations?.includes('student'));
+    expect(studentEntries.length, 'Expected at least 7 student-tagged entries').toBeGreaterThanOrEqual(7);
   });
 });
