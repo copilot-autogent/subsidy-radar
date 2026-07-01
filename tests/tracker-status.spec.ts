@@ -23,8 +23,9 @@ async function getTrackerItem(page: import('@playwright/test').Page, id: string)
 
 test.describe('Tracker application status (申請狀態)', () => {
   test.beforeEach(async ({ page }) => {
+    // Clear before goto so the page always initialises from a clean localStorage
+    await page.addInitScript(() => localStorage.removeItem('subsidy-tracker-v1'));
     await page.goto('/');
-    await clearTracker(page);
   });
 
   test('(a) status persists across reload — localStorage round-trip', async ({ page }) => {

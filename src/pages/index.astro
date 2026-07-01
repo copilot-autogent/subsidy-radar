@@ -1156,7 +1156,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       try {
         const raw = JSON.parse(localStorage.getItem(TRACKER_KEY) ?? '{}') as Record<string, unknown>;
         const validSet = new Set<string>(STATUS_CYCLE);
-        // Migration map: legacy values → closest new status
+        // Migration map: legacy values → closest new status (preserves user intent)
         const LEGACY_MIGRATION: Record<string, TrackerStatus> = {
           '已申請': '申請中',
           '進行中': '申請中',
@@ -1164,10 +1164,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         };
         const result: Record<string, TrackerStatus> = {};
         for (const [id, val] of Object.entries(raw)) {
-          if (typeof val !== 'string') { result[id] = '未申請'; continue; }
+          if (typeof val !== 'string') continue;  // drop corrupt/non-string entries
           if (validSet.has(val)) { result[id] = val as TrackerStatus; }
           else if (val in LEGACY_MIGRATION) { result[id] = LEGACY_MIGRATION[val]; }
-          else { result[id] = '未申請'; }
+          // completely unknown strings are silently dropped (no phantom tracker entries)
         }
         return result;
       }
