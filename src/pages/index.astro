@@ -1477,17 +1477,24 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
     }
 
-    // ── LINE share: update href dynamically to capture current URL + filters ──
-    function initLineShareLinks() {
-      document.querySelectorAll<HTMLAnchorElement>('a.line-share-btn').forEach(link => {
-        link.addEventListener('click', (e) => {
-          const id = link.dataset.id!;
-          const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${id}`;
-          link.href = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(currentUrl)}`;
-        }, { capture: true });
-      });
+    // ── LINE share: update href just before navigation (covers left-click,
+    //    middle-click, right-click "copy link", and keyboard activation) ──────
+    function updateLineShareHref(link: HTMLAnchorElement) {
+      const id = link.dataset.id;
+      if (!id) return;
+      const currentUrl = `${window.location.origin}${window.location.pathname}${window.location.search}#${id}`;
+      link.href = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(currentUrl)}`;
     }
-    initLineShareLinks();
+    // Event delegation on document: fires before click/auxclick and before
+    // context-menu reads the href, so even "open in new tab" gets a fresh URL.
+    document.addEventListener('mousedown', (e) => {
+      const link = (e.target as Element).closest<HTMLAnchorElement>('a.line-share-btn');
+      if (link) updateLineShareHref(link);
+    }, true);
+    document.addEventListener('focusin', (e) => {
+      const link = (e.target as Element).closest<HTMLAnchorElement>('a.line-share-btn');
+      if (link) updateLineShareHref(link);
+    });
 
     // ── Sort ─────────────────────────────────────────────────────────────────
     function applySort() {

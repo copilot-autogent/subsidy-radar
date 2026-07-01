@@ -958,11 +958,11 @@ main {
   gap: 0.35rem;
   padding: 0.65rem 0.9rem;
   background: #06C755;
-  color: #fff;
+  color: #0a3d1a;
   border: 1px solid #05b04b;
   border-radius: 8px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.15s;
@@ -971,6 +971,7 @@ main {
 .line-share-btn:hover {
   background: #05a849;
   border-color: #04943f;
+  color: #0a3d1a;
   text-decoration: none;
   transform: translateY(-1px);
 }
