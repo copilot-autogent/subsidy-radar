@@ -1498,9 +1498,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const link = getLineShareLink(e.target);
       if (link) updateLineShareHref(link);
     });
-    // keydown ensures fresh href if filters changed after initial focus.
+    // keydown Enter ensures fresh href if filters changed after initial focus.
     document.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
+      if (e.key !== 'Enter') return;
       const link = getLineShareLink(e.target);
       if (link) updateLineShareHref(link);
     }, true);

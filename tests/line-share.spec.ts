@@ -22,11 +22,12 @@ test.describe('LINE share button', () => {
 
     expect(href).toBeTruthy();
     expect(href).toContain('https://social-plugins.line.me/lineit/share?url=');
-    // The encoded URL should contain the subsidy anchor
+    // The encoded URL should be a valid URL pointing to the subsidy-radar site with an anchor
     const parsed = new URL(href!);
     const sharedUrl = parsed.searchParams.get('url');
     expect(sharedUrl).toBeTruthy();
-    expect(sharedUrl).toContain('#');
+    expect(sharedUrl).toContain('copilot-autogent.github.io/subsidy-radar');
+    expect(sharedUrl).toMatch(/#[a-z0-9-]+$/);
   });
 
   test('LINE share button is accessible with aria-label', async ({ page }) => {

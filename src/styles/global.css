@@ -977,7 +977,7 @@ main {
 }
 
 .line-share-btn:focus-visible {
-  outline: 3px solid #06C755;
+  outline: 3px solid #1e293b;
   outline-offset: 2px;
 }
 
