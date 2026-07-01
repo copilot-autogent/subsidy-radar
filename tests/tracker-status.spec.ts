@@ -110,20 +110,31 @@ test.describe('Tracker application status (申請狀態)', () => {
     await expect(sel).toHaveClass(/ts-none/);
   });
 
-  test('backward-compatible: old localStorage values treated as 未申請', async ({ page }) => {
+  test('backward-compatible: old localStorage values are migrated to nearest new status', async ({ page }) => {
     const card = page.locator('.subsidy-card').first();
     const id = await card.getAttribute('data-id');
     expect(id).toBeTruthy();
 
-    // Seed with an old status value that no longer exists in the new enum
+    // Seed with old status values and verify migration
+    // 已申請 → 申請中, 進行中 → 申請中, 已完成 → 已領取
     await setTrackerItem(page, id!, '已申請');
     await page.reload();
 
-    // The select should fall back to 未申請 (not a tracked item)
     const sel = page.locator(`.subsidy-card[data-id="${id}"] .tracker-select`);
-    await expect(sel).toHaveValue('未申請');
+    await expect(sel).toHaveValue('申請中');
 
-    // Summary banner should not show (nothing tracked)
-    await expect(page.locator('#trackerSummaryBanner')).toBeHidden();
+    // Summary banner should show (申請中 is tracked)
+    await expect(page.locator('#trackerSummaryBanner')).toBeVisible();
+    await expect(page.locator('#trackerStatusBreakdown')).toContainText('申請中 1');
+
+    // Test 進行中 → 申請中
+    await setTrackerItem(page, id!, '進行中');
+    await page.reload();
+    await expect(page.locator(`.subsidy-card[data-id="${id}"] .tracker-select`)).toHaveValue('申請中');
+
+    // Test 已完成 → 已領取
+    await setTrackerItem(page, id!, '已完成');
+    await page.reload();
+    await expect(page.locator(`.subsidy-card[data-id="${id}"] .tracker-select`)).toHaveValue('已領取');
   });
 });

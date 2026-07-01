@@ -54,13 +54,12 @@ test.describe('iCal export button', () => {
   });
 
   test('export button appears dynamically (without reload) when tracker status is updated via UI', async ({ page }) => {
-    // Find a card with a deadline and click its tracker button twice to get to 申請中
+    // Find a card with a deadline and use its tracker select to set status to 申請中
     const deadlineCard = page.locator('.subsidy-card[data-deadline]:not([data-deadline=""])').first();
     await expect(deadlineCard).toHaveCount(1);
 
-    const trackerBtn = deadlineCard.locator('.tracker-btn');
-    // Click to cycle from 未申請 → 申請中
-    await trackerBtn.click();
+    const trackerSelect = deadlineCard.locator('.tracker-select');
+    await trackerSelect.selectOption('申請中');
     const btn = page.locator('#icalExportBtn');
     await expect(btn).toBeVisible();
   });

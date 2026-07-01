@@ -581,7 +581,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               <span class="category-badge">{s.category}</span>
             </div>
             <div class="tracker-control">
-              <select class="tracker-select ts-none" data-id={s.id} aria-label={`申請狀態 — ${s.title}`}>
+              <select class="tracker-select ts-none" data-id={s.id} aria-label={`申請狀態：未申請 — ${s.title}`}>
                 <option value="未申請">未申請</option>
                 <option value="申請中">申請中</option>
                 <option value="已核准">已核准</option>
@@ -1156,9 +1156,18 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       try {
         const raw = JSON.parse(localStorage.getItem(TRACKER_KEY) ?? '{}') as Record<string, unknown>;
         const validSet = new Set<string>(STATUS_CYCLE);
+        // Migration map: legacy values → closest new status
+        const LEGACY_MIGRATION: Record<string, TrackerStatus> = {
+          '已申請': '申請中',
+          '進行中': '申請中',
+          '已完成': '已領取',
+        };
         const result: Record<string, TrackerStatus> = {};
         for (const [id, val] of Object.entries(raw)) {
-          result[id] = (typeof val === 'string' && validSet.has(val)) ? val as TrackerStatus : '未申請';
+          if (typeof val !== 'string') { result[id] = '未申請'; continue; }
+          if (validSet.has(val)) { result[id] = val as TrackerStatus; }
+          else if (val in LEGACY_MIGRATION) { result[id] = LEGACY_MIGRATION[val]; }
+          else { result[id] = '未申請'; }
         }
         return result;
       }
@@ -1172,6 +1181,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     function applyTrackerToSelect(sel: HTMLSelectElement, status: TrackerStatus) {
       sel.value = status;
       sel.className = `tracker-select ${STATUS_CLASS[status]}`;
+      // Update aria-label with current status for screen readers
+      const card = sel.closest<HTMLElement>('.subsidy-card');
+      const cardTitle = card?.querySelector<HTMLElement>('.card-title')?.textContent?.trim() ?? '';
+      sel.setAttribute('aria-label', `申請狀態：${status}${cardTitle ? ` — ${cardTitle}` : ''}`);
       const printBadge = sel.parentElement?.querySelector<HTMLElement>('.tracker-print-badge');
       if (printBadge) {
         printBadge.textContent = status;
