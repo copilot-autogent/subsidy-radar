@@ -21,13 +21,8 @@ interface TimelineSubsidy {
 
 const subsidies = subsidiesRaw as TimelineSubsidy[];
 
-// Only include subsidies that have timeline metadata OR are parent/young-child relevant
-const timelineSubsidies = subsidies.filter(
-  s =>
-    s.eligibilityStartEvent != null ||
-    s.situations?.includes('parent') ||
-    s.situations?.includes('young-child'),
-);
+// Only include subsidies that have explicit timeline metadata
+const timelineSubsidies = subsidies.filter(s => s.eligibilityStartEvent != null);
 
 // Group by eligibilityStartEvent
 const byEvent: Record<string, TimelineSubsidy[]> = {};
@@ -56,7 +51,11 @@ function safeUrl(url: string | undefined): string | undefined {
   if (!url) return undefined;
   const trimmed = url.trimStart();
   const lower = trimmed.toLowerCase();
-  return lower.startsWith('https://') || lower.startsWith('http://') ? trimmed : undefined;
+  // Allow http/https absolute URLs and root-relative paths; block javascript: etc.
+  if (lower.startsWith('https://') || lower.startsWith('http://') || lower.startsWith('/')) {
+    return trimmed;
+  }
+  return undefined;
 }
 ---
 
@@ -142,7 +141,7 @@ function safeUrl(url: string | undefined): string | undefined {
                 <div class="timeline-card" data-id={s.id} data-event={s.eligibilityStartEvent ?? 'ongoing'} data-apply-months={s.applyWithinMonths ?? ''}>
                   <div class="card-header">
                     <span class="card-title">{s.title}</span>
-                    {s.applyWithinMonths && (
+                    {s.applyWithinMonths != null && s.applyWithinMonths > 0 && (
                       <span class="deadline-badge">⏰ {s.eligibilityStartEvent === 'birth' ? '出生後' : s.eligibilityStartEvent === 'parental-leave' ? '育嬰假後' : '入學後'}{s.applyWithinMonths}個月內申請</span>
                     )}
                   </div>
@@ -246,7 +245,7 @@ function safeUrl(url: string | undefined): string | undefined {
   interface TimelineEntry {
     deadline: Date | null;
     deadlineLabel: string;
-    urgency: 'urgent' | 'soon' | 'later' | 'ongoing';
+    urgency: 'expired' | 'urgent' | 'soon' | 'later' | 'ongoing';
     subsidy: SubsidyData;
   }
 
@@ -275,7 +274,8 @@ function safeUrl(url: string | undefined): string | undefined {
 
       if (!referenceDate) continue;
 
-      const applyMonths = applyMonthsStr ? parseInt(applyMonthsStr, 10) : null;
+      const parsedMonths = applyMonthsStr ? parseInt(applyMonthsStr, 10) : NaN;
+      const applyMonths = Number.isFinite(parsedMonths) && parsedMonths > 0 ? parsedMonths : null;
       let deadline: Date | null = null;
       let deadlineLabel = '';
       let urgency: TimelineEntry['urgency'] = 'ongoing';
@@ -285,7 +285,10 @@ function safeUrl(url: string | undefined): string | undefined {
         deadlineLabel = `${formatYM(referenceDate)} 起 ${applyMonths} 個月內（截止 ${formatYM(deadline)}）`;
         const diffMs = deadline.getTime() - today.getTime();
         const diffDays = Math.ceil(diffMs / 86400000);
-        urgency = diffDays <= 30 ? 'urgent' : diffDays <= 90 ? 'soon' : 'later';
+        if (diffDays < 0) urgency = 'expired';
+        else if (diffDays <= 30) urgency = 'urgent';
+        else if (diffDays <= 90) urgency = 'soon';
+        else urgency = 'later';
       } else {
         deadlineLabel = `${formatYM(referenceDate)} 起可申請（隨時）`;
         urgency = referenceDate <= today ? 'soon' : 'later';
@@ -321,11 +324,24 @@ function safeUrl(url: string | undefined): string | undefined {
       const urgencyClass = `urgency-${entry.urgency}`;
       const div = document.createElement('div');
       div.className = `personalized-item ${urgencyClass}`;
-      div.innerHTML = `
-        <div class="pi-deadline">${entry.deadlineLabel}</div>
-        <div class="pi-title">${entry.subsidy.title}</div>
-        ${entry.subsidy.timelineNote ? `<div class="pi-note">${entry.subsidy.timelineNote}</div>` : ''}
-      `;
+
+      const deadlineEl = document.createElement('div');
+      deadlineEl.className = 'pi-deadline';
+      deadlineEl.textContent = entry.deadlineLabel;
+      div.appendChild(deadlineEl);
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'pi-title';
+      titleEl.textContent = entry.subsidy.title;
+      div.appendChild(titleEl);
+
+      if (entry.subsidy.timelineNote) {
+        const noteEl = document.createElement('div');
+        noteEl.className = 'pi-note';
+        noteEl.textContent = entry.subsidy.timelineNote;
+        div.appendChild(noteEl);
+      }
+
       container.appendChild(div);
     }
   }
@@ -472,6 +488,12 @@ function safeUrl(url: string | undefined): string | undefined {
     background: white;
   }
 
+  .personalized-item.urgency-expired {
+    border-left-color: #9ca3af;
+    background: #f9fafb;
+    opacity: 0.7;
+  }
+
   .personalized-item.urgency-urgent {
     border-left-color: #ef4444;
     background: #fff5f5;
@@ -495,6 +517,11 @@ function safeUrl(url: string | undefined): string | undefined {
     font-size: 0.82rem;
     color: #6b7280;
     margin-bottom: 0.25rem;
+  }
+
+  .urgency-expired .pi-deadline {
+    color: #9ca3af;
+    font-style: italic;
   }
 
   .urgency-urgent .pi-deadline {
