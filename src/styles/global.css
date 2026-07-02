@@ -902,6 +902,19 @@ main {
   gap: 0.4rem;
 }
 
+.card-official-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  margin-top: 0.1rem;
+}
+
+.card-official-link:hover {
+  text-decoration: underline;
+}
+
 .tag {
   padding: 0.2rem 0.6rem;
   background: var(--color-tag);

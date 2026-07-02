@@ -3,13 +3,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
 type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student';
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[] };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[]; officialUrl?: string };
 const subsidies = subsidiesRaw as Subsidy[];
 
 // ── Related subsidies: build-time pre-computation ─────────────────────────
 // Algorithm: find top 2-3 other subsidies sharing the most `situations` tags.
 // Ties broken by difficulty: easier (easy < medium < hard) comes first.
 const DIFFICULTY_ORDER: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
+
+// Only allow http/https scheme URLs to prevent javascript: injection.
+// Returns the trimmed URL if safe, otherwise undefined.
+function safeUrl(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  const trimmed = url.trimStart();
+  const lower = trimmed.toLowerCase();
+  return lower.startsWith('https://') || lower.startsWith('http://') ? trimmed : undefined;
+}
 
 function getRelatedSubsidies(subsidy: Subsidy, all: Subsidy[], max = 3): Subsidy[] {
   const mySituations = new Set<string>(subsidy.situations ?? []);
@@ -622,6 +631,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           <div class="card-tags">
             {s.tags.map(tag => <span class="tag">{tag}</span>)}
           </div>
+          {(() => { const olu = safeUrl(s.officialUrl); return olu ? (
+            <a href={olu} target="_blank" rel="nofollow noopener noreferrer" class="card-official-link">查看官方說明 →</a>
+          ) : null; })()}
           {s.steps && s.steps.length > 0 && (
             <details class="card-steps">
               <summary>📋 如何申請？（{s.steps.length} 個步驟）</summary>
