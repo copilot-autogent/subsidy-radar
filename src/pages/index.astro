@@ -1057,6 +1057,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         activeCounty = countyAnswer;
         if (countySelect) countySelect.value = countyAnswer;
       } else {
+        // 'other' or unanswered → clear county filter so all entries (including city-specific
+        // ones) remain visible. Users in non-listed counties get the full set, which is more
+        // useful than hiding potentially relevant city-specific subsidies.
         activeCounty = '';
         if (countySelect) countySelect.value = '';
       }

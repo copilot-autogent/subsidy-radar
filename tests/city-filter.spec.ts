@@ -38,10 +38,14 @@ test.describe('city/county filter — data integrity', () => {
       s => !Array.isArray(s.counties) || s.counties.length === 0
     );
     expect(national.length).toBeGreaterThan(0);
-    // Every national entry either has no counties field or has an empty array
+    // Every "national" entry either has no counties field or has an explicitly empty array.
+    // A non-array value (e.g. a malformed string) would be caught by this assertion.
     for (const s of national) {
       const c = (s as any).counties;
-      expect(c == null || (Array.isArray(c) && c.length === 0)).toBe(true);
+      // counties must be absent (undefined/null) OR an empty array — never a non-array truthy value
+      const isAbsent = c == null;
+      const isEmptyArray = Array.isArray(c) && c.length === 0;
+      expect(isAbsent || isEmptyArray).toBe(true);
     }
   });
 });
