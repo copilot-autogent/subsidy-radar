@@ -4,6 +4,10 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // ── Pure badge-class logic (mirrors index.astro getFreshnessBadge) ─────────
+function calendarMonthsAgo(verifiedYear: number, verifiedMonth: number, ref: Date): number {
+  return (ref.getFullYear() - verifiedYear) * 12 + (ref.getMonth() + 1 - verifiedMonth);
+}
+
 function getFreshnessBadge(
   lastVerifiedDate: string | null | undefined,
   referenceDate: Date,
@@ -11,10 +15,19 @@ function getFreshnessBadge(
   if (!lastVerifiedDate) {
     return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
   }
-  const [y, m, d] = lastVerifiedDate.split('-').map(Number);
+  const parts = lastVerifiedDate.split('-').map(Number);
+  const [y, m, d] = parts;
   const verified = new Date(y, m - 1, d);
-  const monthsAgo =
-    (referenceDate.getTime() - verified.getTime()) / (1000 * 60 * 60 * 24 * 30.44);
+  const isValid =
+    parts.length === 3 &&
+    Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d) &&
+    m >= 1 && m <= 12 && d >= 1 && d <= 31 &&
+    verified.getFullYear() === y && verified.getMonth() === m - 1 && verified.getDate() === d &&
+    verified <= referenceDate;
+  if (!isValid) {
+    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+  }
+  const monthsAgo = calendarMonthsAgo(y, m, referenceDate);
   const label = `✓ 已核實 ${String(y)}-${String(m).padStart(2, '0')}`;
   if (monthsAgo < 3) return { cls: 'freshness-fresh', label };
   if (monthsAgo < 6) return { cls: 'freshness-stale', label };
@@ -58,6 +71,16 @@ test.describe('data freshness badge colour', () => {
       cls: 'freshness-outdated',
       label: '⚠️ 未核實',
     });
+  });
+
+  test('invalid or future date → freshness-outdated with 未核實', () => {
+    // Future date
+    expect(getFreshnessBadge('2027-01-01', REF).cls).toBe('freshness-outdated');
+    expect(getFreshnessBadge('2027-01-01', REF).label).toBe('⚠️ 未核實');
+    // Malformed
+    expect(getFreshnessBadge('not-a-date', REF).cls).toBe('freshness-outdated');
+    // Month 13
+    expect(getFreshnessBadge('2026-13-01', REF).cls).toBe('freshness-outdated');
   });
 
   test('all subsidies.json entries have lastVerifiedDate and source fields', () => {

@@ -9,14 +9,34 @@ const subsidies = subsidiesRaw as Subsidy[];
 // ── Data freshness badge helper ───────────────────────────────────────────
 const BUILD_DATE = new Date(); BUILD_DATE.setHours(0, 0, 0, 0);
 
+/**
+ * Returns calendar months between verifiedDate and BUILD_DATE.
+ * Positive = verified is in the past; negative = verified is in the future.
+ */
+function calendarMonthsAgo(verifiedYear: number, verifiedMonth: number): number {
+  return (BUILD_DATE.getFullYear() - verifiedYear) * 12 +
+    (BUILD_DATE.getMonth() + 1 - verifiedMonth);
+}
+
 /** Returns { cls, label } for the data freshness badge. */
 function getFreshnessBadge(lastVerifiedDate: string | null | undefined): { cls: string; label: string } {
   if (!lastVerifiedDate) {
     return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
   }
-  const [y, m, d] = lastVerifiedDate.split('-').map(Number);
+  const parts = lastVerifiedDate.split('-').map(Number);
+  const [y, m, d] = parts;
+  // Validate: must be YYYY-MM-DD with sane ranges and no future date
   const verified = new Date(y, m - 1, d);
-  const monthsAgo = (BUILD_DATE.getTime() - verified.getTime()) / (1000 * 60 * 60 * 24 * 30.44);
+  const isValid =
+    parts.length === 3 &&
+    Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d) &&
+    m >= 1 && m <= 12 && d >= 1 && d <= 31 &&
+    verified.getFullYear() === y && verified.getMonth() === m - 1 && verified.getDate() === d &&
+    verified <= BUILD_DATE;
+  if (!isValid) {
+    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+  }
+  const monthsAgo = calendarMonthsAgo(y, m);
   const label = `✓ 已核實 ${String(y)}-${String(m).padStart(2, '0')}`;
   if (monthsAgo < 3) return { cls: 'freshness-fresh', label };
   if (monthsAgo < 6) return { cls: 'freshness-stale', label };
