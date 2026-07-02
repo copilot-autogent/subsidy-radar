@@ -4,8 +4,10 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // ── Pure badge-class logic (mirrors index.astro getFreshnessBadge) ─────────
-function calendarMonthsAgo(verifiedYear: number, verifiedMonth: number, ref: Date): number {
-  return (ref.getFullYear() - verifiedYear) * 12 + (ref.getMonth() + 1 - verifiedMonth);
+function calendarMonthsAgo(verifiedYear: number, verifiedMonth: number, verifiedDay: number, ref: Date): number {
+  let months = (ref.getFullYear() - verifiedYear) * 12 + (ref.getMonth() + 1 - verifiedMonth);
+  if (ref.getDate() < verifiedDay) months -= 1;
+  return months;
 }
 
 function getFreshnessBadge(
@@ -27,7 +29,7 @@ function getFreshnessBadge(
   if (!isValid) {
     return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
   }
-  const monthsAgo = calendarMonthsAgo(y, m, referenceDate);
+  const monthsAgo = calendarMonthsAgo(y, m, d, referenceDate);
   const label = `✓ 已核實 ${String(y)}-${String(m).padStart(2, '0')}`;
   if (monthsAgo < 3) return { cls: 'freshness-fresh', label };
   if (monthsAgo < 6) return { cls: 'freshness-stale', label };
@@ -42,6 +44,13 @@ test.describe('data freshness badge colour', () => {
     expect(result.cls).toBe('freshness-fresh');
     expect(result.label).toContain('已核實');
     expect(result.label).toContain('✓');
+  });
+
+  test('fresh: April 30 verified → July 1 is still fresh (day-of-month boundary)', () => {
+    // April 30 to July 1: calendar months = 3, but day 1 < day 30 → adjusted to 2 → fresh
+    const refJuly1 = new Date(2026, 6, 1); // 2026-07-01
+    const result = getFreshnessBadge('2026-04-30', refJuly1);
+    expect(result.cls).toBe('freshness-fresh');
   });
 
   test('stale: verified 3–6 months ago → freshness-stale', () => {
