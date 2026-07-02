@@ -166,46 +166,6 @@ function safeUrl(url: string | undefined): string | undefined {
         </div>
       );
     })}
-
-    {(byEvent['ongoing'] ?? []).length > 0 && (
-      <div class="event-group" data-event="ongoing">
-        <div class="event-header">
-          <span class="event-icon">{eventLabels.ongoing.icon}</span>
-          <div>
-            <h3 class="event-title">{eventLabels.ongoing.label}</h3>
-            <p class="event-desc">{eventLabels.ongoing.desc}</p>
-          </div>
-        </div>
-        <div class="subsidy-list">
-          {(byEvent['ongoing'] ?? []).map(s => {
-            const appUrl = safeUrl(s.applicationUrl);
-            const offUrl = safeUrl(s.officialUrl);
-            const diff = difficultyLabel[s.difficulty ?? 'medium'] ?? difficultyLabel.medium;
-            return (
-              <div class="timeline-card" data-id={s.id} data-event="ongoing">
-                <div class="card-header">
-                  <span class="card-title">{s.title}</span>
-                </div>
-                <p class="card-note">{s.timelineNote ?? s.summary}</p>
-                <div class="card-meta">
-                  <span class={`diff-badge ${diff.cls}`}>{diff.text}</span>
-                  <span class="card-category">{s.category}</span>
-                </div>
-                <div class="card-actions">
-                  {appUrl && (
-                    <a href={appUrl} class="apply-link" target="_blank" rel="noopener noreferrer">申請連結 →</a>
-                  )}
-                  {offUrl && offUrl !== appUrl && (
-                    <a href={offUrl} class="official-link" target="_blank" rel="noopener noreferrer">官方資訊</a>
-                  )}
-                  <a href={(import.meta.env.BASE_URL || '/').replace(/\/?$/, '/') + '#' + s.id} class="detail-link">查看詳情</a>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    )}
   </section>
 
   <div class="back-link-row">

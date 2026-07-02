@@ -142,6 +142,29 @@ test.describe('timeline — data schema and ordering', () => {
     }
     expect(dupes, `Duplicate ids: ${dupes.join(', ')}`).toHaveLength(0);
   });
+
+  test('all eligibilityStartEvent values are in the allowed enum', () => {
+    const ALLOWED_EVENTS = new Set(['birth', 'parental-leave', 'child-enrollment']);
+    const invalid = subsidies.filter(
+      s => s.eligibilityStartEvent != null && !ALLOWED_EVENTS.has(s.eligibilityStartEvent),
+    );
+    if (invalid.length > 0) {
+      const detail = invalid.map(s => `${s.id}: "${s.eligibilityStartEvent}"`).join(', ');
+      throw new Error(`Invalid eligibilityStartEvent values (check for typos): ${detail}`);
+    }
+    expect(invalid.length).toBe(0);
+  });
+
+  test('applyWithinMonths is always a positive integer when present', () => {
+    const invalid = subsidies.filter(
+      s => s.applyWithinMonths != null && (!Number.isInteger(s.applyWithinMonths) || s.applyWithinMonths <= 0),
+    );
+    if (invalid.length > 0) {
+      const detail = invalid.map(s => `${s.id}: ${s.applyWithinMonths}`).join(', ');
+      throw new Error(`Invalid applyWithinMonths (must be positive integer): ${detail}`);
+    }
+    expect(invalid.length).toBe(0);
+  });
 });
 
 test.describe('timeline page — renders', () => {
