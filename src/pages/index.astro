@@ -3,8 +3,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
 type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student';
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[]; officialUrl?: string };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[]; officialUrl?: string; lastVerifiedDate?: string; source?: string };
 const subsidies = subsidiesRaw as Subsidy[];
+
+// ── Data freshness badge helper ───────────────────────────────────────────
+const BUILD_DATE = new Date(); BUILD_DATE.setHours(0, 0, 0, 0);
+
+/** Returns { cls, label } for the data freshness badge. */
+function getFreshnessBadge(lastVerifiedDate: string | null | undefined): { cls: string; label: string } {
+  if (!lastVerifiedDate) {
+    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+  }
+  const [y, m, d] = lastVerifiedDate.split('-').map(Number);
+  const verified = new Date(y, m - 1, d);
+  const monthsAgo = (BUILD_DATE.getTime() - verified.getTime()) / (1000 * 60 * 60 * 24 * 30.44);
+  const label = `✓ 已核實 ${String(y)}-${String(m).padStart(2, '0')}`;
+  if (monthsAgo < 3) return { cls: 'freshness-fresh', label };
+  if (monthsAgo < 6) return { cls: 'freshness-stale', label };
+  return { cls: 'freshness-outdated', label: `⚠️ ${label}` };
+}
 
 // ── Related subsidies: build-time pre-computation ─────────────────────────
 // Algorithm: find top 2-3 other subsidies sharing the most `situations` tags.
@@ -579,6 +596,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     {subsidies.map(s => {
       const status = deadlineLabel[s.deadlineStatus] ?? deadlineLabel['ongoing'];
       const diff = difficultyLabel[s.difficulty ?? 'medium'];
+      const freshness = getFreshnessBadge(s.lastVerifiedDate);
       return (
         <article
           id={s.id}
@@ -599,6 +617,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           data-counties={s.counties ? JSON.stringify(s.counties) : ''}
           data-url={s.applicationUrl ?? ''}
           data-steps={s.steps ? String(s.steps.length) : '0'}
+          data-last-verified={s.lastVerifiedDate ?? ''}
         >
           <label class="compare-label">
             <input
@@ -620,6 +639,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             <div class="card-badges">
               {s.isYouthHighlight && <span class="youth-badge">⭐ 青年必看</span>}
               <span class="recency-badge" data-recency-badge style="display:none">🆕 最新</span>
+              <span class={`freshness-badge ${freshness.cls}`} title={s.source ? `資料來源：${s.source}` : undefined}>{freshness.label}</span>
               <span class="category-badge">{s.category}</span>
             </div>
             <div class="tracker-control">

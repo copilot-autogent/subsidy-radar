@@ -122,6 +122,12 @@ a:hover {
   gap: 0.4rem;
 }
 
+.footer-freshness-notice {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
 main {
   max-width: 1100px;
   margin: 0 auto;
@@ -1666,6 +1672,34 @@ main {
   50%       { opacity: 0.65; }
 }
 
+/* ── Data Freshness Badge ────────────────────────────────────────────────── */
+.freshness-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.freshness-fresh {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.freshness-stale {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.freshness-outdated {
+  background: #fff1f2;
+  color: #9f1239;
+  border: 1px solid #fda4af;
+}
+
 /* ── Recency Badge ───────────────────────────────────────────────────────── */
 .recency-badge {
   display: inline-block;
@@ -2245,6 +2279,7 @@ main {
   .line-share-btn,
   .countdown-badge,
   .difficulty-badge,
+  .freshness-badge,
   .recency-badge,
   .youth-badge,
   .card-badges { display: none !important; }

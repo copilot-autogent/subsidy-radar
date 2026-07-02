@@ -42,7 +42,9 @@
       "最高學歷畢業證書",
       "台灣就業通帳號",
       "銀行帳戶資料"
-    ]
+    ],
+    "lastVerifiedDate": "2026-05-09",
+    "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=1C9A6C1CD86EADE8"
   },
   {
     "id": "youth-vocational-training",
@@ -78,7 +80,9 @@
       "全程參與課程（出缺勤會影響補助核定）",
       "完成課程後持收據申請費用補助，約 2-3 週匯入帳戶"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-05-09",
+    "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=BE85A9FE95C61A78"
   },
   {
     "id": "micro-phoenix-loan",
@@ -117,7 +121,9 @@
       "參加至少 18 小時政府認可的創業研習課程並取得結業證書",
       "向合作銀行提交申請，銀行信審通過後撥款（全程約 6-8 週）"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-05-09",
+    "source": "https://beboss.wda.gov.tw/Default.aspx"
   },
   {
     "id": "rent-subsidy",
@@ -164,7 +170,9 @@
       "戶口名簿影本",
       "申請人身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.nlma.gov.tw/"
   },
   {
     "id": "youth-home-loan",
@@ -202,7 +210,9 @@
       "核准後簽約，政府利率補貼直接計入優惠利率中"
     ],
     "deadlineDate": "2026-07-31",
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-06-18",
+    "source": "https://www.nta.gov.tw/htmlList/71"
   },
   {
     "id": "interest-subsidy",
@@ -238,7 +248,9 @@
       "審核通過後（約 4-6 週），補貼款每年一次匯入指定帳戶"
     ],
     "deadlineDate": "2026-09-30",
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-05-09",
+    "source": "https://www.nlma.gov.tw/"
   },
   {
     "id": "parenting-home-loan",
@@ -277,7 +289,9 @@
     "addedDate": "2026-06-20",
     "eligibilityStartEvent": "birth",
     "applyWithinMonths": null,
-    "timelineNote": "孩子出生後可申請購屋優惠貸款（無嚴格截止）"
+    "timelineNote": "孩子出生後可申請購屋優惠貸款（無嚴格截止）",
+    "lastVerifiedDate": "2026-05-09",
+    "source": "https://www.nlma.gov.tw/"
   },
   {
     "id": "social-housing",
@@ -316,7 +330,9 @@
       "線上填寫申請表，部分縣市採積分排序、部分採抽籤制",
       "確認分配結果後選屋、簽約，繳押金及第一期租金（市價約 7-9 折）"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.socialhousing.tw/"
   },
   {
     "id": "student-loan-interest-relief",
@@ -354,7 +370,9 @@
       "附上貸款餘額證明、最近一年所得或稅務資料",
       "審核通過後，補貼直接抵扣利息或匯入帳戶（每年審核一次）"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-05-14",
+    "source": "https://heloan.boe.moe.edu.tw/"
   },
   {
     "id": "unemployment-benefit",
@@ -398,7 +416,9 @@
       "離職證明或資遣通知書",
       "最近6個月薪資單",
       "銀行存摺封面"
-    ]
+    ],
+    "lastVerifiedDate": "2026-05-14",
+    "source": "https://www.bli.gov.tw/0006445.html"
   },
   {
     "id": "childcare-allowance",
@@ -448,7 +468,9 @@
     ],
     "eligibilityStartEvent": "birth",
     "applyWithinMonths": null,
-    "timelineNote": "幼兒0至未滿5歲期間可持續申請托育補助"
+    "timelineNote": "幼兒0至未滿5歲期間可持續申請托育補助",
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383"
   },
   {
     "id": "youth-startup-fund",
@@ -487,7 +509,9 @@
       "完成 8 小時以上政府認可的創業培訓課程，取得結業證書",
       "向合作銀行提交申請，審核通過後撥款（全程約 8-12 週）"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-05-14",
+    "source": "https://startup.sme.gov.tw/"
   },
   {
     "id": "parental-leave-allowance",
@@ -535,7 +559,9 @@
     ],
     "eligibilityStartEvent": "parental-leave",
     "applyWithinMonths": null,
-    "timelineNote": "育嬰假開始後隨時可申請，子女未滿3歲前均可"
+    "timelineNote": "育嬰假開始後隨時可申請，子女未滿3歲前均可",
+    "lastVerifiedDate": "2026-05-16",
+    "source": "https://www.bli.gov.tw/0015003.html"
   },
   {
     "id": "birth-subsidy",
@@ -583,7 +609,9 @@
     ],
     "eligibilityStartEvent": "birth",
     "applyWithinMonths": 6,
-    "timelineNote": "出生後6個月內申請（部分縣市1年內），勿錯過！"
+    "timelineNote": "出生後6個月內申請（部分縣市1年內），勿錯過！",
+    "lastVerifiedDate": "2026-05-16",
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=357"
   },
   {
     "id": "vocational-training-living-allowance",
@@ -621,7 +649,9 @@
       "審核後津貼每月匯入帳戶，訓練全程均可領取"
     ],
     "addedDate": "2026-06-20",
-    "maxAmount": 80946
+    "maxAmount": 80946,
+    "lastVerifiedDate": "2026-05-16",
+    "source": "https://www.wda.gov.tw/"
   },
   {
     "id": "disability-living-allowance",
@@ -668,7 +698,9 @@
       "存款餘額證明",
       "最近3個月薪資單",
       "申請書"
-    ]
+    ],
+    "lastVerifiedDate": "2026-05-16",
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341"
   },
   {
     "id": "home-renovation-loan-subsidy",
@@ -710,7 +742,9 @@
       "撥款後6個月內完成修繕工程，並將施工前後照片送交承辦銀行備查"
     ],
     "addedDate": "2026-06-20",
-    "deadlineDate": "2026-09-30"
+    "deadlineDate": "2026-09-30",
+    "lastVerifiedDate": "2026-06-18",
+    "source": "https://pip.moi.gov.tw/v3/b/SCRB0108.aspx"
   },
   {
     "id": "self-use-housing-tax-reduction",
@@ -749,7 +783,9 @@
       "房屋稅：完成設籍並申請後，7月1日後次一年適用1.2%優惠稅率"
     ],
     "addedDate": "2026-06-20",
-    "deadlineDate": "2026-09-22"
+    "deadlineDate": "2026-09-22",
+    "lastVerifiedDate": "2026-06-14",
+    "source": "https://www.etax.nat.gov.tw/etwmain/front/ETW158W1"
   },
   {
     "id": "sbir-sme-innovation",
@@ -789,7 +825,9 @@
       "線上登入SBIR申請系統，填報資料並上傳附件（含自我檢查表、個資同意書）",
       "通過初審後進行現場簡報；審查通過後簽訂合約，按期程執行研發並進行成果驗收"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-06-14",
+    "source": "https://www.sbir.org.tw/"
   },
   {
     "id": "siir-service-innovation",
@@ -828,7 +866,9 @@
       "線上提出申請；初審通過後安排簡報審查（約30分鐘）",
       "審查通過後簽訂補助合約，按計畫執行並定期繳交進度報告，完成後辦理成果驗收與核銷"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-06-14",
+    "source": "https://gcis.nat.gov.tw/neo-s/"
   },
   {
     "id": "nstc-research-startup",
@@ -867,7 +907,9 @@
       "透過所屬機構提出申請，附上技術資料、財務預估及團隊履歷",
       "審查通過後簽訂合約，按計畫推進技術授權或衍生新創設立，完成驗收及成果報告"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "lastVerifiedDate": "2026-06-14",
+    "source": "https://www.nstc.gov.tw"
   },
   {
     "id": "labor-child-education-grant",
@@ -911,7 +953,9 @@
     "deadlineDate": "2026-09-30",
     "eligibilityStartEvent": "child-enrollment",
     "applyWithinMonths": 2,
-    "timelineNote": "每學期開學6週受理，勿錯過申請窗口"
+    "timelineNote": "每學期開學6週受理，勿錯過申請窗口",
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.mol.gov.tw/topic/3075/6074/"
   },
   {
     "id": "indigenous-student-scholarship",
@@ -952,7 +996,9 @@
     ],
     "addedDate": "2026-06-20",
     "maxAmount": 60000,
-    "deadlineDate": "2026-10-31"
+    "deadlineDate": "2026-10-31",
+    "lastVerifiedDate": "2026-06-17",
+    "source": "https://cipgrant.fju.edu.tw/"
   },
   {
     "id": "employment-promotion-subsidy",
@@ -990,7 +1036,9 @@
       "審核通過後，津貼按月匯入帳戶，最長發給6個月"
     ],
     "addedDate": "2026-06-20",
-    "maxAmount": 66000
+    "maxAmount": 66000,
+    "lastVerifiedDate": "2026-06-20",
+    "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=6DD5A8BE5EE84F37"
   },
   {
     "id": "mid-age-employment-reward",
@@ -1028,7 +1076,9 @@
       "持續就業至滿6個月，再提出第二期申請，合計最高50,000元"
     ],
     "addedDate": "2026-06-20",
-    "maxAmount": 50000
+    "maxAmount": 50000,
+    "lastVerifiedDate": "2026-06-20",
+    "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=BE85A9FE95C61A78"
   },
   {
     "id": "cross-region-employment-subsidy",
@@ -1066,7 +1116,9 @@
       "備齊申請書、搬遷證明文件、薪資資料及身分證，審核後撥款"
     ],
     "addedDate": "2026-06-20",
-    "maxAmount": 30000
+    "maxAmount": 30000,
+    "lastVerifiedDate": "2026-06-20",
+    "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=CB87D1FAA95D0FBB"
   },
   {
     "id": "itraining-subsidy",
@@ -1104,7 +1156,9 @@
       "課程結束後上傳收據申請補助，審核通過後補助款約2-3週匯入帳戶"
     ],
     "addedDate": "2026-06-20",
-    "maxAmount": 10000
+    "maxAmount": 10000,
+    "lastVerifiedDate": "2026-06-20",
+    "source": "https://itraining.wda.gov.tw/"
   },
   {
     "id": "youth-startup-loan-2025",
@@ -1140,7 +1194,9 @@
       "審核通過後簽約撥款"
     ],
     "deadlineDate": "2026-01-31",
-    "addedDate": "2025-10-01"
+    "addedDate": "2025-10-01",
+    "lastVerifiedDate": "2025-12-31",
+    "source": "https://www.moeasmea.gov.tw/"
   },
   {
     "id": "rent-subsidy-2",
@@ -1180,7 +1236,9 @@
       "審核通過後（約4–6週）核定，補貼按月匯入指定帳戶，補助期間一年；次年可重新申請"
     ],
     "deadlineDate": "2026-08-31",
-    "addedDate": "2026-06-24"
+    "addedDate": "2026-06-24",
+    "lastVerifiedDate": "2026-06-24",
+    "source": "https://has.nlma.gov.tw/subsidyOnline/"
   },
   {
     "id": "social-housing-priority-points",
@@ -1229,7 +1287,9 @@
       "台中市",
       "台南市",
       "高雄市"
-    ]
+    ],
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.socialhousing.tw/Portal/"
   },
   {
     "id": "mortgage-interest-tax-deduction",
@@ -1267,7 +1327,9 @@
       "透過財政部電子申報繳稅服務（etax.nat.gov.tw）或至國稅局親辦完成申報，稅額自動計算扣減"
     ],
     "deadlineDate": "2027-05-31",
-    "addedDate": "2026-06-24"
+    "addedDate": "2026-06-24",
+    "lastVerifiedDate": "2026-06-24",
+    "source": "https://www.etax.nat.gov.tw/"
   },
   {
     "id": "senior-low-income-living-allowance",
@@ -1314,7 +1376,9 @@
       "財產申報書",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "lastVerifiedDate": "2026-06-26",
+    "source": "https://dep.mohw.gov.tw/DOSAASW/lp-548-103.html"
   },
   {
     "id": "senior-long-term-care-subsidy",
@@ -1358,7 +1422,9 @@
       "戶籍謄本",
       "身分證影本",
       "醫療診斷證明"
-    ]
+    ],
+    "lastVerifiedDate": "2026-06-26",
+    "source": "https://1966.gov.tw/LTC/cp-3636-42393-201.html"
   },
   {
     "id": "senior-denture-subsidy",
@@ -1396,7 +1462,9 @@
       "牙醫師進行口腔評估，確認適合裝配活動假牙並開立治療計畫",
       "依計畫製作假牙，完成後取件並支付自付額，費用由健保署直接補助診所"
     ],
-    "addedDate": "2026-06-26"
+    "addedDate": "2026-06-26",
+    "lastVerifiedDate": "2026-06-26",
+    "source": "https://www.nhi.gov.tw/Content_List.aspx?n=15E1ABFE48CA9B17"
   },
   {
     "id": "senior-emergency-response-device",
@@ -1443,7 +1511,9 @@
       "高雄市",
       "新竹市",
       "新竹縣"
-    ]
+    ],
+    "lastVerifiedDate": "2026-06-26",
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/Detail.aspx?nodeid=272&pid=4935"
   },
   {
     "id": "senior-old-age-allowance",
@@ -1481,7 +1551,9 @@
       "審核通過後，自符合資格之日（年滿65歲當月）起，次月起匯入指定帳戶"
     ],
     "addedDate": "2026-06-30",
-    "maxAmount": 45264
+    "maxAmount": 45264,
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.bli.gov.tw/0100010.html"
   },
   {
     "id": "senior-friendly-housing-repair",
@@ -1520,7 +1592,9 @@
       "核准後由政府委托施工單位施作，或核發補助款由申請人自行委托施工"
     ],
     "addedDate": "2026-06-30",
-    "maxAmount": 120000
+    "maxAmount": 120000,
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/Detail.aspx?nodeid=272"
   },
   {
     "id": "disability-assistive-devices",
@@ -1564,7 +1638,9 @@
       "醫師輔具需求證明",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "lastVerifiedDate": "2026-06-26",
+    "source": "https://newrepat.sfaa.gov.tw/home/repat-subsidy/assistive-device"
   },
   {
     "id": "disability-home-care",
@@ -1601,7 +1677,9 @@
       "社工到府進行需求評估，確認服務時數及補助等級",
       "評估通過後由縣市政府媒合居家服務機構，安排照顧服務員定期到府服務"
     ],
-    "addedDate": "2026-06-26"
+    "addedDate": "2026-06-26",
+    "lastVerifiedDate": "2026-06-26",
+    "source": "https://dpws.sfaa.gov.tw/home-care"
   },
   {
     "id": "disability-vocational-rehab",
@@ -1639,7 +1717,9 @@
       "依評估結果安排職業評量、職業訓練或直接就業媒合等服務",
       "就業後持續提供職場支持（工作適應訓練、雇主溝通等），協助穩定就業"
     ],
-    "addedDate": "2026-06-26"
+    "addedDate": "2026-06-26",
+    "lastVerifiedDate": "2026-06-26",
+    "source": "https://www.wda.gov.tw/Business.aspx?n=11579&sms=9388"
   },
   {
     "id": "nhia-premium-subsidy",
@@ -1680,7 +1760,9 @@
       "每年於資格重審期間配合提交相關所得及財產資料，維持補助資格"
     ],
     "addedDate": "2026-06-27",
-    "maxAmount": 14400
+    "maxAmount": 14400,
+    "lastVerifiedDate": "2026-06-27",
+    "source": "https://www.nhi.gov.tw/Content_List.aspx?n=25&topn=5FE8C9FEAE863B46"
   },
   {
     "id": "cancer-screening-subsidy",
@@ -1723,7 +1805,9 @@
       "若結果異常，依醫師建議進行後續精密檢查，部分後續檢查亦有補助"
     ],
     "addedDate": "2026-06-27",
-    "maxAmount": 4000
+    "maxAmount": 4000,
+    "lastVerifiedDate": "2026-06-27",
+    "source": "https://www.hpa.gov.tw/Pages/Detail.aspx?nodeid=615&pid=2847"
   },
   {
     "id": "major-illness-copay-waiver",
@@ -1763,7 +1847,9 @@
       "審核通過後核發「重大傷病證明卡」，就醫持卡出示即可免除部分負擔"
     ],
     "addedDate": "2026-06-27",
-    "maxAmount": 30000
+    "maxAmount": 30000,
+    "lastVerifiedDate": "2026-06-27",
+    "source": "https://www.nhi.gov.tw/Content_List.aspx?n=5765"
   },
   {
     "id": "infertility-treatment-subsidy",
@@ -1804,7 +1890,9 @@
       "衛福部及縣市方案可分別申請（可累計補助），約1–2個月後補助款匯入指定帳戶"
     ],
     "addedDate": "2026-06-27",
-    "maxAmount": 160000
+    "maxAmount": 160000,
+    "lastVerifiedDate": "2026-06-27",
+    "source": "https://www.mohw.gov.tw/cp-18-75631-1.html"
   },
   {
     "id": "new-immigrant-adaptation-course",
@@ -1839,7 +1927,9 @@
       "向移民服務中心或所在地直轄市、縣（市）政府社會局報名課程",
       "免費參加課程，托育及交通費補助依各縣市規定另行申請"
     ],
-    "addedDate": "2026-06-28"
+    "addedDate": "2026-06-28",
+    "lastVerifiedDate": "2026-06-28",
+    "source": "https://www.immigration.gov.tw/5385/7244/7250/7317/"
   },
   {
     "id": "foreign-spouse-fund-subsidy",
@@ -1874,7 +1964,9 @@
       "向移民服務中心或執行機構洽詢當期服務方案並完成報名",
       "免費參加各項服務課程；如有急難救助需求，由社工評估後協助申請地方補助"
     ],
-    "addedDate": "2026-06-28"
+    "addedDate": "2026-06-28",
+    "lastVerifiedDate": "2026-06-28",
+    "source": "https://www.immigration.gov.tw/5385/7244/7250/7318/"
   },
   {
     "id": "new-immigrant-employment-program",
@@ -1911,7 +2003,9 @@
       "參加就業諮詢，由就業服務員評估後媒合職業訓練課程或就業機會",
       "完成訓練後按規定申請訓練費用補助及就業獎勵金，約2–4週撥款"
     ],
-    "addedDate": "2026-06-28"
+    "addedDate": "2026-06-28",
+    "lastVerifiedDate": "2026-06-28",
+    "source": "https://www.wda.gov.tw/News_Content.aspx?n=9454E8C2E34C4B6A"
   },
   {
     "id": "indigenous-entrepreneurship-loan",
@@ -1956,7 +2050,9 @@
       "身分證影本",
       "戶籍謄本",
       "公司或商業登記文件"
-    ]
+    ],
+    "lastVerifiedDate": "2026-06-29",
+    "source": "https://www.apc.gov.tw/portal/docList.html?CID=940F9579765AC6A0"
   },
   {
     "id": "indigenous-housing-subsidy",
@@ -1994,7 +2090,9 @@
       "審查通過後，依核定補助金額辦理修繕工程，完工後檢附收據核銷"
     ],
     "addedDate": "2026-06-29",
-    "maxAmount": 300000
+    "maxAmount": 300000,
+    "lastVerifiedDate": "2026-06-29",
+    "source": "https://www.apc.gov.tw/portal/docList.html?CID=9EF048B7A04BBAD9"
   },
   {
     "id": "indigenous-culture-grant",
@@ -2032,7 +2130,9 @@
       "通過書面審查後，部分案件需接受口頭簡報；核准後依計畫執行，期末繳交成果報告及收據核銷"
     ],
     "addedDate": "2026-06-29",
-    "maxAmount": 500000
+    "maxAmount": 500000,
+    "lastVerifiedDate": "2026-06-29",
+    "source": "https://www.titv.org.tw/"
   },
   {
     "id": "disability-transport-subsidy",
@@ -2070,7 +2170,9 @@
       "核准後補助款定期匯入指定帳戶，部分縣市以儲值卡方式提供，可刷卡搭乘復康巴士或大眾運輸"
     ],
     "addedDate": "2026-06-29",
-    "maxAmount": 12000
+    "maxAmount": 12000,
+    "lastVerifiedDate": "2026-06-29",
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341"
   },
   {
     "id": "low-income-emergency-relief",
@@ -2110,7 +2212,9 @@
       "社工人員訪視評估後，核定補助金額並撥款；緊急情形得當日或次日完成初步審核"
     ],
     "addedDate": "2026-06-29",
-    "maxAmount": 30000
+    "maxAmount": 30000,
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html"
   },
   {
     "id": "low-income-education-grant",
@@ -2153,7 +2257,9 @@
     ],
     "addedDate": "2026-06-29",
     "maxAmount": 120000,
-    "deadlineDate": "2026-08-31"
+    "deadlineDate": "2026-08-31",
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "special-circumstance-living-allowance",
@@ -2194,7 +2300,9 @@
       "核定後每月匯入指定帳戶；需每年重新申請確認資格"
     ],
     "addedDate": "2026-06-30",
-    "maxAmount": 96000
+    "maxAmount": 96000,
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html"
   },
   {
     "id": "single-parent-afterschool-subsidy",
@@ -2240,7 +2348,9 @@
     "deadlineDate": "2026-08-31",
     "eligibilityStartEvent": "child-enrollment",
     "applyWithinMonths": 2,
-    "timelineNote": "每學期開學後申請課後照顧補助"
+    "timelineNote": "每學期開學後申請課後照顧補助",
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.edu.tw/Default.aspx"
   },
   {
     "id": "private-nursery-subsidy",
@@ -2287,7 +2397,9 @@
     ],
     "eligibilityStartEvent": "birth",
     "applyWithinMonths": null,
-    "timelineNote": "嬰幼兒0至未滿2歲，送托後立即可申請"
+    "timelineNote": "嬰幼兒0至未滿2歲，送托後立即可申請",
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383"
   },
   {
     "id": "preschool-county-subsidy",
@@ -2327,7 +2439,9 @@
     "maxAmount": 36000,
     "eligibilityStartEvent": "child-enrollment",
     "applyWithinMonths": 2,
-    "timelineNote": "入園後每學期申請，通常於2月及8月受理"
+    "timelineNote": "入園後每學期申請，通常於2月及8月受理",
+    "lastVerifiedDate": "2026-06-30",
+    "source": "https://www.ece.moe.edu.tw/"
   },
   {
     "id": "moe-disadvantaged-scholarship",
@@ -2370,7 +2484,9 @@
       "在學學生證明",
       "低/中低收入戶證明文件",
       "銀行帳戶資料"
-    ]
+    ],
+    "lastVerifiedDate": "2026-07-01",
+    "source": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "university-tuition-subsidy",
@@ -2413,7 +2529,9 @@
       "學費繳費收據",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "lastVerifiedDate": "2026-07-01",
+    "source": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "graduate-scholarship",
@@ -2456,7 +2574,9 @@
       "最近一學期成績單",
       "指導教授推薦函（視各校規定）",
       "銀行帳戶資料"
-    ]
+    ],
+    "lastVerifiedDate": "2026-07-01",
+    "source": "https://www.edu.tw/"
   },
   {
     "id": "student-employment-program",
@@ -2498,6 +2618,8 @@
       "在學學生證或在學證明",
       "身分證影本",
       "最高學曆成績單"
-    ]
+    ],
+    "lastVerifiedDate": "2026-07-01",
+    "source": "https://kys.wda.gov.tw/"
   }
 ]
