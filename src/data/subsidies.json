@@ -1,1 +1,478 @@
-{"_placeholder": "will_be_replaced"}
+[
+  {
+    "id": "youth-job-support",
+    "title": "支援青年就業計畫",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "協助18～29歲初次尋職青年穩定就業，提供尋職津貼與就業獎勵，合計最高補助48,000元。應屆畢業生首選！",
+    "eligibility": [
+      "年齡18至29歲本國籍青年",
+      "未就業（尋職中或初次進入職場）",
+      "透過公立就業服務機構或線上登記"
+    ],
+    "amount": "尋職津貼最高 15,000 元 + 就業獎勵最高 33,000 元，合計最高 48,000 元",
+    "deadline": "115年常態受理（至115年12月31日）",
+    "deadlineStatus": "open",
+    "applicationUrl": "https://special.taiwanjobs.gov.tw/internet/2025/YNGSRH/index.html",
+    "tags": [
+      "青年",
+      "應屆畢業生",
+      "就業獎勵",
+      "津貼"
+    ],
+    "situations": [
+      "fresh-grad",
+      "entrepreneur"
+    ],
+    "isYouthHighlight": true,
+    "difficulty": "easy",
+    "updatedAt": "2026-05-09",
+    "steps": [
+      "至台灣就業通或公立就業服務站線上登記求職（免費）",
+      "填寫申請表，提供身分證、學歷證明、銀行帳戶資料",
+      "透過就業服務員媒合職缺，穩定就業後申請就業獎勵",
+      "尋職津貼每月匯入，就業獎勵於就業滿3/6個月分批撥款"
+    ],
+    "deadlineDate": "2026-12-31",
+    "addedDate": "2026-06-20",
+    "maxAmount": 48000,
+    "requiredDocs": [
+      "身分證影本",
+      "最高學歷畢業證書",
+      "台灣就業通帳號",
+      "銀行帳戶資料"
+    ]
+  },
+  {
+    "id": "student-loan-interest-relief",
+    "title": "就學貸款利息補貼",
+    "category": "教育",
+    "agency": "教育部學生事務及特殊教育司",
+    "summary": "具有就學貸款的畢業生可申請利息補貼，符合條件者在還款期間政府補貼全部或部分利息，大幅減輕還款壓力。年收入70萬元以下優先。",
+    "eligibility": [
+      "曾申辦就學貸款並已畢業或離校",
+      "家庭年所得符合規定（各縣市公告為準）",
+      "貸款期間仍在還款中",
+      "向原貸款金融機構申請"
+    ],
+    "amount": "依個人所得及還款狀況補貼全額或部分利息，年省數千至數萬元",
+    "deadline": "全年常態受理，每年審查",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://heloan.boe.moe.edu.tw/",
+    "tags": [
+      "學貸",
+      "畢業生",
+      "利息補貼",
+      "還款減壓"
+    ],
+    "situations": [
+      "fresh-grad",
+      "student"
+    ],
+    "isYouthHighlight": true,
+    "difficulty": "easy",
+    "updatedAt": "2026-05-14",
+    "steps": [
+      "確認資格：持有就學貸款、已畢業、家庭收入符合補貼標準",
+      "至「學生就學貸款資訊網」或向原貸款銀行索取申請表",
+      "附上貸款餘額證明、最近一年所得或稅務資料",
+      "審核通過後，補貼直接抵扣利息或匯入帳戶（每年審核一次）"
+    ],
+    "addedDate": "2026-06-20"
+  },
+  {
+    "id": "indigenous-student-scholarship",
+    "title": "原住民族學生就學獎助學金",
+    "category": "教育",
+    "agency": "原住民族委員會",
+    "summary": "具原住民族身分之大專校院在學學生，可申請原民會就學獎助學金，依家庭收入分不同級距補助，成績優異者另有優秀獎學金加碼。每學期各受理一次，是原住民學生就學的重要支持資源。",
+    "eligibility": [
+      "具原住民族身分（持有政府核發之原住民族身分證明）",
+      "就讀國內公私立大專校院，具正式學籍",
+      "不含研究生、在職專班、推廣教育課程及空中大學等回流教育體系",
+      "申請優秀獎學金者，前一學期學業成績需達規定門檻"
+    ],
+    "amount": "一般助學金每學期 3,000～15,000 元（依家庭收入級距）；優秀獎學金每學期 5,000～30,000 元",
+    "deadline": "每學期開學後一個月內受理：上學期約10月、下學期約3月，各一次",
+    "deadlineStatus": "seasonal",
+    "applicationUrl": "https://cipgrant.fju.edu.tw/",
+    "tags": [
+      "原住民",
+      "獎學金",
+      "大專院校",
+      "就學補助",
+      "原民會"
+    ],
+    "situations": [
+      "indigenous",
+      "fresh-grad",
+      "student"
+    ],
+    "isYouthHighlight": true,
+    "difficulty": "easy",
+    "updatedAt": "2026-06-17",
+    "steps": [
+      "確認資格：持有原住民族身分、就讀大專校院正式學籍",
+      "至「我的e政府」說明頁確認資格，或直接至原民會官方申請系統（cipgrant.fju.edu.tw）完成帳號驗證並登入",
+      "依系統提示上傳原住民族身分證明、在學證明及前一學期成績單（優秀獎學金需達成績門檻）",
+      "每學期依學校公告期間提出申請，逾期不補申請；核准後補助於學期中匯入"
+    ],
+    "addedDate": "2026-06-20",
+    "maxAmount": 60000,
+    "deadlineDate": "2026-10-31"
+  },
+  {
+    "id": "low-income-education-grant",
+    "title": "低收入戶及中低收入戶子女就學補助",
+    "category": "教育",
+    "agency": "教育部",
+    "summary": "低收入戶或中低收入戶家庭的子女就讀大專校院，享有學雜費大幅減免：低收入戶全免，中低收入戶補助60%。國中小及高中職階段亦有雜費減免及學用品補助，由就讀學校代為申請。申請時需備妥縣市政府核發之低/中低收入戶核定通知書（每年應重新認定）。",
+    "eligibility": [
+      "就讀教育部認可之公私立大專校院（含技職院校）",
+      "家長（或學生本人）持有縣市政府核發之低收入戶或中低收入戶核定通知書",
+      "學雜費減免按戶別核定：低收入戶全免，中低收入戶減免60%",
+      "國中小及高中職：向就讀學校申請雜費減免及學用品補助（由學校送教育局核辦）"
+    ],
+    "amount": "大專院校（低收入戶）：學雜費全免，私立約 6 至 12 萬元/學年；（中低收入戶）：學雜費減免 60%，約 3.6 至 7.2 萬元/學年",
+    "deadline": "每學期開學報到期間申請，約每年2月及8月",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://helpdreams.moe.edu.tw/",
+    "tags": [
+      "低收入戶",
+      "中低收入戶",
+      "學雜費減免",
+      "就學補助",
+      "教育補助",
+      "弱勢助學"
+    ],
+    "situations": [
+      "low-income",
+      "parent",
+      "single-parent",
+      "student"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-06-30",
+    "steps": [
+      "確認持有縣市政府核發之低收入戶或中低收入戶核定通知書（每年須重新認定，請確認效期）",
+      "大專院校：至就讀學校學務處或財務組填寫「弱勢助學申請書」（可至教育部弱勢助學網 helpdreams.moe.edu.tw 查詢），附上核定通知書及在學證明",
+      "學校核定後辦理學雜費減免或退費；低收入戶全免，中低收入戶減免60%",
+      "國中小至高中職：向就讀學校提出申請（學校代送教育局審核），雜費全免並補助學用品費；縣市另有加碼補助可同步洽縣市教育局"
+    ],
+    "addedDate": "2026-06-29",
+    "maxAmount": 120000,
+    "deadlineDate": "2026-08-31"
+  },
+  {
+    "id": "moe-disadvantaged-scholarship",
+    "title": "教育部弱勢助學金",
+    "category": "教育",
+    "agency": "教育部",
+    "summary": "針對就讀大專校院之低收入戶及中低收入戶學生，提供每學期最高 6,500 元生活費補助，減輕就學經濟壓力。",
+    "eligibility": [
+      "就讀國內公私立大專校院（含研究所）",
+      "低收入戶或中低收入戶身分",
+      "每學期向就讀學校申請"
+    ],
+    "amount": "每學期最高 6,500 元",
+    "deadline": "每學期開學後受理，詳洽各校",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://helpdreams.moe.edu.tw/",
+    "tags": [
+      "學生",
+      "助學金",
+      "低收入",
+      "大專"
+    ],
+    "situations": [
+      "student",
+      "low-income"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "向就讀學校學生事務處詢問申請期程",
+      "準備低/中低收入戶證明及在學證明",
+      "填寫申請表，繳交學校審核",
+      "核定後補助款項撥入指定帳戶"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 6500,
+    "requiredDocs": [
+      "在學學生證明",
+      "低/中低收入戶證明文件",
+      "銀行帳戶資料"
+    ]
+  },
+  {
+    "id": "university-tuition-subsidy",
+    "title": "私立大學學費補助（就學費用減免）",
+    "category": "教育",
+    "agency": "教育部",
+    "summary": "就讀私立大學或技術院校的學生，可申請學費補助，每學年最高補助 3 萬元，減輕就學負擔。",
+    "eligibility": [
+      "就讀國內私立大專校院（含技術學院）",
+      "符合教育部公告之補助資格",
+      "每學年向學校提出申請"
+    ],
+    "amount": "每學年最高 30,000 元",
+    "deadline": "每學年受理，各校公告時程",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://helpdreams.moe.edu.tw/",
+    "tags": [
+      "學生",
+      "學費補助",
+      "私立大學",
+      "技術院校"
+    ],
+    "situations": [
+      "student"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "至教育部圓夢助學網查詢補助資格",
+      "填寫線上申請表並上傳相關文件",
+      "由學校審核後轉送教育部核定",
+      "補助款由學校代為抄扣或匯入帳戶"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 30000,
+    "requiredDocs": [
+      "在學學生證明",
+      "學費繳費收據",
+      "身分證影本",
+      "銀行帳戶資料"
+    ]
+  },
+  {
+    "id": "graduate-scholarship",
+    "title": "研究生獎助學金（教育部）",
+    "category": "教育",
+    "agency": "教育部",
+    "summary": "針對就讀國內碩博士班研究生，由教育部或各大學提供每月 5,000–15,000 元獎助學金，鼓勵優秀人才投入學術研究。",
+    "eligibility": [
+      "就讀國內公私立大學碩士或博士班",
+      "成績或研究表現符合各校標準",
+      "向就讀學校獎助學金委員會申請"
+    ],
+    "amount": "每月 5,000–15,000 元（依核定級別）",
+    "deadline": "每學年開學初受理，各校公告",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://www.edu.tw/",
+    "tags": [
+      "研究生",
+      "碩博士",
+      "獎助學金",
+      "學術"
+    ],
+    "situations": [
+      "student"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "向就讀學校研究生事務組查詢申請資格",
+      "準備研究計畫摘要或成績單",
+      "填寫申請表格繳交系所推薦",
+      "核定後每月匯入指定帳戶"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 180000,
+    "requiredDocs": [
+      "研究生在學證明",
+      "最近一學期成績單",
+      "指導教授推薦函（視各校規定）",
+      "銀行帳戶資料"
+    ]
+  },
+  {
+    "id": "student-employment-program",
+    "title": "大專生就業學程補助",
+    "category": "教育",
+    "agency": "勞動部勞動力發展署",
+    "summary": "協助大學生在學期間取得職場實作經驗，提供每月最高 26,400 元薪資補助，透過政府補助企業聘用在學學生實習。",
+    "eligibility": [
+      "就讀國內大專校院（含研究所）在學學生",
+      "年滿 18 歲",
+      "透過勞動部認可之就業學程計畫媒合實習"
+    ],
+    "amount": "每月最高 26,400 元（按基本工資比例補助）",
+    "deadline": "全年常態受理，各縣市分署定期公告",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://kys.wda.gov.tw/",
+    "tags": [
+      "學生",
+      "實習",
+      "就業學程",
+      "薪資補助"
+    ],
+    "situations": [
+      "student"
+    ],
+    "isYouthHighlight": true,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "至台灣就業通查詢就業學程計畫",
+      "選擇符合科系的合作企業，提出媒合申請",
+      "完成面試後由雇主與勞動署簽訂補助契約",
+      "實習期間每月薪資由雇主發放，政府補助差額"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 316800,
+    "requiredDocs": [
+      "在學學生證或在學證明",
+      "身分證影本",
+      "最高學曆成績單"
+    ]
+  },
+  {
+    "id": "vac-veteran-employment-subsidy",
+    "title": "退輔會榮民就業輔導金",
+    "category": "就業",
+    "agency": "國軍退除役官兵輔導委員會（退輔會）",
+    "summary": "協助退役軍人（榮民）重返職場，提供就業輔導與生活津貼，每月最高 6,000 元，輔導期間最長 6 個月。",
+    "eligibility": [
+      "具榮民身分（持有榮民證或相關證明文件）",
+      "年齡在 65 歲以下",
+      "目前無固定工作或收入低於基本工資",
+      "向退輔會所屬服務機構提出申請"
+    ],
+    "amount": "每月最高 6,000 元，最長補助 6 個月，合計最高 36,000 元",
+    "deadline": "全年常態受理，視預算公告調整",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.vac.gov.tw/",
+    "tags": [
+      "榮民",
+      "退役軍人",
+      "就業輔導",
+      "生活津貼"
+    ],
+    "situations": [
+      "veteran",
+      "unemployed"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "攜帶榮民證及身分證至最近退輔會榮民服務處諮詢",
+      "填寫就業輔導申請書，提供相關身分及收入證明",
+      "通過資格審核後開始就業媒合輔導",
+      "核准後每月領取就業輔導生活津貼"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 36000,
+    "requiredDocs": [
+      "榮民證或退伍令",
+      "身分證影本",
+      "戶籍謄本",
+      "收入證明或無工作切結書",
+      "銀行帳戶資料"
+    ]
+  },
+  {
+    "id": "vac-veteran-housing",
+    "title": "榮民安置住宅申請",
+    "category": "住宅",
+    "agency": "國軍退除役官兵輔導委員會（退輔會）",
+    "summary": "退輔會提供榮民低租金安置住宅，每月租金補助最高 4,000 元，協助無自有房屋之榮民穩定居住。",
+    "eligibility": [
+      "具榮民身分，持有退輔會核發榮民證",
+      "名下無自有房屋或居住狀況困難",
+      "年齡 60 歲以上（特殊情況可彈性認定）",
+      "在台居住且無其他安置管道"
+    ],
+    "amount": "每月最高 4,000 元租金補助，或提供退輔會管理之安置住宅入住",
+    "deadline": "全年常態受理，名額有限",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.vac.gov.tw/",
+    "tags": [
+      "榮民",
+      "退役軍人",
+      "住宅補助",
+      "安置住宅"
+    ],
+    "situations": [
+      "veteran",
+      "renter",
+      "senior"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "至退輔會榮民服務處填寫住宅需求調查表",
+      "提供榮民證、戶籍謄本及房屋租用狀況說明",
+      "通過資格審核並列入候補名單",
+      "依名額分配入住安置住宅或核發租金補助"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 48000,
+    "requiredDocs": [
+      "榮民證",
+      "身分證影本",
+      "戶籍謄本",
+      "無自有房屋切結書",
+      "租賃契約（如現為租屋者）"
+    ]
+  },
+  {
+    "id": "vac-veteran-spouse-living",
+    "title": "榮民遺眷生活補助",
+    "category": "生活",
+    "agency": "國軍退除役官兵輔導委員會（退輔會）",
+    "summary": "提供已故榮民之配偶（榮眷）每月生活補助，維持基本生活所需，每月最高 5,000 元。",
+    "eligibility": [
+      "已故榮民之配偶（持有榮眷身分證明）",
+      "未再婚且未領取其他政府生活扶助",
+      "家庭收入符合低收入或中低收入戶認定標準",
+      "設籍台灣"
+    ],
+    "amount": "每月最高 5,000 元",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.vac.gov.tw/",
+    "tags": [
+      "榮眷",
+      "榮民配偶",
+      "遺眷補助",
+      "生活補助"
+    ],
+    "situations": [
+      "veteran",
+      "low-income"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "至戶籍所在地退輔會榮民服務處提出申請",
+      "提供榮眷身分證明、榮民死亡相關文件",
+      "填寫家庭收入申報表及生活補助申請書",
+      "核准後每月自動撥付補助款至指定帳戶"
+    ],
+    "deadlineDate": null,
+    "addedDate": "2026-07-01",
+    "maxAmount": 60000,
+    "requiredDocs": [
+      "榮眷身分證明文件",
+      "身分證影本",
+      "戶籍謄本",
+      "配偶死亡證明",
+      "銀行帳戶資料",
+      "家庭收入切結書"
+    ]
+  }
+]
