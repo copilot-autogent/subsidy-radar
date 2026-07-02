@@ -2231,6 +2231,10 @@ main {
   .deadline-panel,
   .results-row,
   .share-toast,
+  .persona-strip,
+  .compare-label,
+  .compare-bar,
+  .compare-overlay,
   .card-tags,
   .card-summary,
   .card-eligibility,
@@ -2244,6 +2248,41 @@ main {
   .recency-badge,
   .youth-badge,
   .card-badges { display: none !important; }
+
+  /* Filtered print mode: show key eligibility criteria */
+  body.print-filtered .card-eligibility {
+    display: block !important;
+    margin-top: 0.4rem;
+  }
+  body.print-filtered .card-eligibility > ul {
+    display: block !important;
+    margin: 0.25rem 0 0 1rem;
+    padding: 0;
+  }
+  body.print-filtered .card-eligibility > ul li {
+    font-size: 0.82rem;
+    color: #334155;
+    margin-bottom: 0.15rem;
+  }
+  body.print-filtered .card-eligibility > summary {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #475569;
+    list-style: none;
+  }
+
+  /* Official URL: show inline after title area in filtered print mode */
+  body.print-filtered .card-official-link {
+    display: block !important;
+    font-size: 0.78rem;
+    color: #1d4ed8 !important;
+    word-break: break-all;
+    margin-top: 0.25rem;
+  }
+  body.print-filtered .card-official-link[href]::after {
+    content: " (" attr(href) ")";
+    font-weight: normal;
+  }
 
   /* Tracker mode: hide non-tracked cards and no-results */
   body:not(.print-filtered) .subsidy-card:not(.tracker-state-tracked) { display: none !important; }
