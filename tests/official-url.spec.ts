@@ -70,13 +70,11 @@ test.describe('Official URL link on subsidy cards', () => {
       return;
     }
     const html = readFileSync(htmlPath, 'utf-8');
-    const linkRe = /class="card-official-link"/g;
+    const linkRe = /<a\b[^>]*class="card-official-link"[^>]*>/g;
     let m: RegExpExecArray | null;
     let count = 0;
     while ((m = linkRe.exec(html)) !== null) {
-      const tagStart = html.lastIndexOf('<a', m.index);
-      const tagEnd = html.indexOf('>', m.index) + 1;
-      const tag = html.slice(tagStart, tagEnd);
+      const tag = m[0];
       expect(tag).toContain('rel="nofollow noopener noreferrer"');
       expect(tag).toContain('target="_blank"');
       count++;
