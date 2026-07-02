@@ -3,8 +3,52 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
 type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student';
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[]; officialUrl?: string };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[]; officialUrl?: string; lastVerifiedDate?: string; source?: string };
 const subsidies = subsidiesRaw as Subsidy[];
+
+// ── Data freshness badge helper ───────────────────────────────────────────
+// NOTE: BUILD_DATE is fixed at Astro build time. Freshness thresholds are
+// evaluated once and baked into the HTML. The site must be rebuilt periodically
+// (e.g. via scheduled CI) so that badges don't permanently overstate freshness.
+const BUILD_DATE = new Date(); BUILD_DATE.setHours(0, 0, 0, 0);
+
+/**
+ * Returns the number of whole calendar months between a verified date and
+ * BUILD_DATE, accounting for the day-of-month so that e.g. April 30 → July 1
+ * counts as 2 months (not 3).
+ */
+function calendarMonthsAgo(verifiedYear: number, verifiedMonth: number, verifiedDay: number): number {
+  let months = (BUILD_DATE.getFullYear() - verifiedYear) * 12 +
+    (BUILD_DATE.getMonth() + 1 - verifiedMonth);
+  // Subtract 1 if we haven't yet reached the same day-of-month in the build month
+  if (BUILD_DATE.getDate() < verifiedDay) months -= 1;
+  return months;
+}
+
+/** Returns { cls, label } for the data freshness badge. */
+function getFreshnessBadge(lastVerifiedDate: string | null | undefined): { cls: string; label: string } {
+  if (!lastVerifiedDate) {
+    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+  }
+  const parts = lastVerifiedDate.split('-').map(Number);
+  const [y, m, d] = parts;
+  // Validate: must be YYYY-MM-DD with sane ranges and no future date
+  const verified = new Date(y, m - 1, d);
+  const isValid =
+    parts.length === 3 &&
+    Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d) &&
+    m >= 1 && m <= 12 && d >= 1 && d <= 31 &&
+    verified.getFullYear() === y && verified.getMonth() === m - 1 && verified.getDate() === d &&
+    verified <= BUILD_DATE;
+  if (!isValid) {
+    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+  }
+  const monthsAgo = calendarMonthsAgo(y, m, d);
+  const label = `✓ 已核實 ${String(y)}-${String(m).padStart(2, '0')}`;
+  if (monthsAgo < 3) return { cls: 'freshness-fresh', label };
+  if (monthsAgo <= 6) return { cls: 'freshness-stale', label };
+  return { cls: 'freshness-outdated', label: `⚠️ ${label}` };
+}
 
 // ── Related subsidies: build-time pre-computation ─────────────────────────
 // Algorithm: find top 2-3 other subsidies sharing the most `situations` tags.
@@ -579,6 +623,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     {subsidies.map(s => {
       const status = deadlineLabel[s.deadlineStatus] ?? deadlineLabel['ongoing'];
       const diff = difficultyLabel[s.difficulty ?? 'medium'];
+      const freshness = getFreshnessBadge(s.lastVerifiedDate);
       return (
         <article
           id={s.id}
@@ -599,6 +644,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           data-counties={s.counties ? JSON.stringify(s.counties) : ''}
           data-url={s.applicationUrl ?? ''}
           data-steps={s.steps ? String(s.steps.length) : '0'}
+          data-last-verified={s.lastVerifiedDate ?? ''}
         >
           <label class="compare-label">
             <input
@@ -620,6 +666,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             <div class="card-badges">
               {s.isYouthHighlight && <span class="youth-badge">⭐ 青年必看</span>}
               <span class="recency-badge" data-recency-badge style="display:none">🆕 最新</span>
+              <span class={`freshness-badge ${freshness.cls}`} title={s.source ? `資料來源：${s.source}` : undefined}>{freshness.label}</span>
               <span class="category-badge">{s.category}</span>
             </div>
             <div class="tracker-control">
