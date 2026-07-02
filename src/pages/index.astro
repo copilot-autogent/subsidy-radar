@@ -339,6 +339,36 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       </div>
     </div>
 
+    <div class="quiz-question" data-question="county" style="display:none">
+      <label id="quiz-label-county" class="quiz-label">8. 您目前居住在哪個縣市？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-county">
+        <button class="quiz-option" data-value="台北市" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">🏙️</span>
+          <span class="option-text">台北市</span>
+        </button>
+        <button class="quiz-option" data-value="新北市" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">🏙️</span>
+          <span class="option-text">新北市</span>
+        </button>
+        <button class="quiz-option" data-value="桃園市" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">🏙️</span>
+          <span class="option-text">桃園市</span>
+        </button>
+        <button class="quiz-option" data-value="台中市" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">🏙️</span>
+          <span class="option-text">台中市</span>
+        </button>
+        <button class="quiz-option" data-value="高雄市" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">🏙️</span>
+          <span class="option-text">高雄市</span>
+        </button>
+        <button class="quiz-option" data-value="other" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">🗺️</span>
+          <span class="option-text">其他縣市</span>
+        </button>
+      </div>
+    </div>
+
     <div class="quiz-reset" style="display:none">
       <button class="reset-btn" id="quizReset" type="button">↺ 重新開始</button>
     </div>
@@ -889,6 +919,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       'single-parent': new Set(['yes', 'no']),
       'young-child':   new Set(['yes', 'no']),
       'student':       new Set(['yes', 'no']),
+      'county':        new Set(['台北市', '新北市', '桃園市', '台中市', '高雄市', 'other']),
     };
 
     function updateQuizUrl() {
@@ -900,6 +931,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.set('q5', quizAnswers['single-parent'] ?? '');
       params.set('q6', quizAnswers['young-child'] ?? '');
       params.set('q7', quizAnswers['student'] ?? '');
+      params.set('q8', quizAnswers['county'] ?? '');
       history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
     }
 
@@ -912,6 +944,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.delete('q5');
       params.delete('q6');
       params.delete('q7');
+      params.delete('q8');
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
@@ -1017,6 +1050,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     function applyQuizFilter() {
       const situations = matchQuizToSituations();
+
+      // Apply county answer from quiz: pre-fill the county dropdown filter
+      const countyAnswer = quizAnswers['county'];
+      if (countyAnswer && countyAnswer !== 'other') {
+        activeCounty = countyAnswer;
+        if (countySelect) countySelect.value = countyAnswer;
+      } else {
+        activeCounty = '';
+        if (countySelect) countySelect.value = '';
+      }
       
       // Reset category filter
       activeCategory = '全部';
@@ -1041,16 +1084,26 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
       const isYouth = quizAnswers.age === 'youth';
       let visible = 0;
+
+      const activeCountyNorm = normalizeCounty(activeCounty);
       
       cards.forEach(card => {
         const cardSituations: string[] = JSON.parse(card.dataset.situations ?? '[]');
         const cardIsYouth = card.dataset.youth === 'true';
         
-        // Match if: (youth-eligible OR situation-match) AND category/search/tracker
+        // Match if: (youth-eligible OR situation-match) AND county-match
         const matchSituation = situations.length === 0 
           || situations.some(s => cardSituations.includes(s));
         const matchYouth = !isYouth || cardIsYouth;
-        const matchOverall = matchSituation && matchYouth;
+
+        // County filter: national entries (empty counties) always match; city-specific entries
+        // only match when the selected county is in their counties list.
+        const cardCounties: string[] = card.dataset.counties ? JSON.parse(card.dataset.counties) : [];
+        const matchCounty = activeCounty === ''
+          || cardCounties.length === 0
+          || cardCounties.some(c => normalizeCounty(c) === activeCountyNorm);
+
+        const matchOverall = matchSituation && matchYouth && matchCounty;
         
         card.style.display = matchOverall ? '' : 'none';
         if (matchOverall) visible++;
@@ -2279,6 +2332,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const q5 = params.get('q5') ?? '';
       const q6 = params.get('q6') ?? '';
       const q7 = params.get('q7') ?? '';
+      const q8 = params.get('q8') ?? '';
 
       const q123Valid =
         VALID_QUIZ_VALUES.age.has(q1) &&
@@ -2292,10 +2346,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // q7 is optional: empty string means user hadn't reached this question yet (backward-compat
       // with URLs shared before the student question was added in #114).
       const q7Valid = q7 === '' || VALID_QUIZ_VALUES['student'].has(q7);
+      // q8 is optional: empty string means user hadn't reached this question yet (backward-compat
+      // with URLs shared before the county question was added in #125).
+      const q8Valid = q8 === '' || VALID_QUIZ_VALUES['county'].has(q8);
 
-      if (q123Valid && q4Valid && q5Valid && q6Valid && q7Valid) {
+      if (q123Valid && q4Valid && q5Valid && q6Valid && q7Valid && q8Valid) {
         // All answers present and valid — restore full quiz state
-        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5, ...(q6 ? { 'young-child': q6 } : {}), ...(q7 ? { 'student': q7 } : {}) };
+        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5, ...(q6 ? { 'young-child': q6 } : {}), ...(q7 ? { 'student': q7 } : {}), ...(q8 ? { 'county': q8 } : {}) };
         // Mark each answer as selected in the UI; sync roving tabindex per group
         quizQuestions.forEach(q => { q.style.display = 'none'; });
         quizResetContainer.style.display = 'block';
@@ -2391,7 +2448,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         showQuizQuestion(currentQuestionIndex);
         applyQuizFilter();
         quizResetContainer.style.display = 'block';
-      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4') || params.has('q5')) {
+      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4') || params.has('q5') || params.has('q8')) {
         // Stale/partial/invalid params — clear them so the URL matches UI state
         clearQuizUrl();
       }
