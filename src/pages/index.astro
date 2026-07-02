@@ -2245,12 +2245,27 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           el.classList.remove('print-filtered-hidden');
         });
         document.body.classList.remove('print-filtered');
+        // Close any previously force-opened eligibility details
+        document.querySelectorAll<HTMLDetailsElement>('details.card-eligibility[data-print-opened]').forEach(el => {
+          el.removeAttribute('open');
+          el.removeAttribute('data-print-opened');
+        });
 
         // Mark currently hidden cards (use computed style to catch class-based hiding)
         const allCards = document.querySelectorAll<HTMLElement>('.subsidy-card');
         allCards.forEach(card => {
           if (getComputedStyle(card).display === 'none') {
             card.classList.add('print-filtered-hidden');
+          }
+        });
+
+        // Open eligibility <details> on visible cards so content is reliably printed.
+        // Track which ones we opened so we can close them in cleanup.
+        document.querySelectorAll<HTMLDetailsElement>('details.card-eligibility').forEach(el => {
+          const card = el.closest<HTMLElement>('.subsidy-card');
+          if (card && !card.classList.contains('print-filtered-hidden') && !el.open) {
+            el.setAttribute('open', '');
+            el.setAttribute('data-print-opened', '');
           }
         });
 
@@ -2276,6 +2291,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               document.querySelectorAll<HTMLElement>('.print-filtered-hidden').forEach(el => {
                 el.classList.remove('print-filtered-hidden');
               });
+              document.querySelectorAll<HTMLDetailsElement>('details.card-eligibility[data-print-opened]').forEach(el => {
+                el.removeAttribute('open');
+                el.removeAttribute('data-print-opened');
+              });
             }
           }, 3000);
         }
@@ -2287,6 +2306,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         document.body.classList.remove('print-filtered');
         document.querySelectorAll<HTMLElement>('.print-filtered-hidden').forEach(el => {
           el.classList.remove('print-filtered-hidden');
+        });
+        document.querySelectorAll<HTMLDetailsElement>('details.card-eligibility[data-print-opened]').forEach(el => {
+          el.removeAttribute('open');
+          el.removeAttribute('data-print-opened');
         });
       });
     }
