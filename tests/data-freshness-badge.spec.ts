@@ -32,7 +32,7 @@ function getFreshnessBadge(
   const monthsAgo = calendarMonthsAgo(y, m, d, referenceDate);
   const label = `✓ 已核實 ${String(y)}-${String(m).padStart(2, '0')}`;
   if (monthsAgo < 3) return { cls: 'freshness-fresh', label };
-  if (monthsAgo < 6) return { cls: 'freshness-stale', label };
+  if (monthsAgo <= 6) return { cls: 'freshness-stale', label };
   return { cls: 'freshness-outdated', label: `⚠️ ${label}` };
 }
 
@@ -60,7 +60,13 @@ test.describe('data freshness badge colour', () => {
     expect(result.label).toContain('已核實');
   });
 
-  test('outdated: verified >6 months ago → freshness-outdated', () => {
+  test('stale: exactly 6 calendar months old is still stale, not outdated', () => {
+    // REF = 2026-07-02; verified = 2026-01-02 (exactly 6 calendar months)
+    const result = getFreshnessBadge('2026-01-02', REF);
+    expect(result.cls).toBe('freshness-stale');
+  });
+
+  test('outdated: 7+ calendar months → freshness-outdated', () => {
     // 2026-07-02 minus 7 months = 2025-12-02
     const result = getFreshnessBadge('2025-11-01', REF);
     expect(result.cls).toBe('freshness-outdated');
@@ -92,7 +98,7 @@ test.describe('data freshness badge colour', () => {
     expect(getFreshnessBadge('2026-13-01', REF).cls).toBe('freshness-outdated');
   });
 
-  test('all subsidies.json entries have lastVerifiedDate and source fields', () => {
+  test('all subsidies.json entries have valid lastVerifiedDate and non-empty source', () => {
     const dataPath = resolve(
       dirname(fileURLToPath(import.meta.url)),
       '../src/data/subsidies.json',
@@ -103,14 +109,20 @@ test.describe('data freshness badge colour', () => {
       source?: unknown;
     }>;
 
-    const missing = subsidies.filter(
-      s => typeof s.lastVerifiedDate !== 'string' || typeof s.source !== 'string',
-    );
-    if (missing.length > 0) {
-      throw new Error(
-        `${missing.length} entr(ies) missing lastVerifiedDate or source: ${missing.map(s => s.id).join(', ')}`,
-      );
+    const ISO_DATE_RE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+
+    const errors: string[] = [];
+    for (const s of subsidies) {
+      if (typeof s.lastVerifiedDate !== 'string' || !ISO_DATE_RE.test(s.lastVerifiedDate)) {
+        errors.push(`${s.id}: invalid lastVerifiedDate="${s.lastVerifiedDate}"`);
+      }
+      if (typeof s.source !== 'string' || s.source.trim() === '') {
+        errors.push(`${s.id}: missing or empty source`);
+      }
     }
-    expect(missing.length).toBe(0);
+    if (errors.length > 0) {
+      throw new Error(`Data integrity errors:\n${errors.join('\n')}`);
+    }
+    expect(errors.length).toBe(0);
   });
 });
