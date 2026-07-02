@@ -2256,12 +2256,12 @@ main {
     display: block !important;
     margin-top: 0.4rem;
   }
-  body.print-filtered .card-eligibility > ul {
+  body.print-filtered .card-eligibility ul {
     display: block !important;
     margin: 0.25rem 0 0 1rem;
     padding: 0;
   }
-  body.print-filtered .card-eligibility > ul li {
+  body.print-filtered .card-eligibility li {
     font-size: 0.82rem;
     color: #334155;
     margin-bottom: 0.15rem;
