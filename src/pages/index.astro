@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
 type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student';
-type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[] };
+type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[]; officialUrl?: string };
 const subsidies = subsidiesRaw as Subsidy[];
 
 // ── Related subsidies: build-time pre-computation ─────────────────────────
@@ -622,6 +622,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           <div class="card-tags">
             {s.tags.map(tag => <span class="tag">{tag}</span>)}
           </div>
+          {s.officialUrl && (
+            <a href={s.officialUrl} target="_blank" rel="nofollow noreferrer" class="card-official-link">查看官方說明 →</a>
+          )}
           {s.steps && s.steps.length > 0 && (
             <details class="card-steps">
               <summary>📋 如何申請？（{s.steps.length} 個步驟）</summary>
