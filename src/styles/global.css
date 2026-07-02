@@ -483,6 +483,29 @@ main {
   background: rgba(255, 255, 255, 0.3);
 }
 
+.filter-btn.veteran-filter {
+  border-color: #d97706;
+  color: #92400e;
+  background: #fffbeb;
+  font-weight: 600;
+}
+
+.filter-btn.veteran-filter:hover,
+.filter-btn.veteran-filter.active {
+  background: #d97706;
+  border-color: #d97706;
+  color: white;
+}
+
+.filter-btn.veteran-filter .count-badge {
+  background: rgba(217, 119, 6, 0.2);
+}
+
+.filter-btn.veteran-filter:hover .count-badge,
+.filter-btn.veteran-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .subsidy-card.youth-highlight {
   border-color: #fbbf24;
   background: linear-gradient(to bottom right, #fffbeb, #ffffff);
@@ -2470,7 +2493,8 @@ main {
   .filter-btn.new-immigrant-filter,
   .filter-btn.low-income-filter,
   .filter-btn.single-parent-filter,
-  .filter-btn.young-child-filter {
+  .filter-btn.young-child-filter,
+  .filter-btn.veteran-filter {
     border: 2px solid ButtonText;
     background: ButtonFace;
     color: ButtonText;
