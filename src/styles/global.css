@@ -2273,13 +2273,20 @@ main {
     list-style: none;
   }
 
-  /* Official URL: visible as a block link in filtered print mode */
+  /* Official URL: visible as a block link in filtered print mode.
+     Link text is always '查看官方說明 →' so appending href is safe (no duplication). */
   body.print-filtered .card-official-link {
     display: block !important;
     font-size: 0.78rem;
     color: #1d4ed8 !important;
-    word-break: break-all;
     margin-top: 0.25rem;
+  }
+  body.print-filtered .card-official-link[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.72rem;
+    color: #475569;
+    word-break: break-all;
+    font-weight: normal;
   }
 
   /* Tracker mode: hide non-tracked cards and no-results */
