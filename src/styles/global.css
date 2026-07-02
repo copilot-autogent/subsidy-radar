@@ -2249,7 +2249,9 @@ main {
   .youth-badge,
   .card-badges { display: none !important; }
 
-  /* Filtered print mode: show key eligibility criteria */
+  /* Filtered print mode: show key eligibility criteria.
+     <details> open attribute is set via JS before window.print(); CSS ensures
+     the list renders even if the attribute is missed. */
   body.print-filtered .card-eligibility {
     display: block !important;
     margin-top: 0.4rem;
@@ -2271,17 +2273,13 @@ main {
     list-style: none;
   }
 
-  /* Official URL: show inline after title area in filtered print mode */
+  /* Official URL: visible as a block link in filtered print mode */
   body.print-filtered .card-official-link {
     display: block !important;
     font-size: 0.78rem;
     color: #1d4ed8 !important;
     word-break: break-all;
     margin-top: 0.25rem;
-  }
-  body.print-filtered .card-official-link[href]::after {
-    content: " (" attr(href) ")";
-    font-weight: normal;
   }
 
   /* Tracker mode: hide non-tracked cards and no-results */
