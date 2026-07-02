@@ -77,7 +77,7 @@ test.describe('Official URL link on subsidy cards', () => {
       const tagStart = html.lastIndexOf('<a', m.index);
       const tagEnd = html.indexOf('>', m.index) + 1;
       const tag = html.slice(tagStart, tagEnd);
-      expect(tag).toContain('rel="nofollow noreferrer"');
+      expect(tag).toContain('rel="nofollow noopener noreferrer"');
       expect(tag).toContain('target="_blank"');
       count++;
     }
