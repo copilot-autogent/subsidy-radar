@@ -274,7 +274,10 @@
       "填寫申請表，附上出生證明確認子女數（每胎加碼 100 萬元）",
       "銀行審核通過後，依子女數提高貸款額度並享優惠利率"
     ],
-    "addedDate": "2026-06-20"
+    "addedDate": "2026-06-20",
+    "eligibilityStartEvent": "birth",
+    "applyWithinMonths": null,
+    "timelineNote": "孩子出生後可申請購屋優惠貸款（無嚴格截止）"
   },
   {
     "id": "social-housing",
@@ -442,7 +445,10 @@
       "父母身分證影本",
       "父母健保卡影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "eligibilityStartEvent": "birth",
+    "applyWithinMonths": null,
+    "timelineNote": "幼兒0至未滿5歲期間可持續申請托育補助"
   },
   {
     "id": "youth-startup-fund",
@@ -526,7 +532,10 @@
       "身分證影本",
       "投保單位在職證明",
       "銀行帳戶資料"
-    ]
+    ],
+    "eligibilityStartEvent": "parental-leave",
+    "applyWithinMonths": null,
+    "timelineNote": "育嬰假開始後隨時可申請，子女未滿3歲前均可"
   },
   {
     "id": "birth-subsidy",
@@ -571,7 +580,10 @@
       "父母身分證影本",
       "戶口名簿影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "eligibilityStartEvent": "birth",
+    "applyWithinMonths": 6,
+    "timelineNote": "出生後6個月內申請（部分縣市1年內），勿錯過！"
   },
   {
     "id": "vocational-training-living-allowance",
@@ -896,7 +908,10 @@
     ],
     "addedDate": "2026-06-20",
     "maxAmount": 20000,
-    "deadlineDate": "2026-09-30"
+    "deadlineDate": "2026-09-30",
+    "eligibilityStartEvent": "child-enrollment",
+    "applyWithinMonths": 2,
+    "timelineNote": "每學期開學6週受理，勿錯過申請窗口"
   },
   {
     "id": "indigenous-student-scholarship",
@@ -2222,7 +2237,10 @@
     ],
     "addedDate": "2026-06-30",
     "maxAmount": 48000,
-    "deadlineDate": "2026-08-31"
+    "deadlineDate": "2026-08-31",
+    "eligibilityStartEvent": "child-enrollment",
+    "applyWithinMonths": 2,
+    "timelineNote": "每學期開學後申請課後照顧補助"
   },
   {
     "id": "private-nursery-subsidy",
@@ -2266,7 +2284,10 @@
       "托育機構收費單",
       "父母身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "eligibilityStartEvent": "birth",
+    "applyWithinMonths": null,
+    "timelineNote": "嬰幼兒0至未滿2歲，送托後立即可申請"
   },
   {
     "id": "preschool-county-subsidy",
@@ -2303,7 +2324,10 @@
       "審核通過後補助款折抵學費或匯入帳戶"
     ],
     "addedDate": "2026-06-30",
-    "maxAmount": 36000
+    "maxAmount": 36000,
+    "eligibilityStartEvent": "child-enrollment",
+    "applyWithinMonths": 2,
+    "timelineNote": "入園後每學期申請，通常於2月及8月受理"
   },
   {
     "id": "moe-disadvantaged-scholarship",

@@ -83,6 +83,22 @@ a:hover {
   text-decoration: none;
   color: white;
 }
+.nav-timeline-link {
+  color: rgba(255,255,255,0.9);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: rgba(255,255,255,0.15);
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.nav-timeline-link:hover {
+  background: rgba(255,255,255,0.25);
+  text-decoration: none;
+  color: white;
+}
 
 .site-footer {
   background: var(--color-text);
@@ -1932,6 +1948,26 @@ main {
 }
 .calendar-view-link:hover {
   background: #0369a1;
+  color: #fff;
+  text-decoration: none;
+}
+.timeline-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border: 1.5px solid #15803d;
+  border-radius: 9999px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.timeline-hero-link:hover {
+  background: #15803d;
   color: #fff;
   text-decoration: none;
 }

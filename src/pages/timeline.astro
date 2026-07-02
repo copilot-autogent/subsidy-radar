@@ -1,0 +1,715 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import subsidiesRaw from '../data/subsidies.json';
+
+type EligibilityEvent = 'birth' | 'parental-leave' | 'child-enrollment';
+
+interface TimelineSubsidy {
+  id: string;
+  title: string;
+  category: string;
+  summary: string;
+  applicationUrl?: string;
+  officialUrl?: string;
+  situations?: string[];
+  eligibilityStartEvent?: EligibilityEvent;
+  applyWithinMonths?: number | null;
+  timelineNote?: string;
+  deadlineStatus?: string;
+  difficulty?: string;
+}
+
+const subsidies = subsidiesRaw as TimelineSubsidy[];
+
+// Only include subsidies that have timeline metadata OR are parent/young-child relevant
+const timelineSubsidies = subsidies.filter(
+  s =>
+    s.eligibilityStartEvent != null ||
+    s.situations?.includes('parent') ||
+    s.situations?.includes('young-child'),
+);
+
+// Group by eligibilityStartEvent
+const byEvent: Record<string, TimelineSubsidy[]> = {};
+for (const s of timelineSubsidies) {
+  const key = s.eligibilityStartEvent ?? 'ongoing';
+  if (!byEvent[key]) byEvent[key] = [];
+  byEvent[key].push(s);
+}
+
+const eventLabels: Record<string, { icon: string; label: string; desc: string }> = {
+  birth:            { icon: '👶', label: '孩子出生後',   desc: '出生後需盡快申請，部分有截止期限' },
+  'parental-leave': { icon: '🏠', label: '育嬰假開始後', desc: '申請育嬰留職停薪前後辦理' },
+  'child-enrollment': { icon: '🎒', label: '孩子入學後',  desc: '每學期開學後申請，勿錯過窗口' },
+  ongoing:          { icon: '📋', label: '隨時可申請',   desc: '符合資格即可申請，無嚴格觸發事件' },
+};
+
+const eventOrder: EligibilityEvent[] = ['birth', 'parental-leave', 'child-enrollment'];
+
+const difficultyLabel: Record<string, { text: string; cls: string }> = {
+  easy:   { text: '🟢 簡單', cls: 'diff-easy' },
+  medium: { text: '🟡 中等', cls: 'diff-medium' },
+  hard:   { text: '🔴 複雜', cls: 'diff-hard' },
+};
+
+function safeUrl(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  const trimmed = url.trimStart();
+  const lower = trimmed.toLowerCase();
+  return lower.startsWith('https://') || lower.startsWith('http://') ? trimmed : undefined;
+}
+---
+
+<BaseLayout
+  title="申請時程表 — 補助雷達"
+  description="依據您的生活事件（孩子出生、育嬰假、入學），顯示需在何時申請的補助清單，幫助您不錯過重要申請期限。"
+>
+  <section class="timeline-hero">
+    <h1>📅 申請時程表</h1>
+    <p class="timeline-subtitle">根據您的生活事件，提醒您在正確時機申請各項補助。輸入預計日期，即可看到個人化時程表。</p>
+
+    <div class="date-form" id="dateForm">
+      <div class="date-row">
+        <label class="date-label" for="birthDateInput">
+          <span class="date-icon">👶</span>
+          孩子預計出生日期（選填）
+        </label>
+        <input
+          type="month"
+          id="birthDateInput"
+          class="date-input"
+          placeholder="YYYY-MM"
+          aria-label="孩子預計出生年月"
+        />
+      </div>
+      <div class="date-row">
+        <label class="date-label" for="leaveStartInput">
+          <span class="date-icon">🏠</span>
+          育嬰假預計開始年月（選填）
+        </label>
+        <input
+          type="month"
+          id="leaveStartInput"
+          class="date-input"
+          placeholder="YYYY-MM"
+          aria-label="育嬰假預計開始年月"
+        />
+      </div>
+      <div class="date-row">
+        <label class="date-label" for="enrollmentInput">
+          <span class="date-icon">🎒</span>
+          孩子入學年月（選填）
+        </label>
+        <input
+          type="month"
+          id="enrollmentInput"
+          class="date-input"
+          placeholder="YYYY-MM"
+          aria-label="孩子入學年月"
+        />
+      </div>
+    </div>
+
+    <div id="personalizedTimeline" class="personalized-timeline" style="display:none">
+      <h2 class="personalized-title">🗓️ 您的個人化申請時程</h2>
+      <div id="timelineItems" class="timeline-items"></div>
+    </div>
+  </section>
+
+  <section class="timeline-by-event">
+    <h2 class="section-title">補助依申請時機分類</h2>
+    <p class="section-note">未填入日期時，依事件類型顯示所有相關補助。填入日期後可見個人化時程表。</p>
+
+    {eventOrder.map(eventKey => {
+      const group = byEvent[eventKey] ?? [];
+      if (group.length === 0) return null;
+      const meta = eventLabels[eventKey]!;
+      return (
+        <div class="event-group" data-event={eventKey}>
+          <div class="event-header">
+            <span class="event-icon">{meta.icon}</span>
+            <div>
+              <h3 class="event-title">{meta.label}</h3>
+              <p class="event-desc">{meta.desc}</p>
+            </div>
+          </div>
+          <div class="subsidy-list">
+            {group.map(s => {
+              const appUrl = safeUrl(s.applicationUrl);
+              const offUrl = safeUrl(s.officialUrl);
+              const diff = difficultyLabel[s.difficulty ?? 'medium'] ?? difficultyLabel.medium;
+              return (
+                <div class="timeline-card" data-id={s.id} data-event={s.eligibilityStartEvent ?? 'ongoing'} data-apply-months={s.applyWithinMonths ?? ''}>
+                  <div class="card-header">
+                    <span class="card-title">{s.title}</span>
+                    {s.applyWithinMonths && (
+                      <span class="deadline-badge">⏰ {s.eligibilityStartEvent === 'birth' ? '出生後' : s.eligibilityStartEvent === 'parental-leave' ? '育嬰假後' : '入學後'}{s.applyWithinMonths}個月內申請</span>
+                    )}
+                  </div>
+                  <p class="card-note">{s.timelineNote ?? s.summary}</p>
+                  <div class="card-meta">
+                    <span class={`diff-badge ${diff.cls}`}>{diff.text}</span>
+                    <span class="card-category">{s.category}</span>
+                  </div>
+                  <div class="card-actions">
+                    {appUrl && (
+                      <a href={appUrl} class="apply-link" target="_blank" rel="noopener noreferrer">申請連結 →</a>
+                    )}
+                    {offUrl && offUrl !== appUrl && (
+                      <a href={offUrl} class="official-link" target="_blank" rel="noopener noreferrer">官方資訊</a>
+                    )}
+                    <a href={(import.meta.env.BASE_URL || '/').replace(/\/?$/, '/') + '#' + s.id} class="detail-link">查看詳情</a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    })}
+
+    {(byEvent['ongoing'] ?? []).length > 0 && (
+      <div class="event-group" data-event="ongoing">
+        <div class="event-header">
+          <span class="event-icon">{eventLabels.ongoing.icon}</span>
+          <div>
+            <h3 class="event-title">{eventLabels.ongoing.label}</h3>
+            <p class="event-desc">{eventLabels.ongoing.desc}</p>
+          </div>
+        </div>
+        <div class="subsidy-list">
+          {(byEvent['ongoing'] ?? []).map(s => {
+            const appUrl = safeUrl(s.applicationUrl);
+            const offUrl = safeUrl(s.officialUrl);
+            const diff = difficultyLabel[s.difficulty ?? 'medium'] ?? difficultyLabel.medium;
+            return (
+              <div class="timeline-card" data-id={s.id} data-event="ongoing">
+                <div class="card-header">
+                  <span class="card-title">{s.title}</span>
+                </div>
+                <p class="card-note">{s.timelineNote ?? s.summary}</p>
+                <div class="card-meta">
+                  <span class={`diff-badge ${diff.cls}`}>{diff.text}</span>
+                  <span class="card-category">{s.category}</span>
+                </div>
+                <div class="card-actions">
+                  {appUrl && (
+                    <a href={appUrl} class="apply-link" target="_blank" rel="noopener noreferrer">申請連結 →</a>
+                  )}
+                  {offUrl && offUrl !== appUrl && (
+                    <a href={offUrl} class="official-link" target="_blank" rel="noopener noreferrer">官方資訊</a>
+                  )}
+                  <a href={(import.meta.env.BASE_URL || '/').replace(/\/?$/, '/') + '#' + s.id} class="detail-link">查看詳情</a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    )}
+  </section>
+
+  <div class="back-link-row">
+    <a href={(import.meta.env.BASE_URL || '/').replace(/\/?$/, '/')} class="back-link">← 回補助列表</a>
+  </div>
+</BaseLayout>
+
+<script>
+  // Personalized timeline: read dates from inputs, compute month-by-month deadlines
+  interface SubsidyData {
+    id: string;
+    title: string;
+    eligibilityStartEvent?: string;
+    applyWithinMonths?: number;
+    timelineNote?: string;
+  }
+
+  function parseYearMonth(val: string): Date | null {
+    if (!val) return null;
+    const [y, m] = val.split('-').map(Number);
+    if (!y || !m || m < 1 || m > 12) return null;
+    return new Date(y, m - 1, 1);
+  }
+
+  function addMonths(date: Date, months: number): Date {
+    const d = new Date(date);
+    d.setMonth(d.getMonth() + months);
+    return d;
+  }
+
+  function formatYM(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    return `${y}年${m}月`;
+  }
+
+  interface TimelineEntry {
+    deadline: Date | null;
+    deadlineLabel: string;
+    urgency: 'urgent' | 'soon' | 'later' | 'ongoing';
+    subsidy: SubsidyData;
+  }
+
+  function buildTimeline(
+    birthDate: Date | null,
+    leaveDate: Date | null,
+    enrollmentDate: Date | null,
+    cards: NodeListOf<Element>,
+  ): TimelineEntry[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const entries: TimelineEntry[] = [];
+
+    for (const card of cards) {
+      const event = card.getAttribute('data-event');
+      const applyMonthsStr = card.getAttribute('data-apply-months');
+      const id = card.getAttribute('data-id') ?? '';
+      const title = card.querySelector('.card-title')?.textContent ?? id;
+      const note = card.querySelector('.card-note')?.textContent ?? '';
+      const subsidy: SubsidyData = { id, title, eligibilityStartEvent: event ?? undefined, timelineNote: note };
+
+      let referenceDate: Date | null = null;
+      if (event === 'birth') referenceDate = birthDate;
+      else if (event === 'parental-leave') referenceDate = leaveDate;
+      else if (event === 'child-enrollment') referenceDate = enrollmentDate;
+
+      if (!referenceDate) continue;
+
+      const applyMonths = applyMonthsStr ? parseInt(applyMonthsStr, 10) : null;
+      let deadline: Date | null = null;
+      let deadlineLabel = '';
+      let urgency: TimelineEntry['urgency'] = 'ongoing';
+
+      if (applyMonths) {
+        deadline = addMonths(referenceDate, applyMonths);
+        deadlineLabel = `${formatYM(referenceDate)} 起 ${applyMonths} 個月內（截止 ${formatYM(deadline)}）`;
+        const diffMs = deadline.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffMs / 86400000);
+        urgency = diffDays <= 30 ? 'urgent' : diffDays <= 90 ? 'soon' : 'later';
+      } else {
+        deadlineLabel = `${formatYM(referenceDate)} 起可申請（隨時）`;
+        urgency = referenceDate <= today ? 'soon' : 'later';
+      }
+
+      entries.push({ deadline, deadlineLabel, urgency, subsidy });
+    }
+
+    entries.sort((a, b) => {
+      if (!a.deadline && !b.deadline) return 0;
+      if (!a.deadline) return 1;
+      if (!b.deadline) return -1;
+      return a.deadline.getTime() - b.deadline.getTime();
+    });
+
+    return entries;
+  }
+
+  function renderPersonalizedTimeline(entries: TimelineEntry[]): void {
+    const container = document.getElementById('timelineItems');
+    const section = document.getElementById('personalizedTimeline');
+    if (!container || !section) return;
+
+    if (entries.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = 'block';
+    container.innerHTML = '';
+
+    for (const entry of entries) {
+      const urgencyClass = `urgency-${entry.urgency}`;
+      const div = document.createElement('div');
+      div.className = `personalized-item ${urgencyClass}`;
+      div.innerHTML = `
+        <div class="pi-deadline">${entry.deadlineLabel}</div>
+        <div class="pi-title">${entry.subsidy.title}</div>
+        ${entry.subsidy.timelineNote ? `<div class="pi-note">${entry.subsidy.timelineNote}</div>` : ''}
+      `;
+      container.appendChild(div);
+    }
+  }
+
+  function updateTimeline(): void {
+    const birthInput = document.getElementById('birthDateInput') as HTMLInputElement | null;
+    const leaveInput = document.getElementById('leaveStartInput') as HTMLInputElement | null;
+    const enrollInput = document.getElementById('enrollmentInput') as HTMLInputElement | null;
+
+    const birthDate = parseYearMonth(birthInput?.value ?? '');
+    const leaveDate = parseYearMonth(leaveInput?.value ?? '');
+    const enrollDate = parseYearMonth(enrollInput?.value ?? '');
+
+    const cards = document.querySelectorAll('.timeline-card[data-event]');
+    const entries = buildTimeline(birthDate, leaveDate, enrollDate, cards);
+    renderPersonalizedTimeline(entries);
+
+    // Sync URL params for shareability
+    const params = new URLSearchParams();
+    if (birthInput?.value) params.set('birth', birthInput.value);
+    if (leaveInput?.value) params.set('leave', leaveInput.value);
+    if (enrollInput?.value) params.set('enroll', enrollInput.value);
+    const newUrl = params.toString()
+      ? `${window.location.pathname}?${params.toString()}`
+      : window.location.pathname;
+    window.history.replaceState(null, '', newUrl);
+  }
+
+  // Pre-fill from URL params
+  function initFromUrl(): void {
+    const params = new URLSearchParams(window.location.search);
+    const birthInput = document.getElementById('birthDateInput') as HTMLInputElement | null;
+    const leaveInput = document.getElementById('leaveStartInput') as HTMLInputElement | null;
+    const enrollInput = document.getElementById('enrollmentInput') as HTMLInputElement | null;
+    if (birthInput && params.get('birth')) birthInput.value = params.get('birth')!;
+    if (leaveInput && params.get('leave')) leaveInput.value = params.get('leave')!;
+    if (enrollInput && params.get('enroll')) enrollInput.value = params.get('enroll')!;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initFromUrl();
+    updateTimeline();
+
+    const inputs = document.querySelectorAll('.date-input');
+    inputs.forEach(input => {
+      input.addEventListener('change', updateTimeline);
+      input.addEventListener('input', updateTimeline);
+    });
+  });
+</script>
+
+<style>
+  .timeline-hero {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    padding: 1.5rem 1rem 0;
+  }
+
+  .timeline-hero h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1e40af;
+  }
+
+  .timeline-subtitle {
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .date-form {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .date-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .date-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1e40af;
+    min-width: 220px;
+  }
+
+  .date-icon {
+    font-size: 1.1rem;
+  }
+
+  .date-input {
+    border: 1px solid #93c5fd;
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.95rem;
+    background: white;
+    color: #1f2937;
+    outline: none;
+  }
+
+  .date-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+
+  .personalized-timeline {
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .personalized-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #15803d;
+    margin-bottom: 1rem;
+  }
+
+  .timeline-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .personalized-item {
+    border-radius: 8px;
+    padding: 0.875rem 1rem;
+    border-left: 4px solid #d1fae5;
+    background: white;
+  }
+
+  .personalized-item.urgency-urgent {
+    border-left-color: #ef4444;
+    background: #fff5f5;
+  }
+
+  .personalized-item.urgency-soon {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+  }
+
+  .personalized-item.urgency-later {
+    border-left-color: #3b82f6;
+    background: #eff6ff;
+  }
+
+  .personalized-item.urgency-ongoing {
+    border-left-color: #6b7280;
+  }
+
+  .pi-deadline {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+  }
+
+  .urgency-urgent .pi-deadline {
+    color: #b91c1c;
+    font-weight: 600;
+  }
+
+  .urgency-soon .pi-deadline {
+    color: #b45309;
+    font-weight: 500;
+  }
+
+  .pi-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 0.95rem;
+  }
+
+  .pi-note {
+    font-size: 0.82rem;
+    color: #4b5563;
+    margin-top: 0.2rem;
+  }
+
+  .timeline-by-event {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-note {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .event-group {
+    margin-bottom: 2rem;
+  }
+
+  .event-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .event-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+
+  .event-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e40af;
+    margin: 0 0 0.2rem;
+  }
+
+  .event-desc {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  .subsidy-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .timeline-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    transition: box-shadow 0.15s;
+  }
+
+  .timeline-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #111827;
+  }
+
+  .deadline-badge {
+    background: #fef3c7;
+    color: #b45309;
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .card-note {
+    font-size: 0.85rem;
+    color: #4b5563;
+    margin: 0 0 0.6rem;
+    line-height: 1.5;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .diff-badge {
+    font-size: 0.76rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .diff-easy   { background: #d1fae5; color: #065f46; }
+  .diff-medium { background: #fef9c3; color: #713f12; }
+  .diff-hard   { background: #fee2e2; color: #7f1d1d; }
+
+  .card-category {
+    font-size: 0.76rem;
+    background: #f3f4f6;
+    color: #374151;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .apply-link, .official-link, .detail-link {
+    font-size: 0.82rem;
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border-radius: 5px;
+    font-weight: 500;
+  }
+
+  .apply-link {
+    background: #2563eb;
+    color: white;
+  }
+
+  .apply-link:hover {
+    background: #1d4ed8;
+  }
+
+  .official-link {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .official-link:hover {
+    background: #e5e7eb;
+  }
+
+  .detail-link {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+
+  .back-link-row {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+  }
+
+  .back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .date-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+    .date-label {
+      min-width: unset;
+    }
+  }
+</style>
