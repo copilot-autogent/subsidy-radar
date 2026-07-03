@@ -49,6 +49,23 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
     <meta name="theme-color" content="#2563eb" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>{title}</title>
+    <!-- FAWT prevention: apply saved theme before CSS renders -->
+    <script is:inline>
+      (function() {
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else if (saved === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+          } else if (!saved || saved === 'system') {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              document.documentElement.setAttribute('data-theme', 'dark');
+            }
+          }
+        } catch(e) {}
+      })();
+    </script>
     <slot name="head" />
   </head>
   <body>
@@ -58,6 +75,13 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
         <span class="tagline">台灣政府補助一站查詢</span>
         <a href={`${base}calendar`} class="nav-calendar-link">📅 截止日曆</a>
         <a href={`${base}timeline`} class="nav-timeline-link">🗓️ 申請時程表</a>
+        <button
+          class="theme-toggle"
+          id="theme-toggle"
+          aria-label="切換深色模式"
+          title="切換深色模式"
+          type="button"
+        >🌙</button>
       </nav>
     </header>
     <main>
@@ -77,6 +101,45 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
             .catch(err => console.warn('[subsidy-radar] SW registration failed:', err));
         });
       }
+    </script>
+    <script>
+      // Theme toggle logic
+      (function() {
+        var btn = document.getElementById('theme-toggle');
+        if (!btn) return;
+
+        function getEffectiveTheme() {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'dark') return 'dark';
+          if (saved === 'light') return 'light';
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        function applyTheme(theme) {
+          document.documentElement.setAttribute('data-theme', theme);
+          btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+          btn.setAttribute('aria-label', theme === 'dark' ? '切換至淺色模式' : '切換至深色模式');
+          btn.setAttribute('title', theme === 'dark' ? '切換至淺色模式' : '切換至深色模式');
+        }
+
+        // Set initial icon based on current effective theme
+        applyTheme(getEffectiveTheme());
+
+        btn.addEventListener('click', function() {
+          var current = document.documentElement.getAttribute('data-theme');
+          var next = current === 'dark' ? 'light' : 'dark';
+          try { localStorage.setItem('theme', next); } catch(e) {}
+          applyTheme(next);
+        });
+
+        // Sync with system preference changes (when saved = 'system' or unset)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+          var saved = localStorage.getItem('theme');
+          if (!saved || saved === 'system') {
+            applyTheme(e.matches ? 'dark' : 'light');
+          }
+        });
+      })();
     </script>
   </body>
 </html>
