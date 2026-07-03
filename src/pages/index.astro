@@ -1327,6 +1327,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
       isQuizActive = false;
+      updateFilterUrl();
       updateEligibleTotalBanner();
     });
 

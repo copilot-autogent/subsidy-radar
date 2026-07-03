@@ -9,8 +9,9 @@ interface SubsidyEntry {
   agency?: string;
 }
 
-/** Mirror of the build-time normalizeAgency function. */
+/** Mirror of the build-time normalizeAgency function — must stay in sync. */
 function normalizeAgency(agency: string): string {
+  if (!agency) return '其他';
   if (agency.startsWith('衛生福利部')) return '衛福部';
   if (agency.startsWith('勞動部')) return '勞動部';
   if (agency.startsWith('教育部')) return '教育部';
@@ -19,7 +20,8 @@ function normalizeAgency(agency: string): string {
   if (agency.startsWith('國家科學及技術委員會')) return '國科會';
   if (agency.startsWith('經濟部')) return '經濟部';
   if (agency.startsWith('財政部')) return '財政部';
-  return '各縣市';
+  if (agency.startsWith('各縣市')) return '各縣市';
+  return '其他';
 }
 
 test.describe('agency filter — data integrity', () => {
@@ -39,9 +41,9 @@ test.describe('agency filter — data integrity', () => {
   });
 
   test('normalizeAgency maps every entry to a known group', () => {
-    const VALID_GROUPS = new Set(['勞動部', '衛福部', '內政部', '教育部', '原民會', '國科會', '經濟部', '財政部', '各縣市']);
+    const VALID_GROUPS = new Set(['勞動部', '衛福部', '內政部', '教育部', '原民會', '國科會', '經濟部', '財政部', '各縣市', '其他']);
     for (const s of subsidies) {
-      const group = normalizeAgency(s.agency!);
+      const group = normalizeAgency(s.agency ?? '');
       expect(VALID_GROUPS.has(group), `Unknown group "${group}" for agency "${s.agency}" (id: ${s.id})`).toBe(true);
     }
   });
