@@ -3469,8 +3469,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     })();
     // ─────────────────────────────────────────────────────────────────────────
 
-    // Expose scoring utilities for E2E tests (dev/preview builds only)
-    if (import.meta.env.DEV || import.meta.env.MODE === 'test') {
+    // Expose scoring utilities for browser-level E2E tests (dev builds only)
+    if (import.meta.env.DEV) {
       (window as unknown as Record<string, unknown>).__subsidyRadar = { computeMatchScore, getScoreTier };
     }
   </script>

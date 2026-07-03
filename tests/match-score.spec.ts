@@ -160,6 +160,8 @@ test.describe('match score sort behavior — data-driven', () => {
     const disabledOnly = subsidies.filter(
       s => s.situations?.length === 1 && s.situations[0] === 'disabled',
     );
+    // Guard: skip (not fail) if no such entries exist — the algorithm is still correct
+    if (disabledOnly.length === 0) return;
     for (const s of disabledOnly) {
       const score = computeMatchScore(['renter'], s.situations ?? []);
       expect(score).toBe(0);
