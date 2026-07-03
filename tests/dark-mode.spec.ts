@@ -71,32 +71,29 @@ test.describe('dark mode', () => {
   });
 
   test('FAWT: data-theme set before body renders (inline script in head)', async ({ page }) => {
-    // Emulate dark preference, no saved theme
-    await page.emulateMedia({ colorScheme: 'dark' });
+    // Seed localStorage BEFORE navigation so the FAWT head-script reads it on cold load
+    await page.addInitScript(() => { localStorage.setItem('theme', 'dark'); });
+    await page.emulateMedia({ colorScheme: 'light' }); // system = light, but saved = dark
     await page.goto('/');
-    await page.evaluate(() => localStorage.removeItem('theme'));
-    await page.reload();
 
     const theme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
     expect(theme).toBe('dark');
   });
 
   test('system default: light preference uses light theme', async ({ page }) => {
+    await page.addInitScript(() => { localStorage.removeItem('theme'); });
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto('/');
-    await page.evaluate(() => localStorage.removeItem('theme'));
-    await page.reload();
 
     const theme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
     expect(theme).not.toBe('dark');
   });
 
   test('saved "light" overrides dark system preference', async ({ page }) => {
+    // Seed localStorage BEFORE navigation so FAWT head-script picks it up
+    await page.addInitScript(() => { localStorage.setItem('theme', 'light'); });
     await page.emulateMedia({ colorScheme: 'dark' });
-    // Pre-set localStorage before navigation to simulate persistence
     await page.goto('/');
-    await page.evaluate(() => localStorage.setItem('theme', 'light'));
-    await page.reload();
 
     const theme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
     expect(theme).toBe('light');
