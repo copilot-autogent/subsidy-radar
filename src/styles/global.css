@@ -60,7 +60,9 @@
 }
 
 /* Transitions are enabled only after first paint (class added by JS).
-   This prevents a flash-of-transition on initial theme application. */
+   This prevents a flash-of-transition on initial theme application.
+   Only animate colour-related properties to avoid overriding card
+   transform/box-shadow transitions defined elsewhere. */
 html.theme-ready,
 html.theme-ready body,
 html.theme-ready .site-header,
@@ -68,7 +70,9 @@ html.theme-ready .site-footer,
 html.theme-ready .subsidy-card,
 html.theme-ready .filter-bar,
 html.theme-ready .controls {
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition-property: background-color, color, border-color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
 }
 
 html {

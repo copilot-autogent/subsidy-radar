@@ -86,7 +86,7 @@ test.describe('dark mode', () => {
     await page.goto('/');
 
     const theme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
-    expect(theme).not.toBe('dark');
+    expect(theme).toBe('light');
   });
 
   test('saved "light" overrides dark system preference', async ({ page }) => {
