@@ -627,6 +627,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     <span class="tracker-summary-text">📌 已追蹤 <strong><span id="trackerSummaryCount">0</span></strong> 項補助<span id="trackerStatusBreakdown" class="tracker-status-breakdown"></span></span>
     <div class="tracker-summary-actions">
       <button class="ical-export-btn" id="icalExportBtn" type="button" style="display:none" aria-label="匯出追蹤補助截止日期至行事曆">📅 匯出行事曆</button>
+      <button class="csv-export-btn" id="csvExportBtn" type="button" style="display:none" aria-label="匯出追蹤補助清單為 CSV">📥 匯出 CSV</button>
       <button class="print-tracker-btn" id="printTrackerBtn" type="button">🖨️ 列印追蹤清單</button>
     </div>
   </div>
@@ -1504,6 +1505,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         card.classList.toggle('tracker-state-tracked', isTracked);
       });
       updateIcalExportBtn();
+      updateCsvExportBtn();
     }
 
     function updateTrackerFilterLabel() {
@@ -2001,6 +2003,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         eligibilityBanner.style.display = 'none';
       }
       updateEligibleTotalBanner();
+      updateCsvExportBtn();
     }
 
     // ── Event listeners ──────────────────────────────────────────────────────
@@ -2419,6 +2422,71 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         a.click();
         document.body.removeChild(a);
         // Delay revoke so the browser has time to initiate the download
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    }
+
+    // ── CSV Export ────────────────────────────────────────────────────────────
+    const csvExportBtn = document.getElementById('csvExportBtn') as HTMLButtonElement | null;
+
+    function escapeCsvField(value: string): string {
+      const s = String(value ?? '');
+      // Wrap in quotes if the field contains comma, newline, or double-quote
+      if (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    }
+
+    function generateTrackedCsv(): string {
+      const tracker = loadTracker();
+      const headers = ['補助名稱', '類別', '申請狀態', '截止日期', '官方說明連結'];
+      const rows: string[][] = [];
+
+      cards.forEach(card => {
+        // Only include visible tracked cards (respects active filters)
+        if (card.style.display === 'none') return;
+        const id = card.dataset.id ?? '';
+        if (!id || !tracker[id] || tracker[id] === '未申請') return;
+
+        const title = card.querySelector<HTMLElement>('.card-title')?.textContent?.trim() ?? id;
+        const category = card.dataset.category ?? '';
+        const status = tracker[id];
+        const deadline = card.dataset.deadline ?? '';
+        const url = card.dataset.url ?? '';
+        rows.push([title, category, status, deadline, url]);
+      });
+
+      const csvLines = [
+        headers.map(escapeCsvField).join(','),
+        ...rows.map(row => row.map(escapeCsvField).join(',')),
+      ];
+      // BOM prefix for correct zh-TW display in Excel / Numbers
+      return '\uFEFF' + csvLines.join('\r\n');
+    }
+
+    function updateCsvExportBtn() {
+      if (!csvExportBtn) return;
+      const tracker = loadTracker();
+      const hasVisibleTracked = Array.from(cards).some(card => {
+        if (card.style.display === 'none') return false;
+        const id = card.dataset.id ?? '';
+        return id !== '' && tracker[id] && tracker[id] !== '未申請';
+      });
+      csvExportBtn.style.display = hasVisibleTracked ? '' : 'none';
+    }
+
+    if (csvExportBtn) {
+      csvExportBtn.addEventListener('click', () => {
+        const csv = generateTrackedCsv();
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'subsidy-tracker.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       });
     }
