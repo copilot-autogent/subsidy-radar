@@ -2448,6 +2448,7 @@ main {
   /* Hide UI chrome */
   .site-header,
   .site-footer,
+  .theme-toggle,
   .hero,
   .quiz-section,
   .controls,
