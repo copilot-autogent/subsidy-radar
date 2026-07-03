@@ -7,16 +7,72 @@
   --color-text-muted: #64748b;
   --color-border: #e2e8f0;
   --color-tag: #f1f5f9;
+  --color-footer-bg: #1e293b;
+  --color-footer-text: #94a3b8;
+  --color-footer-notice: #cbd5e1;
   --radius: 12px;
   --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
   --header-height: 4rem;
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-primary: #3b82f6;
+  --color-primary-light: #1e3a5f;
+  --color-text: #e6edf3;
+  --color-text-muted: #7d8590;
+  --color-border: #30363d;
+  --color-tag: #21262d;
+  --color-footer-bg: #010409;
+  --color-footer-text: #7d8590;
+  --color-footer-notice: #8d96a0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,0.5);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0d1117;
+    --color-surface: #161b22;
+    --color-primary: #3b82f6;
+    --color-primary-light: #1e3a5f;
+    --color-text: #e6edf3;
+    --color-text-muted: #7d8590;
+    --color-border: #30363d;
+    --color-tag: #21262d;
+    --color-footer-bg: #010409;
+    --color-footer-text: #7d8590;
+    --color-footer-notice: #8d96a0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.5);
+    color-scheme: dark;
+  }
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Transitions are enabled only after first paint (class added by JS).
+   This prevents a flash-of-transition on initial theme application.
+   Only animate colour-related properties to avoid overriding card
+   transform/box-shadow transitions defined elsewhere. */
+html.theme-ready,
+html.theme-ready body,
+html.theme-ready .site-header,
+html.theme-ready .site-footer,
+html.theme-ready .subsidy-card,
+html.theme-ready .filter-bar,
+html.theme-ready .controls {
+  transition-property: background-color, color, border-color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
 }
 
 html {
@@ -100,9 +156,36 @@ a:hover {
   color: white;
 }
 
+/* ── Dark-mode toggle ──────────────────────────────────────────────────── */
+.theme-toggle {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.6rem;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  background: rgba(255,255,255,0.28);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+/* ───────────────────────────────────────────────────────────────────────── */
+
 .site-footer {
-  background: var(--color-text);
-  color: #94a3b8;
+  background: var(--color-footer-bg);
+  color: var(--color-footer-text);
   padding: 2rem 0;
   margin-top: 4rem;
   font-size: 0.85rem;
@@ -110,7 +193,7 @@ a:hover {
 }
 
 .site-footer a {
-  color: #94a3b8;
+  color: var(--color-footer-text);
 }
 
 .footer-inner {
@@ -123,7 +206,7 @@ a:hover {
 }
 
 .footer-freshness-notice {
-  color: #cbd5e1;
+  color: var(--color-footer-notice);
   font-size: 0.8rem;
   opacity: 0.85;
 }
@@ -2374,6 +2457,7 @@ main {
   /* Hide UI chrome */
   .site-header,
   .site-footer,
+  .theme-toggle,
   .hero,
   .quiz-section,
   .controls,
