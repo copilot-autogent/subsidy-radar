@@ -1038,6 +1038,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       debouncedSearch.cancel();
       searchInput.value = title;
       searchQuery = title.toLowerCase();
+      // Reset category filter so the selected card is always visible
+      if (activeCategory !== '全部') {
+        activeCategory = '全部';
+        filterBtns.forEach(b => {
+          const isAll = b.dataset.category === '全部';
+          b.classList.toggle('active', isAll);
+          b.setAttribute('aria-pressed', isAll ? 'true' : 'false');
+          b.setAttribute('tabindex', isAll ? '0' : '-1');
+        });
+      }
       hideSuggestionList();
       updateDisplay();
       applySort();
@@ -1053,6 +1063,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const suggestions = getSuggestions(query);
       suggestionList.innerHTML = '';
       acActiveIdx = -1;
+      searchInput.removeAttribute('aria-activedescendant'); // clear stale reference
       if (suggestions.length === 0) {
         hideSuggestionList();
         return;
