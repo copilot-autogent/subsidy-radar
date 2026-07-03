@@ -2427,8 +2427,6 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     }
 
     // ── CSV Export ────────────────────────────────────────────────────────────
-    const csvExportBtn = document.getElementById('csvExportBtn') as HTMLButtonElement | null;
-
     function escapeCsvField(value: string): string {
       const s = String(value ?? '');
       // Force quoting for fields that start with formula-trigger chars (=, +, @, tab).
@@ -2470,16 +2468,20 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     }
 
     function updateCsvExportBtn() {
-      if (!csvExportBtn) return;
+      // Resolve lazily to avoid temporal dead zone — this function may be invoked
+      // from updateTrackerSummaryBanner() before the script reaches the const binding.
+      const btn = document.getElementById('csvExportBtn') as HTMLButtonElement | null;
+      if (!btn) return;
       const tracker = loadTracker();
       const hasVisibleTracked = Array.from(cards).some(card => {
         if (getComputedStyle(card).display === 'none') return false;
         const id = card.dataset.id ?? '';
         return id !== '' && tracker[id] && tracker[id] !== '未申請';
       });
-      csvExportBtn.style.display = hasVisibleTracked ? '' : 'none';
+      btn.style.display = hasVisibleTracked ? '' : 'none';
     }
 
+    const csvExportBtn = document.getElementById('csvExportBtn') as HTMLButtonElement | null;
     if (csvExportBtn) {
       csvExportBtn.addEventListener('click', () => {
         const csv = generateTrackedCsv();
