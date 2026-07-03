@@ -901,6 +901,35 @@ main {
   flex-shrink: 0;
 }
 
+/* ── Match score pills (quiz mode only) ── */
+.match-score-pill {
+  display: none; /* hidden until quiz assigns a tier; JS overrides to '' when shown */
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.match-score-pill.score-high {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
+}
+
+.match-score-pill.score-medium {
+  background: #fef9c3;
+  color: #a16207;
+  border-color: #fde047;
+}
+
+.match-score-pill.score-low {
+  background: var(--color-tag);
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+}
+
 .card-agency {
   font-size: 0.82rem;
   color: var(--color-text-muted);
