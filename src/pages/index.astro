@@ -2431,11 +2431,14 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     function escapeCsvField(value: string): string {
       const s = String(value ?? '');
-      // Wrap in quotes if the field contains comma, newline, or double-quote
-      if (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) {
-        return '"' + s.replace(/"/g, '""') + '"';
+      // Guard against CSV formula injection (=, +, -, @, tab at field start)
+      const needsInjectionGuard = /^[=+\-@\t]/.test(s);
+      const needsQuoting = needsInjectionGuard || s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r');
+      const escaped = needsInjectionGuard ? '\'' + s : s;
+      if (needsQuoting) {
+        return '"' + escaped.replace(/"/g, '""') + '"';
       }
-      return s;
+      return escaped;
     }
 
     function generateTrackedCsv(): string {
@@ -2445,7 +2448,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
       cards.forEach(card => {
         // Only include visible tracked cards (respects active filters)
-        if (card.style.display === 'none') return;
+        // Use getComputedStyle to catch both inline-style and class-based hiding
+        if (getComputedStyle(card).display === 'none') return;
         const id = card.dataset.id ?? '';
         if (!id || !tracker[id] || tracker[id] === '未申請') return;
 
@@ -2469,7 +2473,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       if (!csvExportBtn) return;
       const tracker = loadTracker();
       const hasVisibleTracked = Array.from(cards).some(card => {
-        if (card.style.display === 'none') return false;
+        if (getComputedStyle(card).display === 'none') return false;
         const id = card.dataset.id ?? '';
         return id !== '' && tracker[id] && tracker[id] !== '未申請';
       });

@@ -162,10 +162,12 @@ test.describe('CSV export button', () => {
 
     // First card (visible) should be in the CSV
     expect(content).toContain('申請中');
-    // Other category's status should NOT appear if that card is filtered out
-    // (We cannot easily check by ID in CSV, but we can verify only 1 data row)
-    const lines = content.split('\r\n').filter(l => l.trim() !== '');
-    // header + exactly 1 data row
-    expect(lines).toHaveLength(2);
+    // Only 1 data row should be present — count non-empty lines that are not the header
+    // (avoid naive \r\n split which breaks on quoted multi-line fields)
+    const headerIdx = content.indexOf('補助名稱');
+    const afterHeader = content.slice(headerIdx + content.slice(headerIdx).indexOf('\n') + 1).trim();
+    // afterHeader should contain exactly one data row (no second \r\n-terminated line with tracked data)
+    const dataLines = afterHeader.split('\r\n').filter(l => l.trim() !== '');
+    expect(dataLines).toHaveLength(1);
   });
 });
