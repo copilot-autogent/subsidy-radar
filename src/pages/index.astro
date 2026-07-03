@@ -467,15 +467,26 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   </div>
 
   <div class="controls">
-    <div class="search-box">
+    <div class="search-box" id="searchBox">
       <span class="search-icon">🔍</span>
       <input
         type="search"
         id="searchInput"
         placeholder="搜尋補助名稱、類別或關鍵字…"
         aria-label="搜尋補助"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="searchSuggestions"
+        role="combobox"
         autocomplete="off"
       />
+      <ul
+        id="searchSuggestions"
+        class="search-suggestions"
+        role="listbox"
+        aria-label="補助建議清單"
+        hidden
+      ></ul>
     </div>
     <div id="fuzzyHint" class="fuzzy-hint" hidden role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="category-filters" role="toolbar" aria-label="類別篩選">
@@ -973,7 +984,157 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     // Per-card fuzzy scores — populated by updateDisplay(), consumed by applySort()
     const fuzzyScores = new Map<Element, { exact: boolean; score: number }>();
 
-    // ── Debounce ─────────────────────────────────────────────────────────────
+    // ── Search autocomplete ───────────────────────────────────────────────────
+    const searchBox = document.getElementById('searchBox') as HTMLElement;
+    const suggestionList = document.getElementById('searchSuggestions') as HTMLUListElement;
+    let acActiveIdx = -1;
+    let acBlurTimer: ReturnType<typeof setTimeout> | undefined;
+
+    /** Build suggestion data from card DOM (title, category, id) once per render */
+    interface SuggestionEntry { title: string; category: string; id: string; score: number }
+
+    function getSuggestions(query: string): SuggestionEntry[] {
+      if (query.length < 1) return [];
+      const results: SuggestionEntry[] = [];
+      cards.forEach(card => {
+        const title = card.querySelector<HTMLElement>('h3, h2, .subsidy-title')?.textContent?.trim() ?? '';
+        const category = card.dataset.category ?? '';
+        const id = card.dataset.id ?? '';
+        const search = (card.dataset.search ?? '').toLowerCase();
+        const fm = fuzzyMatchText(query, search);
+        if (fm.exact || fm.score >= FUZZY_THRESHOLD) {
+          results.push({ title, category, id, score: fm.exact ? 1 : fm.score });
+        }
+      });
+      return results.sort((a, b) => b.score - a.score).slice(0, 6);
+    }
+
+    function showSuggestionList(): void {
+      suggestionList.hidden = false;
+      searchInput.setAttribute('aria-expanded', 'true');
+    }
+
+    function hideSuggestionList(): void {
+      suggestionList.hidden = true;
+      searchInput.setAttribute('aria-expanded', 'false');
+      searchInput.removeAttribute('aria-activedescendant');
+      acActiveIdx = -1;
+    }
+
+    function updateAcActiveItem(items: NodeListOf<HTMLLIElement>): void {
+      items.forEach((item, i) => {
+        if (i === acActiveIdx) {
+          item.classList.add('suggestion-item--active');
+          item.setAttribute('aria-selected', 'true');
+          searchInput.setAttribute('aria-activedescendant', item.id);
+        } else {
+          item.classList.remove('suggestion-item--active');
+          item.setAttribute('aria-selected', 'false');
+        }
+      });
+    }
+
+    function selectSuggestion(title: string, id: string): void {
+      debouncedSearch.cancel();
+      searchInput.value = title;
+      searchQuery = title.toLowerCase();
+      // Reset category filter so the selected card is always visible
+      if (activeCategory !== '全部') {
+        activeCategory = '全部';
+        filterBtns.forEach(b => {
+          const isAll = b.dataset.category === '全部';
+          b.classList.toggle('active', isAll);
+          b.setAttribute('aria-pressed', isAll ? 'true' : 'false');
+          b.setAttribute('tabindex', isAll ? '0' : '-1');
+        });
+      }
+      hideSuggestionList();
+      updateDisplay();
+      applySort();
+      const targetCard = document.getElementById(id);
+      if (targetCard) {
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetCard.classList.add('subsidy-card--highlight');
+        setTimeout(() => targetCard.classList.remove('subsidy-card--highlight'), 1500);
+      }
+    }
+
+    function renderSuggestions(query: string): void {
+      const suggestions = getSuggestions(query);
+      suggestionList.innerHTML = '';
+      acActiveIdx = -1;
+      searchInput.removeAttribute('aria-activedescendant'); // clear stale reference
+      if (suggestions.length === 0) {
+        hideSuggestionList();
+        return;
+      }
+      suggestions.forEach((s, i) => {
+        const li = document.createElement('li');
+        li.className = 'suggestion-item';
+        li.id = `suggestion-item-${i}`;
+        li.setAttribute('role', 'option');
+        li.setAttribute('aria-selected', 'false');
+        li.dataset.id = s.id;
+        li.dataset.title = s.title;
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'suggestion-title';
+        titleSpan.textContent = s.title;
+
+        const catTag = document.createElement('span');
+        catTag.className = 'suggestion-cat-tag';
+        catTag.textContent = s.category;
+
+        li.append(titleSpan, catTag);
+        li.addEventListener('pointerdown', (e: PointerEvent) => {
+          e.preventDefault(); // prevent blur from firing before click
+          selectSuggestion(s.title, s.id);
+        });
+        suggestionList.appendChild(li);
+      });
+      showSuggestionList();
+    }
+
+    searchInput.addEventListener('focus', () => {
+      clearTimeout(acBlurTimer); // cancel any pending hide from blur
+      const q = searchInput.value.trim().toLowerCase();
+      if (q.length >= 1) renderSuggestions(q);
+    });
+
+    searchInput.addEventListener('blur', () => {
+      acBlurTimer = setTimeout(() => hideSuggestionList(), 150);
+    });
+
+    searchInput.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.isComposing) return; // don't intercept IME composition
+      if (suggestionList.hidden) return;
+      const items = suggestionList.querySelectorAll<HTMLLIElement>('.suggestion-item');
+      if (items.length === 0) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        acActiveIdx = (acActiveIdx + 1) % items.length;
+        updateAcActiveItem(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        acActiveIdx = (acActiveIdx - 1 + items.length) % items.length;
+        updateAcActiveItem(items);
+      } else if (e.key === 'Enter' && acActiveIdx >= 0) {
+        e.preventDefault();
+        const item = items[acActiveIdx];
+        selectSuggestion(item.dataset.title ?? '', item.dataset.id ?? '');
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        hideSuggestionList();
+      }
+    });
+
+    // Close on outside click
+    document.addEventListener('pointerdown', (e: PointerEvent) => {
+      if (!searchBox.contains(e.target as Node)) {
+        hideSuggestionList();
+      }
+    });
+    // ─────────────────────────────────────────────────────────────────────────
     function debounce<T extends unknown[]>(fn: (...args: T) => void, ms: number): ((...args: T) => void) & { cancel: () => void } {
       let timer: ReturnType<typeof setTimeout> | undefined = undefined;
       const call = (...args: T) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
@@ -2015,7 +2176,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     }, 200);
 
     searchInput.addEventListener('input', () => {
-      debouncedSearch(searchInput.value.trim().toLowerCase());
+      const q = searchInput.value.trim().toLowerCase();
+      debouncedSearch(q);
+      if (q.length >= 1) {
+        renderSuggestions(q);
+      } else {
+        hideSuggestionList();
+      }
     });
 
     filterBtns.forEach(btn => {
