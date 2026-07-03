@@ -6,14 +6,19 @@ import { resolve, dirname } from 'node:path';
 // ── Pure logic tests (Node.js only, no browser required) ─────────────────
 
 /**
- * Mirror of computeMatchScore from index.astro — keeps tests in sync with
- * the implementation without requiring a browser.
+ * Mirror of computeMatchScore from index.astro.
+ * NOTE: This is an intentional specification-level mirror due to the Astro/script-tag
+ * constraint (production code is inlined in a <script> tag and cannot be imported
+ * from Node.js). The window.__subsidyRadar exposure in dev builds allows E2E tests
+ * to verify the production implementation directly. These tests serve as the
+ * deterministic specification that the production implementation must satisfy.
  */
 function computeMatchScore(quizSituations: string[], cardSituations: string[]): number {
   if (cardSituations.length === 0 || quizSituations.length === 0) return 0;
   const quizSet = new Set(quizSituations);
-  const matches = cardSituations.filter(s => quizSet.has(s)).length;
-  return Math.round((matches / cardSituations.length) * 100);
+  const uniqueCardSituations = Array.from(new Set(cardSituations));
+  const matches = uniqueCardSituations.filter(s => quizSet.has(s)).length;
+  return Math.round((matches / uniqueCardSituations.length) * 100);
 }
 
 function getScoreTier(score: number): { label: string; cls: string } | null {
@@ -66,6 +71,13 @@ test.describe('computeMatchScore — unit tests', () => {
 
   test('returns 0 when quiz has no situations', () => {
     expect(computeMatchScore([], ['renter', 'employed'])).toBe(0);
+  });
+
+  test('deduplicates card situation tags before scoring', () => {
+    // Card has ['renter', 'renter', 'employed'] — unique = ['renter', 'employed']
+    // Quiz matches 'renter' → 1/2 = 50%
+    const score = computeMatchScore(['renter'], ['renter', 'renter', 'employed']);
+    expect(score).toBe(50);
   });
 });
 
@@ -121,6 +133,10 @@ test.describe('match score sort behavior — data-driven', () => {
     const subsidies = loadSubsidies();
     const quizSituations = ['renter'];
     const renterSubsidies = subsidies.filter(s => s.situations?.includes('renter'));
+    // Guard: if the data ever has no renter entries, flag it as a data integrity issue
+    if (renterSubsidies.length === 0) {
+      throw new Error('Data integrity: no subsidies tagged with "renter" — scoring tests are vacuous');
+    }
     expect(renterSubsidies.length).toBeGreaterThan(0);
 
     for (const s of renterSubsidies) {

@@ -1117,14 +1117,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     /**
      * Computes a 0–100 match score between the user's quiz situations and a subsidy's
-     * situation tags. Score = (matching tags / total unique tags on the subsidy) * 100.
+     * situation tags. Score = (matching unique tags / total unique tags on the subsidy) * 100.
      * Returns 0 if the subsidy has no situation tags.
      */
     function computeMatchScore(quizSituations: string[], cardSituations: string[]): number {
       if (cardSituations.length === 0 || quizSituations.length === 0) return 0;
       const quizSet = new Set(quizSituations);
-      const matches = cardSituations.filter(s => quizSet.has(s)).length;
-      return Math.round((matches / cardSituations.length) * 100);
+      const uniqueCardSituations = Array.from(new Set(cardSituations));
+      const matches = uniqueCardSituations.filter(s => quizSet.has(s)).length;
+      return Math.round((matches / uniqueCardSituations.length) * 100);
     }
 
     /**
@@ -1245,7 +1246,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           if (pill) pill.style.display = 'none';
           return;
         }
-        const cardSituations: string[] = JSON.parse(card.dataset.situations ?? '[]');
+        let cardSituations: string[] = [];
+        try {
+          const parsed: unknown = JSON.parse(card.dataset.situations ?? '[]');
+          if (Array.isArray(parsed)) cardSituations = parsed.filter((s): s is string => typeof s === 'string');
+        } catch { /* malformed data-situations — treat as no tags */ }
         const score = computeMatchScore(situations, cardSituations);
         card.dataset.quizScore = String(score);
         const pill = card.querySelector<HTMLElement>('[data-match-score-pill]');
@@ -1371,7 +1376,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       activeAgency = '';
       agencyChips.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-      cards.forEach(card => { card.style.display = ''; card.dataset.quizScore = ''; });
+      cards.forEach(card => { card.style.display = ''; card.style.order = ''; card.dataset.quizScore = ''; });
       // Hide all score pills
       document.querySelectorAll<HTMLElement>('[data-match-score-pill]').forEach(pill => {
         pill.style.display = 'none';
@@ -3462,7 +3467,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     })();
     // ─────────────────────────────────────────────────────────────────────────
 
-    // Expose scoring utilities for testability (no side effects)
-    (window as unknown as Record<string, unknown>).__subsidyRadar = { computeMatchScore, getScoreTier };
+    // Expose scoring utilities for E2E tests (dev/preview builds only)
+    if (import.meta.env.DEV || import.meta.env.MODE === 'test') {
+      (window as unknown as Record<string, unknown>).__subsidyRadar = { computeMatchScore, getScoreTier };
+    }
   </script>
 </BaseLayout>
