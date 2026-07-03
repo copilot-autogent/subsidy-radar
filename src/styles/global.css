@@ -903,6 +903,7 @@ main {
 
 /* ── Match score pills (quiz mode only) ── */
 .match-score-pill {
+  display: none; /* hidden until quiz assigns a tier; JS overrides to '' when shown */
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   font-size: 0.72rem;

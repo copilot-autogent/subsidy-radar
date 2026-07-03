@@ -18,7 +18,8 @@ function computeMatchScore(quizSituations: string[], cardSituations: string[]): 
   const quizSet = new Set(quizSituations);
   const uniqueCardSituations = Array.from(new Set(cardSituations));
   const matches = uniqueCardSituations.filter(s => quizSet.has(s)).length;
-  return Math.round((matches / uniqueCardSituations.length) * 100);
+  if (matches === 0) return 0;
+  return Math.max(1, Math.round((matches / uniqueCardSituations.length) * 100));
 }
 
 function getScoreTier(score: number): { label: string; cls: string } | null {
@@ -78,6 +79,14 @@ test.describe('computeMatchScore — unit tests', () => {
     // Quiz matches 'renter' → 1/2 = 50%
     const score = computeMatchScore(['renter'], ['renter', 'renter', 'employed']);
     expect(score).toBe(50);
+  });
+
+  test('guarantees score ≥ 1 when at least one tag matches (no rounding to 0)', () => {
+    // 1 match out of 200 unique tags → Math.round(1/200*100) = 1 → guaranteed ≥ 1
+    const manyTags = Array.from({ length: 200 }, (_, i) => `tag-${i}`);
+    manyTags[0] = 'renter'; // one match
+    const score = computeMatchScore(['renter'], manyTags);
+    expect(score).toBeGreaterThanOrEqual(1);
   });
 });
 

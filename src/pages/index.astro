@@ -1118,14 +1118,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     /**
      * Computes a 0–100 match score between the user's quiz situations and a subsidy's
      * situation tags. Score = (matching unique tags / total unique tags on the subsidy) * 100.
-     * Returns 0 if the subsidy has no situation tags.
+     * Returns 0 if the subsidy has no situation tags. Guarantees score ≥ 1 when at least
+     * one tag matches (avoids rounding to 0 for sparsely-tagged subsidies).
      */
     function computeMatchScore(quizSituations: string[], cardSituations: string[]): number {
       if (cardSituations.length === 0 || quizSituations.length === 0) return 0;
       const quizSet = new Set(quizSituations);
       const uniqueCardSituations = Array.from(new Set(cardSituations));
       const matches = uniqueCardSituations.filter(s => quizSet.has(s)).length;
-      return Math.round((matches / uniqueCardSituations.length) * 100);
+      if (matches === 0) return 0;
+      return Math.max(1, Math.round((matches / uniqueCardSituations.length) * 100));
     }
 
     /**
@@ -1376,7 +1378,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       activeAgency = '';
       agencyChips.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-      cards.forEach(card => { card.style.display = ''; card.style.order = ''; card.dataset.quizScore = ''; });
+      cards.forEach(card => { card.style.display = ''; card.style.order = ''; delete card.dataset.quizScore; });
       // Hide all score pills
       document.querySelectorAll<HTMLElement>('[data-match-score-pill]').forEach(pill => {
         pill.style.display = 'none';
@@ -1775,7 +1777,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // Default sort in quiz mode: descending match score
         const ranked = Array.from(cards).map(card => ({
           card,
-          score: Number(card.dataset.quizScore ?? 0),
+          score: Number(card.dataset.quizScore || 0),
         }));
         ranked.sort((a, b) => b.score - a.score);
         ranked.forEach(({ card }, i) => { card.style.order = String(i + 1); });
