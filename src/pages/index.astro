@@ -712,6 +712,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               <span class="recency-badge" data-recency-badge style="display:none">🆕 最新</span>
               <span class={`freshness-badge ${freshness.cls}`} title={s.source ? `資料來源：${s.source}` : undefined}>{freshness.label}</span>
               <span class="category-badge">{s.category}</span>
+              <span class="match-score-pill" data-match-score-pill style="display:none"></span>
             </div>
             <div class="tracker-control">
               <select class="tracker-select ts-none" data-id={s.id} aria-label={`申請狀態：未申請 — ${s.title}`}>
@@ -1114,6 +1115,29 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       quizResetContainer.style.display = index > 0 ? 'block' : 'none';
     }
 
+    /**
+     * Computes a 0–100 match score between the user's quiz situations and a subsidy's
+     * situation tags. Score = (matching tags / total unique tags on the subsidy) * 100.
+     * Returns 0 if the subsidy has no situation tags.
+     */
+    function computeMatchScore(quizSituations: string[], cardSituations: string[]): number {
+      if (cardSituations.length === 0 || quizSituations.length === 0) return 0;
+      const quizSet = new Set(quizSituations);
+      const matches = cardSituations.filter(s => quizSet.has(s)).length;
+      return Math.round((matches / cardSituations.length) * 100);
+    }
+
+    /**
+     * Maps a 0–100 score to a display tier label and CSS class.
+     * ≥70 → 高符合, 40–69 → 可能符合, 1–39 → 低符合, 0 → null (hidden)
+     */
+    function getScoreTier(score: number): { label: string; cls: string } | null {
+      if (score >= 70) return { label: '🌟 高符合', cls: 'score-high' };
+      if (score >= 40) return { label: '✨ 可能符合', cls: 'score-medium' };
+      if (score >= 1)  return { label: '· 低符合', cls: 'score-low' };
+      return null;
+    }
+
     function matchQuizToSituations(): string[] {
       const situations: string[] = [];
       const { age, employment, housing, disability } = quizAnswers;
@@ -1211,6 +1235,30 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         
         card.style.display = matchOverall ? '' : 'none';
         if (matchOverall) visible++;
+      });
+
+      // Compute and display match scores for visible cards
+      cards.forEach(card => {
+        if (card.style.display === 'none') {
+          card.dataset.quizScore = '0';
+          const pill = card.querySelector<HTMLElement>('[data-match-score-pill]');
+          if (pill) pill.style.display = 'none';
+          return;
+        }
+        const cardSituations: string[] = JSON.parse(card.dataset.situations ?? '[]');
+        const score = computeMatchScore(situations, cardSituations);
+        card.dataset.quizScore = String(score);
+        const pill = card.querySelector<HTMLElement>('[data-match-score-pill]');
+        if (pill) {
+          const tier = getScoreTier(score);
+          if (tier) {
+            pill.textContent = tier.label;
+            pill.className = `match-score-pill ${tier.cls}`;
+            pill.style.display = '';
+          } else {
+            pill.style.display = 'none';
+          }
+        }
       });
       
       resultsCount.textContent = `共 ${visible} 項補助符合你的情況`;
@@ -1323,7 +1371,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       activeAgency = '';
       agencyChips.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-      cards.forEach(card => card.style.display = '');
+      cards.forEach(card => { card.style.display = ''; card.dataset.quizScore = ''; });
+      // Hide all score pills
+      document.querySelectorAll<HTMLElement>('[data-match-score-pill]').forEach(pill => {
+        pill.style.display = 'none';
+        pill.textContent = '';
+        pill.className = 'match-score-pill';
+      });
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
       isQuizActive = false;
@@ -1711,6 +1765,14 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           if (a.exact !== b.exact) return a.exact ? -1 : 1;
           return b.score - a.score;
         });
+        ranked.forEach(({ card }, i) => { card.style.order = String(i + 1); });
+      } else if (isQuizActive) {
+        // Default sort in quiz mode: descending match score
+        const ranked = Array.from(cards).map(card => ({
+          card,
+          score: Number(card.dataset.quizScore ?? 0),
+        }));
+        ranked.sort((a, b) => b.score - a.score);
         ranked.forEach(({ card }, i) => { card.style.order = String(i + 1); });
       } else {
         cards.forEach(card => { card.style.order = ''; });
@@ -3399,5 +3461,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
     })();
     // ─────────────────────────────────────────────────────────────────────────
+
+    // Expose scoring utilities for testability (no side effects)
+    (window as unknown as Record<string, unknown>).__subsidyRadar = { computeMatchScore, getScoreTier };
   </script>
 </BaseLayout>
