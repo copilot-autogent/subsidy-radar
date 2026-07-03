@@ -1085,6 +1085,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     }
 
     searchInput.addEventListener('focus', () => {
+      clearTimeout(acBlurTimer); // cancel any pending hide from blur
       const q = searchInput.value.trim().toLowerCase();
       if (q.length >= 1) renderSuggestions(q);
     });
@@ -1094,6 +1095,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     });
 
     searchInput.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.isComposing) return; // don't intercept IME composition
       if (suggestionList.hidden) return;
       const items = suggestionList.querySelectorAll<HTMLLIElement>('.suggestion-item');
       if (items.length === 0) return;

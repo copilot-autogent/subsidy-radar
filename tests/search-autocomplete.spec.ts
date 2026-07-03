@@ -175,6 +175,15 @@ test.describe('search autocomplete — pure logic (issue #136)', () => {
     for (let i = 1; i < results.length; i++) {
       expect(results[i].score).toBeLessThanOrEqual(results[i - 1].score);
     }
+
+    // Any exact match (score===1) must precede non-exact matches
+    const firstNonExact = results.findIndex(r => r.score < 1);
+    if (firstNonExact > 0) {
+      // Everything before firstNonExact should have score===1
+      for (let i = 0; i < firstNonExact; i++) {
+        expect(results[i].score).toBe(1);
+      }
+    }
   });
 
   test('each suggestion has a category tag for display', () => {
