@@ -79,6 +79,7 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
           class="theme-toggle"
           id="theme-toggle"
           aria-label="切換深色模式"
+          aria-pressed="false"
           title="切換深色模式"
           type="button"
         >🌙</button>
@@ -106,39 +107,58 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
       // Theme toggle logic
       (function() {
         var btn = document.getElementById('theme-toggle');
-        if (!btn) return;
 
         function getEffectiveTheme() {
-          var saved = localStorage.getItem('theme');
-          if (saved === 'dark') return 'dark';
-          if (saved === 'light') return 'light';
+          try {
+            var saved = localStorage.getItem('theme');
+            if (saved === 'dark') return 'dark';
+            if (saved === 'light') return 'light';
+          } catch(e) {}
           return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
 
         function applyTheme(theme) {
           document.documentElement.setAttribute('data-theme', theme);
-          btn.textContent = theme === 'dark' ? '☀️' : '🌙';
-          btn.setAttribute('aria-label', theme === 'dark' ? '切換至淺色模式' : '切換至深色模式');
-          btn.setAttribute('title', theme === 'dark' ? '切換至淺色模式' : '切換至深色模式');
+          if (btn) {
+            btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+            btn.setAttribute('aria-label', theme === 'dark' ? '切換至淺色模式' : '切換至深色模式');
+            btn.setAttribute('title', theme === 'dark' ? '切換至淺色模式' : '切換至深色模式');
+            btn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+          }
         }
 
-        // Set initial icon based on current effective theme
+        // Enable transitions after first paint (prevents flash-of-transition on load)
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            document.documentElement.classList.add('theme-ready');
+          });
+        });
+
+        // Set initial icon/state
         applyTheme(getEffectiveTheme());
 
-        btn.addEventListener('click', function() {
-          var current = document.documentElement.getAttribute('data-theme');
-          var next = current === 'dark' ? 'light' : 'dark';
-          try { localStorage.setItem('theme', next); } catch(e) {}
-          applyTheme(next);
-        });
+        if (btn) {
+          btn.addEventListener('click', function() {
+            var current = document.documentElement.getAttribute('data-theme');
+            var next = current === 'dark' ? 'light' : 'dark';
+            try { localStorage.setItem('theme', next); } catch(e) {}
+            applyTheme(next);
+          });
+        }
 
-        // Sync with system preference changes (when saved = 'system' or unset)
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-          var saved = localStorage.getItem('theme');
-          if (!saved || saved === 'system') {
-            applyTheme(e.matches ? 'dark' : 'light');
-          }
-        });
+        // Sync with system preference changes (when no saved override)
+        try {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            try {
+              var saved = localStorage.getItem('theme');
+              if (!saved || saved === 'system') {
+                applyTheme(e.matches ? 'dark' : 'light');
+              }
+            } catch(e2) {}
+          });
+        } catch(e) {
+          // Safari <14: addEventListener not supported on MediaQueryList
+        }
       })();
     </script>
   </body>

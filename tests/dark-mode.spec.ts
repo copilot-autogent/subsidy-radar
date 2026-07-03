@@ -7,6 +7,7 @@ test.describe('dark mode', () => {
     await expect(btn).toBeVisible();
     // Tap target: at least 44×44px
     const box = await btn.boundingBox();
+    expect(box).not.toBeNull();
     expect(box!.width).toBeGreaterThanOrEqual(44);
     expect(box!.height).toBeGreaterThanOrEqual(44);
   });
@@ -120,6 +121,7 @@ test.describe('dark mode', () => {
     const btn = page.locator('#theme-toggle');
     await expect(btn).toBeVisible();
     const box = await btn.boundingBox();
+    expect(box).not.toBeNull();
     expect(box!.width).toBeGreaterThanOrEqual(44);
     expect(box!.height).toBeGreaterThanOrEqual(44);
   });

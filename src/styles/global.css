@@ -14,6 +14,7 @@
   --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   --shadow-hover: 0 4px 12px rgba(0,0,0,0.15);
   --header-height: 4rem;
+  color-scheme: light;
 }
 
 [data-theme="dark"] {
@@ -58,11 +59,15 @@
   padding: 0;
 }
 
-html {
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-body, .site-header, .site-footer, .subsidy-card, .filter-bar {
+/* Transitions are enabled only after first paint (class added by JS).
+   This prevents a flash-of-transition on initial theme application. */
+html.theme-ready,
+html.theme-ready body,
+html.theme-ready .site-header,
+html.theme-ready .site-footer,
+html.theme-ready .subsidy-card,
+html.theme-ready .filter-bar,
+html.theme-ready .controls {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -2448,7 +2453,6 @@ main {
   /* Hide UI chrome */
   .site-header,
   .site-footer,
-  .theme-toggle,
   .hero,
   .quiz-section,
   .controls,
