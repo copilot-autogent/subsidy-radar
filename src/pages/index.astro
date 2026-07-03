@@ -124,6 +124,29 @@ const studentCount = subsidies.filter(s => s.situations?.includes('student')).le
 const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY))];
 const youthCount = youthHighlightCount;
 
+// ── Agency filter — normalize full agency names to parent-ministry groups ─
+function normalizeAgency(agency: string): string {
+  if (agency.startsWith('衛生福利部')) return '衛福部';
+  if (agency.startsWith('勞動部')) return '勞動部';
+  if (agency.startsWith('教育部')) return '教育部';
+  if (agency.startsWith('內政部') || agency.startsWith('國家住宅及都市更新中心')) return '內政部';
+  if (agency.startsWith('原住民族')) return '原民會';
+  if (agency.startsWith('國家科學及技術委員會')) return '國科會';
+  if (agency.startsWith('經濟部')) return '經濟部';
+  if (agency.startsWith('財政部')) return '財政部';
+  return '各縣市';
+}
+
+const agencyCounts: Record<string, number> = {};
+subsidies.forEach(s => {
+  const norm = normalizeAgency(s.agency);
+  agencyCounts[norm] = (agencyCounts[norm] || 0) + 1;
+});
+
+// Display order: highest-count ministries first, then alphabetical
+const AGENCY_DISPLAY_ORDER = ['勞動部', '衛福部', '內政部', '教育部', '原民會', '經濟部', '財政部', '各縣市', '國科會'];
+const agencies = AGENCY_DISPLAY_ORDER.filter(a => agencyCounts[a] > 0);
+
 // Difficulty filter counts
 const VALID_DIFFICULTIES = new Set(['easy', 'medium', 'hard']);
 const difficultyCounts: Record<string, number> = { easy: 0, medium: 0, hard: 0 };
@@ -549,6 +572,24 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         </optgroup>
       </select>
     </div>
+    <div class="agency-filter-row" id="agencyFilterRow">
+      <button class="agency-toggle-btn" id="agencyToggle" type="button" aria-expanded="true" aria-controls="agencyChips">
+        🏛️ 機構
+        <span class="agency-toggle-arrow" aria-hidden="true">▼</span>
+      </button>
+      <div class="agency-chips" id="agencyChips" role="group" aria-label="機構篩選">
+        {agencies.map(agency => (
+          <button
+            class="agency-chip"
+            data-agency={agency}
+            type="button"
+            aria-pressed="false"
+          >
+            {agency} <span class="count-badge">{agencyCounts[agency]}</span>
+          </button>
+        ))}
+      </div>
+    </div>
     <div class="sort-row">
       <button class="sort-btn" id="sortDifficulty" type="button" aria-pressed="false">
         依申請難度排序
@@ -642,6 +683,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           data-amount-value={parseAmountValue(s.amount ?? '')}
           data-max-amount={s.maxAmount != null ? String(s.maxAmount) : ''}
           data-counties={s.counties ? JSON.stringify(s.counties) : ''}
+          data-agency={normalizeAgency(s.agency)}
           data-url={s.applicationUrl ?? ''}
           data-steps={s.steps ? String(s.steps.length) : '0'}
           data-last-verified={s.lastVerifiedDate ?? ''}
@@ -865,6 +907,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const noResults = document.getElementById('noResults')!;
     const fuzzyHint = document.getElementById('fuzzyHint') as HTMLElement;
     const countySelect = document.getElementById('countySelect') as HTMLSelectElement | null;
+    const agencyChips = document.querySelectorAll<HTMLButtonElement>('.agency-chip');
+    const agencyToggleBtn = document.getElementById('agencyToggle') as HTMLButtonElement | null;
+    const agencyChipsContainer = document.getElementById('agencyChips') as HTMLElement | null;
     const eligibilityBanner = document.getElementById('eligibilityBanner')!;
     const bannerText = document.getElementById('bannerText')!;
     const eligibleTotalBanner = document.getElementById('eligibleTotalBanner')!;
@@ -886,6 +931,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     let showTrackedOnly = false;
     let isQuizActive = false;
     let activeCounty = '';
+    let activeAgency = '';
     let activeUrgency = 0;
 
     // ── Fuzzy search utilities ────────────────────────────────────────────────
@@ -1032,6 +1078,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         params.set('q', searchQuery);
       } else {
         params.delete('q');
+      }
+      if (activeAgency) {
+        params.set('agency', activeAgency);
+      } else {
+        params.delete('agency');
       }
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
@@ -1268,6 +1319,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeUrgency = 0;
       urgencyBtns.forEach(b => { b.classList.remove('active'); if (!b.disabled) b.setAttribute('aria-pressed', 'false'); });
       personaBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+      activeAgency = '';
+      agencyChips.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       cards.forEach(card => card.style.display = '');
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
@@ -1781,7 +1834,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           }
         }
 
-        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty && matchUrgency;
+        // Agency filter: if no agency selected, show all; otherwise match card's normalized agency.
+        const matchAgency = activeAgency === '' || card.dataset.agency === activeAgency;
+
+        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty && matchUrgency && matchAgency;
         card.style.display = show ? '' : 'none';
         if (show) {
           visible++;
@@ -1807,7 +1863,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // Restrict to "no other active filters" to avoid suggesting items the user cannot
       // reach without changing their filter state.
       const noOtherFilters = activeCategory === '全部' && activeSituation === '' &&
-        activeDifficulty === '' && activeCounty === '' && activeUrgency === 0 &&
+        activeDifficulty === '' && activeCounty === '' && activeUrgency === 0 && activeAgency === '' &&
         !showTrackedOnly && !isQuizActive;
       if (searchQuery !== '' && visible === 0 && noOtherFilters) {
         fuzzyScores.forEach((fm, card) => {
@@ -2081,6 +2137,36 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       updateDisplay();
     });
 
+    // ── Agency filter chips ───────────────────────────────────────────────────
+    agencyChips.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const agency = btn.dataset.agency!;
+        if (activeAgency === agency) {
+          activeAgency = '';
+          btn.classList.remove('active');
+          btn.setAttribute('aria-pressed', 'false');
+        } else {
+          agencyChips.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+          activeAgency = agency;
+          btn.classList.add('active');
+          btn.setAttribute('aria-pressed', 'true');
+        }
+        updateFilterUrl();
+        updateDisplay();
+      });
+    });
+
+    // Toggle chip strip visibility (collapsible on mobile)
+    agencyToggleBtn?.addEventListener('click', () => {
+      const expanded = agencyToggleBtn.getAttribute('aria-expanded') === 'true';
+      agencyToggleBtn.setAttribute('aria-expanded', String(!expanded));
+      if (agencyChipsContainer) {
+        agencyChipsContainer.style.display = expanded ? 'none' : '';
+      }
+      const arrow = agencyToggleBtn.querySelector<HTMLElement>('.agency-toggle-arrow');
+      if (arrow) arrow.textContent = expanded ? '▶' : '▼';
+    });
+
     // ── Empty-state CTA buttons ────────────────────────────────────────────────
     const clearFiltersBtn = document.getElementById('clearFiltersBtn') as HTMLButtonElement | null;
     const startQuizBtn = document.getElementById('startQuizBtn') as HTMLButtonElement | null;
@@ -2093,6 +2179,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       activeDifficulty = '';
       activeCounty = '';
       if (countySelect) countySelect.value = '';
+      activeAgency = '';
+      agencyChips.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       showTrackedOnly = false;
       isQuizActive = false;
       sortByDifficulty = false;
@@ -2619,6 +2707,19 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         updateDisplay();
         applySort();
       }
+
+      // Restore agency filter from URL
+      const VALID_AGENCIES = new Set(['勞動部', '衛福部', '內政部', '教育部', '原民會', '國科會', '經濟部', '財政部', '各縣市']);
+      const agencyParam = params.get('agency') ?? '';
+      if (agencyParam && VALID_AGENCIES.has(agencyParam)) {
+        activeAgency = agencyParam;
+        const matchingChip = Array.from(agencyChips).find(b => b.dataset.agency === agencyParam);
+        if (matchingChip) {
+          matchingChip.classList.add('active');
+          matchingChip.setAttribute('aria-pressed', 'true');
+          updateDisplay();
+        }
+      }
     }
 
     // ── popstate: sync filter state on browser back/forward ──────────────────
@@ -2632,10 +2733,12 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       sortAmountState = 0;
       isQuizActive = false;
       activeCounty = '';
+      activeAgency = '';
       activeUrgency = 0;
       // Reset UI
       searchInput.value = '';
       if (countySelect) countySelect.value = '';
+      agencyChips.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       filterBtns.forEach(b => {
         b.classList.remove('active');
         b.setAttribute('aria-pressed', 'false');
