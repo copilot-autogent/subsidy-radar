@@ -2395,6 +2395,26 @@ main {
   outline-offset: 2px;
 }
 
+.csv-export-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #eff6ff;
+  border-radius: 9999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.csv-export-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.csv-export-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+
 /* ── Print Header (shown only in @media print) ── */
 .print-header {
   display: none;
