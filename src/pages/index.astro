@@ -126,6 +126,7 @@ const youthCount = youthHighlightCount;
 
 // ── Agency filter — normalize full agency names to parent-ministry groups ─
 function normalizeAgency(agency: string): string {
+  if (!agency) return '其他';
   if (agency.startsWith('衛生福利部')) return '衛福部';
   if (agency.startsWith('勞動部')) return '勞動部';
   if (agency.startsWith('教育部')) return '教育部';
@@ -134,7 +135,8 @@ function normalizeAgency(agency: string): string {
   if (agency.startsWith('國家科學及技術委員會')) return '國科會';
   if (agency.startsWith('經濟部')) return '經濟部';
   if (agency.startsWith('財政部')) return '財政部';
-  return '各縣市';
+  if (agency.startsWith('各縣市')) return '各縣市';
+  return '其他';
 }
 
 const agencyCounts: Record<string, number> = {};
@@ -144,7 +146,7 @@ subsidies.forEach(s => {
 });
 
 // Display order: highest-count ministries first, then alphabetical
-const AGENCY_DISPLAY_ORDER = ['勞動部', '衛福部', '內政部', '教育部', '原民會', '經濟部', '財政部', '各縣市', '國科會'];
+const AGENCY_DISPLAY_ORDER = ['勞動部', '衛福部', '內政部', '教育部', '原民會', '經濟部', '財政部', '各縣市', '國科會', '其他'];
 const agencies = AGENCY_DISPLAY_ORDER.filter(a => agencyCounts[a] > 0);
 
 // Difficulty filter counts
@@ -2708,17 +2710,17 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         applySort();
       }
 
-      // Restore agency filter from URL
-      const VALID_AGENCIES = new Set(['勞動部', '衛福部', '內政部', '教育部', '原民會', '國科會', '經濟部', '財政部', '各縣市']);
+      // Restore agency filter from URL — validate against actually-rendered chips
+      const renderedAgencies = new Set(Array.from(agencyChips).map(b => b.dataset.agency!).filter(Boolean));
       const agencyParam = params.get('agency') ?? '';
-      if (agencyParam && VALID_AGENCIES.has(agencyParam)) {
+      if (agencyParam && renderedAgencies.has(agencyParam)) {
         activeAgency = agencyParam;
         const matchingChip = Array.from(agencyChips).find(b => b.dataset.agency === agencyParam);
         if (matchingChip) {
           matchingChip.classList.add('active');
           matchingChip.setAttribute('aria-pressed', 'true');
-          updateDisplay();
         }
+        updateDisplay();
       }
     }
 
