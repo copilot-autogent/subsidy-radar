@@ -2431,14 +2431,14 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
     function escapeCsvField(value: string): string {
       const s = String(value ?? '');
-      // Guard against CSV formula injection (=, +, -, @, tab at field start)
-      const needsInjectionGuard = /^[=+\-@\t]/.test(s);
-      const needsQuoting = needsInjectionGuard || s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r');
-      const escaped = needsInjectionGuard ? '\'' + s : s;
-      if (needsQuoting) {
-        return '"' + escaped.replace(/"/g, '""') + '"';
+      // Force quoting for fields that start with formula-trigger chars (=, +, @, tab).
+      // Inside double-quoted CSV cells, Excel does not interpret these as formulas.
+      // Note: '-' is intentionally excluded to avoid corrupting ISO dates and URLs.
+      const forceQuote = /^[=+@\t]/.test(s);
+      if (forceQuote || s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) {
+        return '"' + s.replace(/"/g, '""') + '"';
       }
-      return escaped;
+      return s;
     }
 
     function generateTrackedCsv(): string {
