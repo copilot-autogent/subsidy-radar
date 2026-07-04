@@ -4,22 +4,22 @@
 
 const CACHE_NAME = 'subsidy-radar-v2';
 
-// Static assets to pre-cache on install
+// Static assets to pre-cache on install (each fetched individually to avoid
+// total-failure if one URL 404s — e.g. /index.html vs / on different hosts)
 const PRECACHE_URLS = [
   '/subsidy-radar/',
-  '/subsidy-radar/index.html',
   '/subsidy-radar/favicon.svg',
   '/subsidy-radar/manifest.json',
   '/subsidy-radar/icons/icon-192.png',
   '/subsidy-radar/icons/icon-512.png',
 ];
 
-// ─── Install: pre-cache known static assets ───────────────────────────────────
+// ─── Install: pre-cache known static assets ───────────────────────
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.allSettled(PRECACHE_URLS.map(url => cache.add(url)))
+    ).then(() => self.skipWaiting())
   );
 });
 
@@ -34,23 +34,31 @@ self.addEventListener('activate', event => {
   );
 });
 
-// ─── Fetch: cache strategy ──────────────────────────────────────────
+// ─── Fetch: cache strategy ────────────────────────────────────────────────────
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Only intercept same-origin or subsidy-radar requests
-  if (!url.pathname.startsWith('/subsidy-radar')) return;
+  // Only intercept requests under the /subsidy-radar/ scope
+  if (!url.pathname.startsWith('/subsidy-radar/')) return;
 
-  // Network-first for HTML navigation (ensures fresh content when online)
+  // Network-first for HTML navigation (fresh content when online)
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
         .then(response => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          if (response.ok) {
+            const clone = response.clone();
+            event.waitUntil(
+              caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone))
+            );
+          }
           return response;
         })
-        .catch(() => caches.match(event.request).then(r => r || caches.match('/subsidy-radar/')))
+        .catch(() =>
+          caches.match(event.request)
+            .then(r => r || caches.match('/subsidy-radar/'))
+            .then(r => r || new Response('Offline', { status: 503, statusText: 'Service Unavailable' }))
+        )
     );
     return;
   }
@@ -70,8 +78,12 @@ self.addEventListener('fetch', event => {
       caches.match(event.request).then(cached => {
         if (cached) return cached;
         return fetch(event.request).then(response => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          if (response.ok) {
+            const clone = response.clone();
+            event.waitUntil(
+              caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone))
+            );
+          }
           return response;
         });
       })
@@ -80,9 +92,9 @@ self.addEventListener('fetch', event => {
   }
 });
 
-// ─── Push notifications ───────────────────────────────────────────────────────
+// ─── notifications Push ────────────────────
 self.addEventListener('push', event => {
-  let data = { title: '補助雷達提醒', body: '有補助即將截止，快去查看！', url: '/subsidy-radar/' };
+exit', url: '/subsidy-radar/' };
   try { Object.assign(data, event.data?.json()); } catch {}
 
   event.waitUntil(

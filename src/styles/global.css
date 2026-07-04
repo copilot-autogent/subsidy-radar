@@ -2986,7 +2986,7 @@ main {
   opacity: 0.95;
 }
 
-/* ── PWA: banner Install */ ───────────────────────────────────
+/* ── PWA: Install banner ────────────────────────────────────────────────────── */
 .install-banner {
   position: sticky;
   top: 0;

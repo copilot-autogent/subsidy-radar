@@ -81,15 +81,26 @@ test.describe('PWA: Service Worker', () => {
   });
 
   test('service worker registers without errors', async ({ page }) => {
-    const errors: string[] = [];
+    const swErrors: string[] = [];
     page.on('console', msg => {
-      if (msg.type() === 'warning' && msg.text().includes('SW registration failed')) {
-        errors.push(msg.text());
+      if (
+        (msg.type() === 'warning' || msg.type() === 'error') &&
+        msg.text().includes('SW registration failed')
+      ) {
+        swErrors.push(msg.text());
       }
     });
     await page.goto('/');
-    await page.waitForTimeout(1000);
-    expect(errors).toHaveLength(0);
+    // Wait for SW registration to complete (avoid racy timeout)
+    await page.evaluate(() =>
+      new Promise<void>(resolve => {
+        if (!('serviceWorker' in navigator)) { resolve(); return; }
+        if (navigator.serviceWorker.controller) { resolve(); return; }
+        navigator.serviceWorker.ready.then(() => resolve());
+        setTimeout(resolve, 3000);
+      })
+    );
+    expect(swErrors).toHaveLength(0);
   });
 
   test('dataset (subsidies.json data) loads when page is online', async ({ page }) => {

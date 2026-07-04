@@ -160,6 +160,8 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
             deferredPrompt.userChoice.then(function() {
               deferredPrompt = null;
               if (banner) banner.setAttribute('hidden', '');
+            }).catch(function() {
+              deferredPrompt = null;
             });
           });
         }
