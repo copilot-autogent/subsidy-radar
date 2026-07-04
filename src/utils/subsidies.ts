@@ -79,7 +79,9 @@ export function getRelatedSubsidies(subsidy: Subsidy, all: Subsidy[], max = 3): 
 
 export function safeUrl(url: string | undefined): string | undefined {
   if (!url) return undefined;
-  const trimmed = url.trimStart();
+  const trimmed = url.trim();
+  // Reject URLs with embedded whitespace or control characters
+  if (/\s/.test(trimmed)) return undefined;
   const lower = trimmed.toLowerCase();
   return lower.startsWith('https://') || lower.startsWith('http://') ? trimmed : undefined;
 }

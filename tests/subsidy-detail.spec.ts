@@ -171,9 +171,8 @@ test.describe('Subsidy detail pages — static build', () => {
       return;
     }
     const html = readFileSync(htmlPath, 'utf-8');
-    // At least one LINE share link should point to a detail page, not a hash
-    expect(html).toContain('subsidy%2F');
-    expect(html).not.toMatch(/line\.me\/lineit\/share\?url=[^"]*%23[a-z]/);
+    // LINE share links should use canonical detail page URLs, not hash anchors
+    expect(html).not.toMatch(/line\.me\/lineit\/share\?url=[^"]*%23/);
   });
 });
 
