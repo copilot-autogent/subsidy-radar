@@ -35,31 +35,6 @@ async function grantNotificationPermission(page: import('@playwright/test').Page
   await page.context().grantPermissions(['notifications']);
 }
 
-async function stubNotificationApi(page: import('@playwright/test').Page) {
-  // Expose a way to collect fired notifications
-  await page.exposeFunction('__notificationCallback', () => {});
-  await page.evaluate(() => {
-    (window as typeof window & { __notifCalls: { title: string; body: string }[] }).__notifCalls = [];
-    const OriginalNotification = window.Notification;
-    // @ts-expect-error — stub constructor for test purposes
-    window.Notification = function (title: string, opts?: NotificationOptions) {
-      (window as typeof window & { __notifCalls: { title: string; body: string }[] })
-        .__notifCalls.push({ title, body: opts?.body ?? '' });
-      return new OriginalNotification(title, opts);
-    };
-    // @ts-expect-error — copy static properties
-    window.Notification.permission = OriginalNotification.permission;
-    // @ts-expect-error
-    window.Notification.requestPermission = OriginalNotification.requestPermission.bind(OriginalNotification);
-  });
-}
-
-async function getNotifCalls(page: import('@playwright/test').Page) {
-  return page.evaluate(
-    () => (window as typeof window & { __notifCalls?: { title: string; body: string }[] }).__notifCalls ?? [],
-  );
-}
-
 // ── tests ─────────────────────────────────────────────────────────────────────
 
 test.describe('per-subsidy deadline reminders', () => {
@@ -205,7 +180,8 @@ test.describe('per-subsidy deadline reminders', () => {
 
     await page.goto('/');
     await clearReminders(page);
-    await stubNotificationApi(page);
+
+    // Inject the due reminder into localStorage before reload so it fires on load
     await injectReminder(page, {
       id: 'test-sub-99',
       title: '測試補助通知',
@@ -214,41 +190,17 @@ test.describe('per-subsidy deadline reminders', () => {
       scheduledAt: new Date().toISOString(),
     });
 
-    // Reload to trigger checkDeadlineReminders on page load
+    // Confirm entry is present before reload
+    const before = await loadReminders(page);
+    expect(before.some((e: Record<string, string>) => e.id === 'test-sub-99')).toBe(true);
+
+    // Reload: checkDeadlineReminders runs on page load with permission already granted,
+    // fires the notification and clears the entry from localStorage
     await page.reload();
-    await grantNotificationPermission(page);
-    await stubNotificationApi(page);
 
-    // Re-inject (reload cleared it); then manually call checkDeadlineReminders
-    await injectReminder(page, {
-      id: 'test-sub-99',
-      title: '測試補助通知',
-      deadlineDate,
-      daysBeforeToFire: 7,
-      scheduledAt: new Date().toISOString(),
-    });
-
-    // Trigger checkDeadlineReminders via page evaluate (already defined in page context)
-    await page.evaluate(() => {
-      // The function is defined in a module-level script; re-invoke by calling the
-      // check function indirectly: dispatch a fake page-load by calling it if accessible.
-      // Since the function is scoped inside the script, we verify via storage effect.
-    });
-
-    // Instead, verify the storage effect: fired entries should be cleared
-    await page.evaluate((key) => {
-      // Simulate a page that already has permission + reminders by triggering reload
-      // The safest approach: check that after the page load the entry was consumed.
-      void key;
-    }, REMINDERS_KEY);
-
-    // The most reliable verification: after reload with permission + due reminder,
-    // the entry should be cleared from localStorage.
-    const reminders = await loadReminders(page);
-    // Entry may or may not be cleared depending on whether initReminderBtns ran first
-    // (which re-injects via our injectReminder call above). We check notification calls
-    // are structurally sound instead.
-    expect(Array.isArray(reminders)).toBe(true);
+    // Deterministic side-effect: fired entry must be cleared from storage
+    const after = await loadReminders(page);
+    expect(after.some((e: Record<string, string>) => e.id === 'test-sub-99')).toBe(false);
   });
 
   // ── 6. Notification fires on page load when reminder is due ───────────────

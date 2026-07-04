@@ -3437,13 +3437,19 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             e !== null &&
             typeof e === 'object' &&
             typeof (e as ReminderEntry).id === 'string' &&
-            typeof (e as ReminderEntry).deadlineDate === 'string',
+            typeof (e as ReminderEntry).deadlineDate === 'string' &&
+            typeof (e as ReminderEntry).daysBeforeToFire === 'number' &&
+            Number.isFinite((e as ReminderEntry).daysBeforeToFire) &&
+            (e as ReminderEntry).daysBeforeToFire > 0,
         );
       } catch { return []; }
     }
 
-    function saveReminders(reminders: ReminderEntry[]) {
-      try { localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders)); } catch { /* storage blocked */ }
+    function saveReminders(reminders: ReminderEntry[]): boolean {
+      try {
+        localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders));
+        return true;
+      } catch { return false; /* storage blocked or quota exceeded */ }
     }
 
     function reminderHasEntry(id: string): boolean {
@@ -3513,11 +3519,25 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const id = btn.dataset.id!;
         const deadline = btn.dataset.deadline!;
 
-        // Grace period: disable reminder if deadline < REMINDER_MIN_DAYS away
+        // Grace period: disable new reminders if deadline < REMINDER_MIN_DAYS away,
+        // but still allow cancelling an already-set reminder in that window.
         const daysLeft = daysUntilDate(deadline);
-        if (daysLeft !== null && daysLeft < REMINDER_MIN_DAYS) {
+        const alreadySet = reminderHasEntry(id);
+        if (daysLeft !== null && daysLeft < REMINDER_MIN_DAYS && !alreadySet) {
           btn.disabled = true;
           btn.title = '截止日過近（不足 3 天），無法設定提醒';
+          return;
+        }
+        if (daysLeft !== null && daysLeft < REMINDER_MIN_DAYS && alreadySet) {
+          // Near-deadline with existing reminder: show active state, allow cancel only
+          applyReminderBtnState(btn, true);
+          btn.addEventListener('click', () => {
+            const updated = loadReminders().filter(e => e.id !== id);
+            saveReminders(updated);
+            applyReminderBtnState(btn, false);
+            btn.disabled = true;
+            btn.title = '截止日過近（不足 3 天），無法設定提醒';
+          });
           return;
         }
 
@@ -3526,8 +3546,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         btn.addEventListener('click', async () => {
           if (reminderHasEntry(id)) {
             const updated = loadReminders().filter(e => e.id !== id);
-            saveReminders(updated);
-            applyReminderBtnState(btn, false);
+            if (saveReminders(updated)) {
+              applyReminderBtnState(btn, false);
+            }
             return;
           }
 
@@ -3565,7 +3586,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             daysBeforeToFire: REMINDER_DAYS_DEFAULT,
             scheduledAt: new Date().toISOString(),
           });
-          saveReminders(existing);
+          if (!saveReminders(existing)) {
+            showReminderMsg(btn, '無法儲存提醒（瀏覽器儲存空間不足或已封鎖）。');
+            return;
+          }
           applyReminderBtnState(btn, true);
           // Check immediately in case the deadline is already within threshold
           checkDeadlineReminders();
