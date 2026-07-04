@@ -23,7 +23,8 @@
     ],
     "situations": [
       "fresh-grad",
-      "entrepreneur"
+      "entrepreneur",
+      "worker"
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
@@ -399,7 +400,8 @@
     ],
     "situations": [
       "fresh-grad",
-      "renter"
+      "renter",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -538,7 +540,8 @@
     ],
     "situations": [
       "parent",
-      "young-child"
+      "young-child",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -637,7 +640,8 @@
       "免費訓練"
     ],
     "situations": [
-      "fresh-grad"
+      "fresh-grad",
+      "worker"
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
@@ -937,7 +941,8 @@
     ],
     "situations": [
       "parent",
-      "single-parent"
+      "single-parent",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -1024,7 +1029,8 @@
       "再就業"
     ],
     "situations": [
-      "unemployed"
+      "unemployed",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1064,7 +1070,8 @@
       "促進就業法"
     ],
     "situations": [
-      "unemployed"
+      "unemployed",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1104,7 +1111,8 @@
       "勞動力發展署"
     ],
     "situations": [
-      "unemployed"
+      "unemployed",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1144,7 +1152,8 @@
       "在職勞工"
     ],
     "situations": [
-      "employed"
+      "employed",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -2621,5 +2630,85 @@
     ],
     "lastVerifiedDate": "2026-07-01",
     "source": "https://kys.wda.gov.tw/"
+  },
+  {
+    "id": "worker-training-voucher",
+    "title": "勞工職業訓練費用補貼",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "受僱勞工自費參加職業訓練課程，可申請每年最高 10,000 元費用補貼，提升在職技能。",
+    "difficulty": "easy",
+    "situations": [
+      "worker",
+      "employed"
+    ],
+    "officialUrl": "https://itraining.mol.gov.tw/",
+    "lastVerifiedDate": "2026-07-04",
+    "addedDate": "2026-07-04",
+    "source": "勞動部勞動力發展署 itraining 個人訓練帳戶",
+    "tags": [
+      "勞工",
+      "職業訓練",
+      "在職",
+      "補貼",
+      "技能提升"
+    ],
+    "eligibility": [
+      "受僱勞工身分",
+      "勞工保險被保險人",
+      "自費參加政府認証職訓課程"
+    ]
+  },
+  {
+    "id": "employment-insurance-maternity",
+    "title": "就業保險生育給付",
+    "category": "就業",
+    "agency": "勞動部勞工保險局",
+    "summary": "參加就業保險滿 6 個月的勞工，生育期間可申請生育給付（投保薪資 60% x 8 週）；配偶陪產假者可申請 2 週陪產給付。",
+    "tags": [
+      "勞工",
+      "生育",
+      "就業保險",
+      "生育給付",
+      "陪產"
+    ],
+    "eligibility": [
+      "參加就業保險滿 6 個月",
+      "生育日起 2 年內申請"
+    ],
+    "difficulty": "easy",
+    "situations": [
+      "worker",
+      "parent"
+    ],
+    "officialUrl": "https://www.bli.gov.tw/0007928.html",
+    "lastVerifiedDate": "2026-07-04",
+    "addedDate": "2026-07-04",
+    "source": "就業保險法生育給付"
+  },
+  {
+    "id": "occupational-injury-subsidy",
+    "title": "職業災害勞工證明費用補助",
+    "category": "就業",
+    "agency": "勞動部勞工保險局",
+    "summary": "勞工因職業傷病就醫，願意自負證明文件費用者，可申請每件最高 100 元證明費用補助，一年最高 500 元。",
+    "tags": [
+      "勞工",
+      "職業災害",
+      "傷病給付",
+      "證明補助"
+    ],
+    "eligibility": [
+      "參加勞工保險被保險人",
+      "因職業傷病就醫並願意自負證明費用"
+    ],
+    "difficulty": "easy",
+    "situations": [
+      "worker"
+    ],
+    "officialUrl": "https://www.bli.gov.tw/0007919.html",
+    "lastVerifiedDate": "2026-07-04",
+    "addedDate": "2026-07-04",
+    "source": "勞工保險職業災害證明給付"
   }
 ]
