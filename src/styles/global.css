@@ -762,7 +762,31 @@ main {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.subsidy-card.youth-highlight {
+/* Middle-aged filter — amber tone (distinct from worker's deeper amber) */
+.filter-btn.middle-aged-filter {
+  border-color: #b45309;
+  color: #78350f;
+  background: #fffbeb;
+  font-weight: 600;
+}
+
+.filter-btn.middle-aged-filter:hover,
+.filter-btn.middle-aged-filter.active {
+  background: #b45309;
+  border-color: #b45309;
+  color: white;
+}
+
+.filter-btn.middle-aged-filter .count-badge {
+  background: rgba(180, 83, 9, 0.15);
+}
+
+.filter-btn.middle-aged-filter:hover .count-badge,
+.filter-btn.middle-aged-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
   border-color: #fbbf24;
   background: linear-gradient(to bottom right, #fffbeb, #ffffff);
 }
