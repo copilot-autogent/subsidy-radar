@@ -40,12 +40,12 @@ test.describe('Subsidy detail pages — static build', () => {
   });
 
   test('each subsidy has a generated HTML file in dist/', () => {
+    if (!existsSync(distRoot)) {
+      test.skip(true, 'dist/ not found — run `npm run build` first');
+      return;
+    }
     for (const s of subsidies) {
       const htmlPath = resolve(distRoot, 'subsidy', s.id, 'index.html');
-      if (!existsSync(distRoot)) {
-        test.skip(true, 'dist/ not found — run `npm run build` first');
-        return;
-      }
       expect(existsSync(htmlPath), `Missing detail page for ${s.id}`).toBe(true);
     }
   });
@@ -81,15 +81,15 @@ test.describe('Subsidy detail pages — static build', () => {
       test.skip(true, 'dist/ not found');
       return;
     }
-    const firstSubsidy = subsidies[0];
-    const htmlPath = resolve(distRoot, 'subsidy', firstSubsidy.id, 'index.html');
-    if (!existsSync(htmlPath)) {
-      test.skip(true, 'dist/ not found');
-      return;
+    // Check a sample of pages, not just the first
+    const sample = subsidies.slice(0, Math.min(5, subsidies.length));
+    for (const s of sample) {
+      const htmlPath = resolve(distRoot, 'subsidy', s.id, 'index.html');
+      if (!existsSync(htmlPath)) continue;
+      const html = readFileSync(htmlPath, 'utf-8');
+      expect(html).toContain(`rel="canonical"`);
+      expect(html).toContain(`/subsidy/${s.id}/`);
     }
-    const html = readFileSync(htmlPath, 'utf-8');
-    expect(html).toContain(`rel="canonical"`);
-    expect(html).toContain(`/subsidy/${firstSubsidy.id}/`);
   });
 
   test('detail pages have JSON-LD GovernmentService structured data', () => {
@@ -97,15 +97,14 @@ test.describe('Subsidy detail pages — static build', () => {
       test.skip(true, 'dist/ not found');
       return;
     }
-    const firstSubsidy = subsidies[0];
-    const htmlPath = resolve(distRoot, 'subsidy', firstSubsidy.id, 'index.html');
-    if (!existsSync(htmlPath)) {
-      test.skip(true, 'dist/ not found');
-      return;
+    const sample = subsidies.slice(0, Math.min(5, subsidies.length));
+    for (const s of sample) {
+      const htmlPath = resolve(distRoot, 'subsidy', s.id, 'index.html');
+      if (!existsSync(htmlPath)) continue;
+      const html = readFileSync(htmlPath, 'utf-8');
+      expect(html).toContain('application/ld+json');
+      expect(html).toContain('GovernmentService');
     }
-    const html = readFileSync(htmlPath, 'utf-8');
-    expect(html).toContain('application/ld+json');
-    expect(html).toContain('GovernmentService');
   });
 
   test('detail pages have a back link to the index', () => {
@@ -113,14 +112,13 @@ test.describe('Subsidy detail pages — static build', () => {
       test.skip(true, 'dist/ not found');
       return;
     }
-    const firstSubsidy = subsidies[0];
-    const htmlPath = resolve(distRoot, 'subsidy', firstSubsidy.id, 'index.html');
-    if (!existsSync(htmlPath)) {
-      test.skip(true, 'dist/ not found');
-      return;
+    const sample = subsidies.slice(0, Math.min(5, subsidies.length));
+    for (const s of sample) {
+      const htmlPath = resolve(distRoot, 'subsidy', s.id, 'index.html');
+      if (!existsSync(htmlPath)) continue;
+      const html = readFileSync(htmlPath, 'utf-8');
+      expect(html).toContain('返回補助列表');
     }
-    const html = readFileSync(htmlPath, 'utf-8');
-    expect(html).toContain('返回補助列表');
   });
 
   test('detail pages render application steps when present', () => {
@@ -183,6 +181,7 @@ test.describe('Subsidy detail pages — browser render', () => {
   test('detail page renders title heading', async ({ page }) => {
     const subsidies = getSubsidies();
     const s = subsidies[0];
+    // playwright.config baseURL is http://localhost:4321; site is served at /subsidy-radar/
     await page.goto(`/subsidy-radar/subsidy/${s.id}/`);
     const h1 = page.locator('h1.detail-title');
     await expect(h1).toBeVisible();

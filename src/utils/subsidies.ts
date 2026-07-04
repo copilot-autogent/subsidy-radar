@@ -38,10 +38,10 @@ function calendarMonthsAgo(verifiedYear: number, verifiedMonth: number, verified
 export function getFreshnessBadge(lastVerifiedDate: string | null | undefined): { cls: string; label: string } {
   if (!lastVerifiedDate) return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
   const parts = lastVerifiedDate.split('-').map(Number);
+  if (parts.length !== 3) return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
   const [y, m, d] = parts;
   const verified = new Date(y, m - 1, d);
   const isValid =
-    parts.length === 3 &&
     Number.isFinite(y) && Number.isFinite(m) && Number.isFinite(d) &&
     m >= 1 && m <= 12 && d >= 1 && d <= 31 &&
     verified.getFullYear() === y && verified.getMonth() === m - 1 && verified.getDate() === d &&

@@ -15,21 +15,18 @@ export function getStaticPaths() {
 }
 
 const { id } = Astro.params;
-const subsidy = subsidies.find(s => s.id === id);
-
-// Should never happen in static build, but guard for type-safety
-if (!subsidy) {
-  return Astro.redirect('/subsidy-radar/');
-}
+// getStaticPaths guarantees id is always valid; find is just for type narrowing
+const subsidy = subsidies.find(s => s.id === id)!;
 
 const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
-const siteOrigin = Astro.site?.origin ?? 'https://copilot-autogent.github.io';
+const siteOrigin = Astro.site?.origin ?? new URL(import.meta.env.BASE_URL || '/', 'https://example.com').origin;
 
 const freshness = getFreshnessBadge(subsidy.lastVerifiedDate);
 const deadline = deadlineLabel[subsidy.deadlineStatus] ?? { text: subsidy.deadlineStatus, cls: 'status-ongoing' };
 const diff = difficultyLabel[subsidy.difficulty ?? 'medium'];
 const officialHref = safeUrl(subsidy.officialUrl);
 const appHref = safeUrl(subsidy.applicationUrl);
+const sourceHref = safeUrl(subsidy.source);
 
 const related = getRelatedSubsidies(subsidy, subsidies);
 
@@ -62,6 +59,10 @@ const pageDescription = subsidy.summary;
   <Fragment slot="head">
     <meta property="og:type" content="article" />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <link rel="canonical" href={canonicalUrl} />
     <script type="application/ld+json" set:html={jsonLd} />
   </Fragment>
@@ -174,9 +175,9 @@ const pageDescription = subsidy.summary;
       </div>
 
       <!-- Source / last verified -->
-      {subsidy.source && safeUrl(subsidy.source) && (
+      {sourceHref && (
         <p class="detail-source">
-          資料來源：<a href={safeUrl(subsidy.source)} target="_blank" rel="noopener noreferrer">{safeUrl(subsidy.source)}</a>
+          資料來源：<a href={sourceHref} target="_blank" rel="noopener noreferrer">{sourceHref}</a>
         </p>
       )}
     </article>
