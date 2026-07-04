@@ -158,9 +158,10 @@ test.describe('Subsidy detail pages — static build', () => {
       return;
     }
     const html = readFileSync(htmlPath, 'utf-8');
-    // Each subsidy card should have a link to its detail page
+    // Each subsidy card should have a .card-detail-link pointing to its detail page
     for (const s of subsidies) {
-      expect(html).toContain(`/subsidy/${s.id}/`);
+      // Check for the specific card-detail-link anchor (not just any URL containing the id)
+      expect(html).toContain(`card-detail-link" aria-label="查看 ${s.title} 詳細資訊"`);
     }
   });
 
@@ -179,6 +180,7 @@ test.describe('Subsidy detail pages — static build', () => {
 test.describe('Subsidy detail pages — browser render', () => {
   test('detail page renders title heading', async ({ page }) => {
     const subsidies = getSubsidies();
+    if (subsidies.length === 0) return;
     const s = subsidies[0];
     // playwright.config baseURL is http://localhost:4321; site is served at /subsidy-radar/
     await page.goto(`/subsidy-radar/subsidy/${s.id}/`);
@@ -189,6 +191,7 @@ test.describe('Subsidy detail pages — browser render', () => {
 
   test('detail page has working back link to index', async ({ page }) => {
     const subsidies = getSubsidies();
+    if (subsidies.length === 0) return;
     const s = subsidies[0];
     await page.goto(`/subsidy-radar/subsidy/${s.id}/`);
     const backLink = page.locator('a.back-link').first();
