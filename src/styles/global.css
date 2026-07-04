@@ -2968,3 +2968,75 @@ main {
     border: 1px solid currentColor;
   }
 }
+
+/* ── PWA: Offline indicator ─────────────────────────────────────────────────── */
+.offline-indicator {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  background: var(--color-text, #374151);
+  color: var(--color-bg, #f8fafc);
+  padding: 0.4rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* ── PWA: banner Install */ ───────────────────────────────────
+.install-banner {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: #2563eb;
+  color: #fff;
+  font-size: 0.875rem;
+  flex-wrap: wrap;
+}
+
+.install-banner[hidden] {
+  display: none;
+}
+
+.install-banner span {
+  flex: 1;
+}
+
+.install-banner #install-btn {
+  background: #fff;
+  color: #2563eb;
+  border: none;
+  border-radius: 0.375rem;
+  padding: 0.3rem 0.875rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.install-banner #install-btn:hover {
+  background: #eff6ff;
+}
+
+.install-banner #install-dismiss {
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  line-height: 1;
+}
+
+.install-banner #install-dismiss:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.15);
+}
