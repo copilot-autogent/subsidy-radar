@@ -35,8 +35,8 @@ test.describe('worker persona — data & filter logic', () => {
   test('all new worker entries have required fields and worker situation', () => {
     const workerIds = [
       'worker-training-voucher',
-      'worker-unemployment-benefit',
-      'worker-career-change-subsidy',
+      'employment-insurance-maternity',
+      'occupational-injury-subsidy',
     ];
     for (const id of workerIds) {
       const entry = subsidies.find(s => s.id === id);

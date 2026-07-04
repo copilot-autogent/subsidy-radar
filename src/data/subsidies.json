@@ -2660,59 +2660,55 @@
     ]
   },
   {
-    "id": "worker-unemployment-benefit",
-    "title": "失業給付（就業保險法）",
+    "id": "employment-insurance-maternity",
+    "title": "就業保險生育給付",
     "category": "就業",
     "agency": "勞動部勞工保險局",
-    "summary": "非自願離職且參加就業保險滿 1 年者，可申請失業給付，每月按投保薪資 60% 發給，最長 6 個月。",
-    "difficulty": "medium",
-    "situations": [
-      "worker",
-      "unemployed"
-    ],
-    "officialUrl": "https://www.bli.gov.tw/0007940.html",
-    "lastVerifiedDate": "2026-07-04",
-    "addedDate": "2026-07-04",
-    "source": "就業保險法第 16 條",
+    "summary": "參加就業保險滿 6 個月的勞工，生育期間可申請生育給付（投保薪資 60% x 8 週）；配偶勠产和降生者可申請 2 週陣产給付。",
     "tags": [
       "勞工",
-      "失業",
+      "生育",
       "就業保險",
-      "給付",
-      "離職"
+      "生育給付",
+      "险产"
     ],
     "eligibility": [
-      "非自願離職",
-      "就業保險加保滿 1 年",
-      "離職日起 2 年內申請"
-    ]
+      "參加就業保險滿 6 個月",
+      "生育日起 2 年內申請"
+    ],
+    "difficulty": "easy",
+    "situations": [
+      "worker",
+      "parent"
+    ],
+    "officialUrl": "https://www.bli.gov.tw/0007928.html",
+    "lastVerifiedDate": "2026-07-04",
+    "addedDate": "2026-07-04",
+    "source": "就業保險法生育給付"
   },
   {
-    "id": "worker-career-change-subsidy",
-    "title": "中途轉業職業訓練生活津貼",
+    "id": "occupational-injury-subsidy",
+    "title": "職業災害勞工証明費用補助",
     "category": "就業",
-    "agency": "勞動部勞動力發展署",
-    "summary": "非自願離職轉業者，參加政府委訓職業訓練期間，可申請每月職業訓練生活津貼（投保薪資 60%），支持轉職過渡期。",
-    "difficulty": "medium",
-    "situations": [
-      "worker",
-      "unemployed"
-    ],
-    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=10261&s=61327",
-    "lastVerifiedDate": "2026-07-04",
-    "addedDate": "2026-07-04",
-    "source": "就業保險法職業訓練生活津貼",
+    "agency": "勞動部勞工保險局",
+    "summary": "勞工因職業傷病就醫，願意自负証明文件費用者，可申請每件最高 100 元証明費用補助，一年最高 500 元。",
     "tags": [
       "勞工",
-      "轉業",
-      "職業訓練",
-      "生活津貼",
-      "中途離職"
+      "職業災害",
+      "傷病給付",
+      "証明補助"
     ],
     "eligibility": [
-      "非自願離職",
-      "參加指定政府職業訓練課程",
-      "未領取失業給付期間"
-    ]
+      "參加勞工保險被保險人",
+      "因職業傷病就醫并願意自负証明費用"
+    ],
+    "difficulty": "easy",
+    "situations": [
+      "worker"
+    ],
+    "officialUrl": "https://www.bli.gov.tw/0007919.html",
+    "lastVerifiedDate": "2026-07-04",
+    "addedDate": "2026-07-04",
+    "source": "勞工保險職業災害誠証給付"
   }
 ]
