@@ -1360,8 +1360,6 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       if (worker === 'yes') {
         situations.push('worker');
-        // Workers who are currently employed also qualify for employed-tagged subsidies
-        if (employment === 'employed' && !situations.includes('employed')) situations.push('employed');
       }
       
       return situations;

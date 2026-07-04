@@ -65,9 +65,9 @@ test.describe('worker persona — data & filter logic', () => {
   });
 
   // ── 4. Total entry count target ──────────────────────────────────────────
-  test('worker entries reach the issue-144 target (at least 5)', () => {
+  test('worker entries reach the issue-144 target (at least 10)', () => {
     const workerEntries = subsidies.filter(s => s.situations?.includes('worker'));
-    expect(workerEntries.length, 'Expected at least 5 worker-tagged entries').toBeGreaterThanOrEqual(5);
+    expect(workerEntries.length, 'Expected at least 10 worker-tagged entries').toBeGreaterThanOrEqual(10);
   });
 
   // ── 5. Worker + young-child overlap (育嬰留職停薪) ────────────────────────
