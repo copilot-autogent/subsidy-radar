@@ -2830,15 +2830,14 @@
     ],
     "situations": [
       "middle-aged",
-      "worker",
-      "unemployed"
+      "worker"
     ],
     "difficulty": "medium",
     "updatedAt": "2026-07-04",
     "steps": [
       "雇主媒合中高齡求職者",
       "簽訂勞動契約",
-      "連續僱用渉30日後申請",
+      "連續僱用滿30日後申請",
       "每季檢附資料核定撥款"
     ],
     "deadlineDate": "2026-12-31",
