@@ -773,6 +773,19 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
                 <option value="不符資格">不符資格</option>
               </select>
               <span class="tracker-print-badge ts-none" aria-hidden="true">未申請</span>
+              {s.deadlineDate && (
+                <button
+                  class="reminder-btn"
+                  data-reminder-btn
+                  data-id={s.id}
+                  data-title={s.title}
+                  data-deadline={s.deadlineDate}
+                  type="button"
+                  aria-label={`設定截止提醒：${s.title}`}
+                  aria-pressed="false"
+                  title="設定截止提醒（瀏覽器通知）"
+                >🔔</button>
+              )}
             </div>
           </div>
           <p class="card-agency">📋 {s.agency}</p>
@@ -3401,6 +3414,208 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     }
 
     setupPushNotifications();
+
+    // ── Per-subsidy Deadline Reminders ────────────────────────────────────────
+    const REMINDERS_KEY = 'subsidyReminders';
+    const REMINDER_DAYS_DEFAULT = 7;
+    const REMINDER_MIN_DAYS = 3;
+
+    type ReminderEntry = {
+      id: string;
+      title: string;
+      deadlineDate: string;
+      daysBeforeToFire: number;
+      scheduledAt: string;
+    };
+
+    function loadReminders(): ReminderEntry[] {
+      try {
+        const raw = JSON.parse(localStorage.getItem(REMINDERS_KEY) ?? '[]') as unknown[];
+        if (!Array.isArray(raw)) return [];
+        return raw.filter(
+          (e): e is ReminderEntry =>
+            e !== null &&
+            typeof e === 'object' &&
+            typeof (e as ReminderEntry).id === 'string' &&
+            typeof (e as ReminderEntry).deadlineDate === 'string' &&
+            typeof (e as ReminderEntry).daysBeforeToFire === 'number' &&
+            Number.isFinite((e as ReminderEntry).daysBeforeToFire) &&
+            (e as ReminderEntry).daysBeforeToFire > 0,
+        );
+      } catch { return []; }
+    }
+
+    function saveReminders(reminders: ReminderEntry[]): boolean {
+      try {
+        localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders));
+        return true;
+      } catch { return false; /* storage blocked or quota exceeded */ }
+    }
+
+    function reminderHasEntry(id: string): boolean {
+      return loadReminders().some(e => e.id === id);
+    }
+
+    function applyReminderBtnState(btn: HTMLButtonElement, active: boolean) {
+      btn.classList.toggle('reminder-active', active);
+      btn.setAttribute('aria-pressed', String(active));
+      const title = btn.dataset.title ?? '';
+      btn.setAttribute(
+        'aria-label',
+        active ? `取消截止提醒：${title}` : `設定截止提醒：${title}`,
+      );
+      btn.title = active ? '點擊取消提醒' : '設定截止提醒（瀏覽器通知）';
+    }
+
+    function showReminderMsg(btn: HTMLButtonElement, message: string) {
+      // Remove any stale inline messages near this button
+      btn.closest('.tracker-control')?.querySelectorAll('.reminder-denied-msg').forEach(el => el.remove());
+      const msgEl = document.createElement('span');
+      msgEl.className = 'reminder-denied-msg';
+      msgEl.textContent = message;
+      msgEl.setAttribute('role', 'alert');
+      btn.insertAdjacentElement('afterend', msgEl);
+      const dismiss = () => msgEl.remove();
+      const timer = window.setTimeout(dismiss, 5000);
+      msgEl.addEventListener('click', () => { clearTimeout(timer); dismiss(); });
+    }
+
+    // Fire browser notifications for any due reminders; clear fired entries.
+    function checkDeadlineReminders() {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      const reminders = loadReminders();
+      if (reminders.length === 0) return;
+      const toFire: ReminderEntry[] = [];
+      const remaining: ReminderEntry[] = [];
+      for (const entry of reminders) {
+        const days = daysUntilDate(entry.deadlineDate);
+        if (days === null) continue; // past deadline — discard (not added to remaining)
+        if (days <= entry.daysBeforeToFire) {
+          toFire.push(entry);
+        } else {
+          remaining.push(entry);
+        }
+      }
+      // Always persist remaining (clears expired/fired entries from storage)
+      if (remaining.length !== reminders.length) {
+        saveReminders(remaining);
+      }
+      if (toFire.length > 0) {
+        const items = toFire.map(e => {
+          const d = daysUntilDate(e.deadlineDate);
+          const when = d === 0 ? '今天截止' : d === 1 ? '明天截止' : `還有 ${d} 天`;
+          return `${e.title}（${when}）`;
+        });
+        const body = items.length === 1
+          ? `${items[0]} 申請截止日即將到來`
+          : `${items.length} 項補助申請截止即將到來：${items.slice(0, 2).join('、')}${items.length > 2 ? '…' : ''}`;
+        try {
+          new Notification('⏰ 補助雷達截止提醒', {
+            body,
+            icon: '/subsidy-radar/favicon.svg',
+            tag: 'subsidy-reminder-local',
+          });
+        } catch { /* Notification constructor can throw on some mobile browsers */ }
+      }
+    }
+
+    function initReminderBtns() {
+      document.querySelectorAll<HTMLButtonElement>('[data-reminder-btn]').forEach(btn => {
+        const id = btn.dataset.id!;
+        const deadline = btn.dataset.deadline!;
+
+        // Grace period: disable new reminders if deadline < REMINDER_MIN_DAYS away or past,
+        // but still allow cancelling an already-set reminder in that window.
+        const daysLeft = daysUntilDate(deadline);
+        const alreadySet = reminderHasEntry(id);
+        // daysLeft === null means deadline has passed
+        const isNearOrPast = daysLeft === null || daysLeft < REMINDER_MIN_DAYS;
+        if (isNearOrPast && !alreadySet) {
+          btn.disabled = true;
+          btn.title = daysLeft === null
+            ? '申請截止日已過，無法設定提醒'
+            : '截止日過近（不足 3 天），無法設定提醒';
+          return;
+        }
+        if (isNearOrPast && alreadySet) {
+          // Near-deadline/past with existing reminder: show active state, allow cancel only
+          applyReminderBtnState(btn, true);
+          btn.addEventListener('click', () => {
+            const updated = loadReminders().filter(e => e.id !== id);
+            if (saveReminders(updated)) {
+              applyReminderBtnState(btn, false);
+              btn.disabled = true;
+              btn.title = daysLeft === null
+                ? '申請截止日已過，無法設定提醒'
+                : '截止日過近（不足 3 天），無法設定提醒';
+            } else {
+              showReminderMsg(btn, '無法取消提醒（儲存失敗），請重新整理頁面後再試。');
+            }
+          });
+          return;
+        }
+
+        applyReminderBtnState(btn, reminderHasEntry(id));
+
+        btn.addEventListener('click', async () => {
+          if (reminderHasEntry(id)) {
+            const updated = loadReminders().filter(e => e.id !== id);
+            if (saveReminders(updated)) {
+              applyReminderBtnState(btn, false);
+            } else {
+              showReminderMsg(btn, '無法取消提醒（儲存失敗），請重新整理頁面後再試。');
+            }
+            return;
+          }
+
+          if (!('Notification' in window)) {
+            showReminderMsg(btn, '此瀏覽器不支援通知功能。');
+            return;
+          }
+
+          if (Notification.permission === 'denied') {
+            showReminderMsg(btn, '通知已被封鎖，請在瀏覽器設定（網址列🔒）中允許通知後再試。');
+            return;
+          }
+
+          let perm = Notification.permission as NotificationPermission;
+          if (perm !== 'granted') {
+            perm = await Notification.requestPermission();
+          }
+
+          if (perm !== 'granted') {
+            showReminderMsg(
+              btn,
+              perm === 'denied'
+                ? '通知已被封鎖，請在瀏覽器設定中允許通知。'
+                : '未授予通知權限，無法設定提醒。',
+            );
+            return;
+          }
+
+          const title = btn.dataset.title ?? id;
+          const existing = loadReminders();
+          existing.push({
+            id,
+            title,
+            deadlineDate: deadline,
+            daysBeforeToFire: REMINDER_DAYS_DEFAULT,
+            scheduledAt: new Date().toISOString(),
+          });
+          if (!saveReminders(existing)) {
+            showReminderMsg(btn, '無法儲存提醒（瀏覽器儲存空間不足或已封鎖）。');
+            return;
+          }
+          applyReminderBtnState(btn, true);
+          // Check immediately in case the deadline is already within threshold
+          checkDeadlineReminders();
+        });
+      });
+    }
+
+    initReminderBtns();
+    // Also fire any pending reminders on page load if permission already granted
+    checkDeadlineReminders();
 
     // ── Deadline Timeline Panel ───────────────────────────────────────────────
     (function initDeadlinePanel() {
