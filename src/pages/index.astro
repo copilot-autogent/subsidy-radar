@@ -1387,8 +1387,6 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       if (middleAged === 'yes') {
         situations.push('middle-aged');
-        // Middle-aged workers also qualify for worker-tagged subsidies
-        if (!situations.includes('worker')) situations.push('worker');
       }
       
       return situations;
@@ -2324,7 +2322,6 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       'disabled':     'disabled',
       'low-income':   'low-income',
       'middle-aged':  'middle-aged',
-      'single-parent': 'single-parent',
     };
 
     personaBtns.forEach(btn => {
@@ -2997,7 +2994,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         showQuizQuestion(currentQuestionIndex);
         applyQuizFilter();
         quizResetContainer.style.display = 'block';
-      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4') || params.has('q5') || params.has('q6') || params.has('q7') || params.has('q8') || params.has('q9')) {
+      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4') || params.has('q5') || params.has('q6') || params.has('q7') || params.has('q8') || params.has('q9') || params.has('q10')) {
         // Stale/partial/invalid params — clear them so the URL matches UI state
         clearQuizUrl();
       }

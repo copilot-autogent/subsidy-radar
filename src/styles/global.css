@@ -786,7 +786,7 @@ main {
   background: rgba(255, 255, 255, 0.3);
 }
 
-
+.subsidy-card.youth-highlight {
   border-color: #fbbf24;
   background: linear-gradient(to bottom right, #fffbeb, #ffffff);
 }
