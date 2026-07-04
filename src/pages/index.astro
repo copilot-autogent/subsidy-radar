@@ -809,7 +809,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             </button>
             <a
               class="line-share-btn"
-              href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(siteBase + '#' + s.id)}`}
+              href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(siteBase + 'subsidy/' + s.id + '/')}`}
               target="_blank"
               rel="noopener noreferrer"
               data-id={s.id}
@@ -823,6 +823,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               </span>
               <span class="line-share-text">LINE</span>
             </a>
+            <a href={`${siteBase}subsidy/${s.id}/`} class="card-detail-link" aria-label={`查看 ${s.title} 詳細資訊`}>📄 詳情頁</a>
             <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link" aria-label={`前往申請 ${s.title}（新視窗開啟）`}>立即申請 →</a>
           </div>
         </article>
