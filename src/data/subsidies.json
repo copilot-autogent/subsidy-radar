@@ -23,7 +23,8 @@
     ],
     "situations": [
       "fresh-grad",
-      "entrepreneur"
+      "entrepreneur",
+      "worker"
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
@@ -399,7 +400,8 @@
     ],
     "situations": [
       "fresh-grad",
-      "renter"
+      "renter",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -538,7 +540,8 @@
     ],
     "situations": [
       "parent",
-      "young-child"
+      "young-child",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -637,7 +640,8 @@
       "免費訓練"
     ],
     "situations": [
-      "fresh-grad"
+      "fresh-grad",
+      "worker"
     ],
     "isYouthHighlight": true,
     "difficulty": "easy",
@@ -937,7 +941,8 @@
     ],
     "situations": [
       "parent",
-      "single-parent"
+      "single-parent",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -1024,7 +1029,8 @@
       "再就業"
     ],
     "situations": [
-      "unemployed"
+      "unemployed",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1064,7 +1070,8 @@
       "促進就業法"
     ],
     "situations": [
-      "unemployed"
+      "unemployed",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1104,7 +1111,8 @@
       "勞動力發展署"
     ],
     "situations": [
-      "unemployed"
+      "unemployed",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1144,7 +1152,8 @@
       "在職勞工"
     ],
     "situations": [
-      "employed"
+      "employed",
+      "worker"
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
@@ -2621,5 +2630,89 @@
     ],
     "lastVerifiedDate": "2026-07-01",
     "source": "https://kys.wda.gov.tw/"
+  },
+  {
+    "id": "worker-training-voucher",
+    "title": "勞工職業訓練費用補貼",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "受僱勞工自費參加職業訓練課程，可申請每年最高 10,000 元費用補貼，提升在職技能。",
+    "difficulty": "easy",
+    "situations": [
+      "worker",
+      "employed"
+    ],
+    "officialUrl": "https://itraining.mol.gov.tw/",
+    "lastVerifiedDate": "2026-07-04",
+    "addedDate": "2026-07-04",
+    "source": "勞動部勞動力發展署 itraining 個人訓練帳戶",
+    "tags": [
+      "勞工",
+      "職業訓練",
+      "在職",
+      "補貼",
+      "技能提升"
+    ],
+    "eligibility": [
+      "受僱勞工身分",
+      "勞工保險被保險人",
+      "自費參加政府認証職訓課程"
+    ]
+  },
+  {
+    "id": "worker-unemployment-benefit",
+    "title": "失業給付（就業保險法）",
+    "category": "就業",
+    "agency": "勞動部勞工保險局",
+    "summary": "非自願離職且參加就業保險滿 1 年者，可申請失業給付，每月按投保薪資 60% 發給，最長 6 個月。",
+    "difficulty": "medium",
+    "situations": [
+      "worker",
+      "unemployed"
+    ],
+    "officialUrl": "https://www.bli.gov.tw/0007940.html",
+    "lastVerifiedDate": "2026-07-04",
+    "addedDate": "2026-07-04",
+    "source": "就業保險法第 16 條",
+    "tags": [
+      "勞工",
+      "失業",
+      "就業保險",
+      "給付",
+      "離職"
+    ],
+    "eligibility": [
+      "非自願離職",
+      "就業保險加保滿 1 年",
+      "離職日起 2 年內申請"
+    ]
+  },
+  {
+    "id": "worker-career-change-subsidy",
+    "title": "中途轉業職業訓練生活津貼",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "非自願離職轉業者，參加政府委訓職業訓練期間，可申請每月職業訓練生活津貼（投保薪資 60%），支持轉職過渡期。",
+    "difficulty": "medium",
+    "situations": [
+      "worker",
+      "unemployed"
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=10261&s=61327",
+    "lastVerifiedDate": "2026-07-04",
+    "addedDate": "2026-07-04",
+    "source": "就業保險法職業訓練生活津貼",
+    "tags": [
+      "勞工",
+      "轉業",
+      "職業訓練",
+      "生活津貼",
+      "中途離職"
+    ],
+    "eligibility": [
+      "非自願離職",
+      "參加指定政府職業訓練課程",
+      "未領取失業給付期間"
+    ]
   }
 ]
