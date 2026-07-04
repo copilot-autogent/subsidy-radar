@@ -3489,15 +3489,18 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const remaining: ReminderEntry[] = [];
       for (const entry of reminders) {
         const days = daysUntilDate(entry.deadlineDate);
-        if (days === null) continue; // past deadline — discard silently
+        if (days === null) continue; // past deadline — discard (not added to remaining)
         if (days <= entry.daysBeforeToFire) {
           toFire.push(entry);
         } else {
           remaining.push(entry);
         }
       }
+      // Always persist remaining (clears expired/fired entries from storage)
+      if (remaining.length !== reminders.length) {
+        saveReminders(remaining);
+      }
       if (toFire.length > 0) {
-        saveReminders(remaining); // clear fired entries
         const items = toFire.map(e => {
           const d = daysUntilDate(e.deadlineDate);
           const when = d === 0 ? '今天截止' : d === 1 ? '明天截止' : `還有 ${d} 天`;
@@ -3506,11 +3509,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const body = items.length === 1
           ? `${items[0]} 申請截止日即將到來`
           : `${items.length} 項補助申請截止即將到來：${items.slice(0, 2).join('、')}${items.length > 2 ? '…' : ''}`;
-        new Notification('⏰ 補助雷達截止提醒', {
-          body,
-          icon: '/subsidy-radar/favicon.svg',
-          tag: 'subsidy-reminder-local',
-        });
+        try {
+          new Notification('⏰ 補助雷達截止提醒', {
+            body,
+            icon: '/subsidy-radar/favicon.svg',
+            tag: 'subsidy-reminder-local',
+          });
+        } catch { /* Notification constructor can throw on some mobile browsers */ }
       }
     }
 
@@ -3519,24 +3524,31 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const id = btn.dataset.id!;
         const deadline = btn.dataset.deadline!;
 
-        // Grace period: disable new reminders if deadline < REMINDER_MIN_DAYS away,
+        // Grace period: disable new reminders if deadline < REMINDER_MIN_DAYS away or past,
         // but still allow cancelling an already-set reminder in that window.
         const daysLeft = daysUntilDate(deadline);
         const alreadySet = reminderHasEntry(id);
-        if (daysLeft !== null && daysLeft < REMINDER_MIN_DAYS && !alreadySet) {
+        // daysLeft === null means deadline has passed
+        const isNearOrPast = daysLeft === null || daysLeft < REMINDER_MIN_DAYS;
+        if (isNearOrPast && !alreadySet) {
           btn.disabled = true;
-          btn.title = '截止日過近（不足 3 天），無法設定提醒';
+          btn.title = daysLeft === null
+            ? '申請截止日已過，無法設定提醒'
+            : '截止日過近（不足 3 天），無法設定提醒';
           return;
         }
-        if (daysLeft !== null && daysLeft < REMINDER_MIN_DAYS && alreadySet) {
-          // Near-deadline with existing reminder: show active state, allow cancel only
+        if (isNearOrPast && alreadySet) {
+          // Near-deadline/past with existing reminder: show active state, allow cancel only
           applyReminderBtnState(btn, true);
           btn.addEventListener('click', () => {
             const updated = loadReminders().filter(e => e.id !== id);
-            saveReminders(updated);
-            applyReminderBtnState(btn, false);
-            btn.disabled = true;
-            btn.title = '截止日過近（不足 3 天），無法設定提醒';
+            if (saveReminders(updated)) {
+              applyReminderBtnState(btn, false);
+              btn.disabled = true;
+              btn.title = daysLeft === null
+                ? '申請截止日已過，無法設定提醒'
+                : '截止日過近（不足 3 天），無法設定提醒';
+            }
           });
           return;
         }

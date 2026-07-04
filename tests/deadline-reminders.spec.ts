@@ -147,7 +147,9 @@ test.describe('per-subsidy deadline reminders', () => {
       id,
       title: 'Test subsidy',
       deadlineDate: deadline,
-      daysBeforeToFire: 7,
+      // Use daysBeforeToFire: 1 (well below min allowed deadline of 3 days) so
+      // checkDeadlineReminders won't fire and consume this entry on the reload.
+      daysBeforeToFire: 1,
       scheduledAt: new Date().toISOString(),
     });
     await page.reload();
@@ -303,7 +305,9 @@ test.describe('per-subsidy deadline reminders', () => {
       id,
       title: 'Reload test',
       deadlineDate: deadline,
-      daysBeforeToFire: daysLeft + 1, // ensure it won't fire on reload
+      // Use daysBeforeToFire: 1 so checkDeadlineReminders won't consume this entry
+      // on reload (fires only when days <= threshold; daysLeft >= 3 > 1 here).
+      daysBeforeToFire: 1,
       scheduledAt: new Date().toISOString(),
     });
 
