@@ -3548,6 +3548,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
               btn.title = daysLeft === null
                 ? '申請截止日已過，無法設定提醒'
                 : '截止日過近（不足 3 天），無法設定提醒';
+            } else {
+              showReminderMsg(btn, '無法取消提醒（儲存失敗），請重新整理頁面後再試。');
             }
           });
           return;
@@ -3560,6 +3562,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             const updated = loadReminders().filter(e => e.id !== id);
             if (saveReminders(updated)) {
               applyReminderBtnState(btn, false);
+            } else {
+              showReminderMsg(btn, '無法取消提醒（儲存失敗），請重新整理頁面後再試。');
             }
             return;
           }
