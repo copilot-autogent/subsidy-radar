@@ -55,14 +55,17 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  if (event.request.method !== 'GET') return;
+
   const isCacheable =
-    url.pathname.includes('/_astro/') ||
+    url.origin === self.location.origin &&
+    (url.pathname.includes('/_astro/') ||
     url.pathname.includes('/subsidy-radar/icons/') ||
     url.pathname.endsWith('.svg') ||
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.json') ||
     url.pathname.endsWith('.css') ||
-    url.pathname.endsWith('.js');
+    url.pathname.endsWith('.js'));
 
   if (isCacheable) {
     event.respondWith(

@@ -145,13 +145,17 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
         // Check if user already dismissed
         var dismissed = false;
         try { dismissed = !!localStorage.getItem('pwa-install-dismissed'); } catch(e) {}
-        if (dismissed) return;
 
+        // Always preventDefault so the browser mini-infobar is suppressed,
+        // even when the user has already dismissed our custom banner.
         window.addEventListener('beforeinstallprompt', function(e) {
           e.preventDefault();
+          if (dismissed) return;
           deferredPrompt = e;
           if (banner) banner.removeAttribute('hidden');
         });
+
+        if (dismissed) return;
 
         if (installBtn) {
           installBtn.addEventListener('click', function() {
