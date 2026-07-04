@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student' | 'worker';
+type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student' | 'worker' | 'middle-aged';
 type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[]; officialUrl?: string; lastVerifiedDate?: string; source?: string };
 const subsidies = subsidiesRaw as Subsidy[];
 
@@ -123,7 +123,9 @@ const STUDENT_LABEL = '⭐ 學生補助';
 const studentCount = subsidies.filter(s => s.situations?.includes('student')).length;
 const WORKER_LABEL = '⭐ 勞工補助';
 const workerCount = subsidies.filter(s => s.situations?.includes('worker')).length;
-const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, WORKER_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY))];
+const MIDDLE_AGED_LABEL = '⭐ 中高齡補助';
+const middleAgedCount = subsidies.filter(s => s.situations?.includes('middle-aged')).length;
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, WORKER_LABEL, MIDDLE_AGED_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY))];
 const youthCount = youthHighlightCount;
 
 // ── Agency filter — normalize full agency names to parent-ministry groups ─
@@ -231,6 +233,7 @@ const personas = [
   { key: 'fresh-grad',    icon: '🎓', label: '應屆畢業生' },
   { key: 'student',       icon: '📚', label: '在學學生' },
   { key: 'worker',        icon: '👷', label: '勞工/就業' },
+  { key: 'middle-aged',  icon: '👨‍💼', label: '中高齡(45+)' },
   { key: 'renter',        icon: '🏠', label: '找租屋' },
   { key: 'homebuyer',     icon: '🏡', label: '想買房' },
   { key: 'entrepreneur',  icon: '💼', label: '想創業' },
@@ -425,8 +428,22 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       </div>
     </div>
 
+    <div class="quiz-question" data-question="middle-aged" style="display:none">
+      <label id="quiz-label-middle-aged" class="quiz-label">9. 您是否年滿 45 歲？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-middle-aged">
+        <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">👨‍💼</span>
+          <span class="option-text">是（45–64 歲，適用中高齡專屬補助）</span>
+        </button>
+        <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">✓</span>
+          <span class="option-text">否</span>
+        </button>
+      </div>
+    </div>
+
     <div class="quiz-question" data-question="county" style="display:none">
-      <label id="quiz-label-county" class="quiz-label">9. 您目前居住在哪個縣市？</label>
+      <label id="quiz-label-county" class="quiz-label">10. 您目前居住在哪個縣市？</label>
       <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-county">
         <button class="quiz-option" data-value="台北市" type="button" role="radio" aria-checked="false">
           <span class="option-icon">🏙️</span>
@@ -530,13 +547,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           ? studentCount
           : cat === WORKER_LABEL
           ? workerCount
+          : cat === MIDDLE_AGED_LABEL
+          ? middleAgedCount
           : cat === RECENCY_LABEL
           ? recencyCount
           : categoryCounts[cat] || 0;
         return (
           <button
-            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === SINGLE_PARENT_LABEL ? 'single-parent-filter' : ''} ${cat === YOUNG_CHILD_LABEL ? 'young-child-filter' : ''} ${cat === STUDENT_LABEL ? 'student-filter' : ''} ${cat === WORKER_LABEL ? 'worker-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
-            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : cat === SINGLE_PARENT_LABEL ? 'singleParentFilterBtn' : cat === YOUNG_CHILD_LABEL ? 'youngChildFilterBtn' : cat === STUDENT_LABEL ? 'studentFilterBtn' : cat === WORKER_LABEL ? 'workerFilterBtn' : undefined}
+            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === SINGLE_PARENT_LABEL ? 'single-parent-filter' : ''} ${cat === YOUNG_CHILD_LABEL ? 'young-child-filter' : ''} ${cat === STUDENT_LABEL ? 'student-filter' : ''} ${cat === WORKER_LABEL ? 'worker-filter' : ''} ${cat === MIDDLE_AGED_LABEL ? 'middle-aged-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
+            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : cat === SINGLE_PARENT_LABEL ? 'singleParentFilterBtn' : cat === YOUNG_CHILD_LABEL ? 'youngChildFilterBtn' : cat === STUDENT_LABEL ? 'studentFilterBtn' : cat === WORKER_LABEL ? 'workerFilterBtn' : cat === MIDDLE_AGED_LABEL ? 'middleAgedFilterBtn' : undefined}
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
@@ -1174,6 +1193,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const YOUNG_CHILD_FILTER_LABEL = (document.getElementById('youngChildFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 育兒';
     const STUDENT_FILTER_LABEL = (document.getElementById('studentFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 學生補助';
     const WORKER_FILTER_LABEL = (document.getElementById('workerFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 勞工補助';
+    const MIDDLE_AGED_FILTER_LABEL = (document.getElementById('middleAgedFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 中高齡補助';
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
@@ -1199,6 +1219,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       'young-child':   new Set(['yes', 'no']),
       'student':       new Set(['yes', 'no']),
       'worker':        new Set(['yes', 'no']),
+      'middle-aged':   new Set(['yes', 'no']),
       'county':        new Set(['台北市', '新北市', '桃園市', '台中市', '高雄市', 'other']),
     };
 
@@ -1213,6 +1234,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.set('q7', quizAnswers['student'] ?? '');
       params.set('q8', quizAnswers['county'] ?? '');
       params.set('q9', quizAnswers['worker'] ?? '');
+      params.set('q10', quizAnswers['middle-aged'] ?? '');
       history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
     }
 
@@ -1227,6 +1249,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.delete('q7');
       params.delete('q8');
       params.delete('q9');
+      params.delete('q10');
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
@@ -1334,6 +1357,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const youngChild = quizAnswers['young-child'];
       const student = quizAnswers['student'];
       const worker = quizAnswers['worker'];
+      const middleAged = quizAnswers['middle-aged'];
 
       // Map quiz answers to situations
       if (age === 'senior') situations.push('senior');
@@ -1360,6 +1384,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       if (worker === 'yes') {
         situations.push('worker');
+      }
+      if (middleAged === 'yes') {
+        situations.push('middle-aged');
       }
       
       return situations;
@@ -2061,6 +2088,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           // Worker entries span multiple categories — tag-only matching is intentional.
           : activeCategory === WORKER_FILTER_LABEL
           ? situations.includes('worker')
+          // Middle-aged entries span multiple categories — tag-only matching is intentional.
+          : activeCategory === MIDDLE_AGED_FILTER_LABEL
+          ? situations.includes('middle-aged')
           : activeCategory === RECENCY_FILTER_LABEL
           ? isRecentlyAdded(card)
           : cat === activeCategory;
@@ -2291,6 +2321,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       'indigenous':   'indigenous',
       'disabled':     'disabled',
       'low-income':   'low-income',
+      'middle-aged':  'middle-aged',
     };
 
     personaBtns.forEach(btn => {
@@ -2841,6 +2872,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const q7 = params.get('q7') ?? '';
       const q8 = params.get('q8') ?? '';
       const q9 = params.get('q9') ?? '';
+      const q10 = params.get('q10') ?? '';
 
       const q123Valid =
         VALID_QUIZ_VALUES.age.has(q1) &&
@@ -2860,10 +2892,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // q9 is optional: empty string means user hadn't reached this question yet (backward-compat
       // with URLs shared before the worker question was added in #144).
       const q9Valid = q9 === '' || VALID_QUIZ_VALUES['worker'].has(q9);
+      // q10 is optional: empty string means user hadn't reached this question yet (backward-compat
+      // with URLs shared before the middle-aged question was added in #145).
+      const q10Valid = q10 === '' || VALID_QUIZ_VALUES['middle-aged'].has(q10);
 
-      if (q123Valid && q4Valid && q5Valid && q6Valid && q7Valid && q8Valid && q9Valid) {
+      if (q123Valid && q4Valid && q5Valid && q6Valid && q7Valid && q8Valid && q9Valid && q10Valid) {
         // All answers present and valid — restore full quiz state
-        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5, ...(q6 ? { 'young-child': q6 } : {}), ...(q7 ? { 'student': q7 } : {}), ...(q8 ? { 'county': q8 } : {}), ...(q9 ? { 'worker': q9 } : {}) };
+        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5, ...(q6 ? { 'young-child': q6 } : {}), ...(q7 ? { 'student': q7 } : {}), ...(q8 ? { 'county': q8 } : {}), ...(q9 ? { 'worker': q9 } : {}), ...(q10 ? { 'middle-aged': q10 } : {}) };
         // Mark each answer as selected in the UI; sync roving tabindex per group
         quizQuestions.forEach(q => { q.style.display = 'none'; });
         quizResetContainer.style.display = 'block';
@@ -2959,7 +2994,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         showQuizQuestion(currentQuestionIndex);
         applyQuizFilter();
         quizResetContainer.style.display = 'block';
-      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4') || params.has('q5') || params.has('q6') || params.has('q7') || params.has('q8')) {
+      } else if (params.has('q1') || params.has('q2') || params.has('q3') || params.has('q4') || params.has('q5') || params.has('q6') || params.has('q7') || params.has('q8') || params.has('q9') || params.has('q10')) {
         // Stale/partial/invalid params — clear them so the URL matches UI state
         clearQuizUrl();
       }
@@ -3006,7 +3041,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const VALID_SITUATIONS = new Set([
           'renter', 'homebuyer', 'entrepreneur', 'parent', 'fresh-grad',
           'unemployed', 'employed', 'senior', 'disabled', 'new-immigrant', 'indigenous', 'low-income',
-          'single-parent', 'young-child', 'student', 'worker',
+          'single-parent', 'young-child', 'student', 'worker', 'middle-aged',
         ]);
         const sitParam = params.get('sit') ?? '';
         if (sitParam && VALID_SITUATIONS.has(sitParam)) {

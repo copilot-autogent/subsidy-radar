@@ -111,7 +111,8 @@
     ],
     "situations": [
       "fresh-grad",
-      "entrepreneur"
+      "entrepreneur",
+      "middle-aged"
     ],
     "isYouthHighlight": true,
     "difficulty": "hard",
@@ -1030,7 +1031,8 @@
     ],
     "situations": [
       "unemployed",
-      "worker"
+      "worker",
+      "middle-aged"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -1071,7 +1073,8 @@
     ],
     "situations": [
       "unemployed",
-      "worker"
+      "worker",
+      "middle-aged"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -2710,5 +2713,143 @@
     "lastVerifiedDate": "2026-07-04",
     "addedDate": "2026-07-04",
     "source": "勞工保險職業災害證明給付"
+  },
+  {
+    "id": "middle-aged-on-job-training",
+    "title": "中高齡及高齡者在職訓練補助",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "45歲以上在職勞工可申請在職訓練費用補助，每人每年最高補助8萬元，協助中高齡勞工提升數位技能、取得職業証照，維持職場競爭力。",
+    "eligibility": [
+      "45歲以上在職勞工",
+      "參加符合資格訓練課程",
+      "雇主依法投保勞保"
+    ],
+    "amount": "每人每年最高補助 8 萬元",
+    "deadline": "常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.wda.gov.tw/",
+    "officialUrl": "https://www.wda.gov.tw/",
+    "tags": [
+      "中高齡",
+      "在職訓練",
+      "技能補助",
+      "就業穩定"
+    ],
+    "situations": [
+      "middle-aged",
+      "worker"
+    ],
+    "difficulty": "easy",
+    "updatedAt": "2026-07-04",
+    "steps": [
+      "查詢中高齡在職訓練課程",
+      "報名課程並出席",
+      "完課後申請補助"
+    ],
+    "deadlineDate": "2026-12-31",
+    "addedDate": "2026-07-04",
+    "maxAmount": 80000,
+    "requiredDocs": [
+      "身分證影本",
+      "在職證明",
+      "訓練收據",
+      "完訓證明"
+    ],
+    "lastVerifiedDate": "2026-07-04",
+    "source": "https://www.wda.gov.tw/"
+  },
+  {
+    "id": "middle-aged-entrepreneur-subsidy",
+    "title": "中高齡者創業補貼",
+    "category": "創業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "45至65歲失業者創業可申請創業補貼，最高補助10萬元，並提供免費創業詮詢輔導。",
+    "eligibility": [
+      "45至65歲失業者",
+      "完成創業研習課程（18小時）",
+      "提出創業計畫書"
+    ],
+    "amount": "最高補貼 10 萬元",
+    "deadline": "常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.wda.gov.tw/",
+    "officialUrl": "https://www.wda.gov.tw/",
+    "tags": [
+      "中高齡",
+      "創業",
+      "補貼",
+      "失業"
+    ],
+    "situations": [
+      "middle-aged",
+      "entrepreneur",
+      "unemployed"
+    ],
+    "difficulty": "medium",
+    "updatedAt": "2026-07-04",
+    "steps": [
+      "登記失業",
+      "參加創業研習",
+      "提出創業計畫書",
+      "申請補貼"
+    ],
+    "deadlineDate": "2026-12-31",
+    "addedDate": "2026-07-04",
+    "maxAmount": 100000,
+    "requiredDocs": [
+      "身分證影本",
+      "失業證明",
+      "創業研習結業證書",
+      "創業計畫書"
+    ],
+    "lastVerifiedDate": "2026-07-04",
+    "source": "https://www.wda.gov.tw/"
+  },
+  {
+    "id": "employer-hire-middle-aged-incentive",
+    "title": "雇主僱用中高齡獎勵金",
+    "category": "就業",
+    "agency": "勞動部勞動力發展署",
+    "summary": "雇主僱用45至65歲失業中高齡者，每人每月最高1萬元獎勵金，最長12個月，鼓勵企業積極錄用中高齡求職者。",
+    "eligibility": [
+      "雇主為合法登記事業單位",
+      "所聘勞工45至65歲且持失業證明",
+      "連續受僱滿90日以上"
+    ],
+    "amount": "每人每月最高 10,000 元，最長12個月",
+    "deadline": "常態受理，按季申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.wda.gov.tw/",
+    "officialUrl": "https://www.wda.gov.tw/",
+    "tags": [
+      "中高齡",
+      "雇主獎勵",
+      "就業促進",
+      "僱用補助"
+    ],
+    "situations": [
+      "middle-aged",
+      "worker"
+    ],
+    "difficulty": "medium",
+    "updatedAt": "2026-07-04",
+    "steps": [
+      "雇主媒合中高齡求職者",
+      "簽訂勞動契約",
+      "連續僱用滿30日後申請",
+      "每季檢附資料核定撥款"
+    ],
+    "deadlineDate": "2026-12-31",
+    "addedDate": "2026-07-04",
+    "maxAmount": 120000,
+    "requiredDocs": [
+      "事業登記證明",
+      "勞工身分證及失業證明",
+      "勞動契約影本",
+      "勞保投保紀錄"
+    ],
+    "lastVerifiedDate": "2026-07-04",
+    "source": "https://www.wda.gov.tw/"
   }
 ]
