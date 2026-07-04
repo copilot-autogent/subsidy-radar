@@ -48,6 +48,9 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
     <link rel="manifest" href={`${base}manifest.json`} />
     <meta name="theme-color" content="#2563eb" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="補助雷達" />
+    <link rel="apple-touch-icon" href={`${base}icons/icon-192.png`} />
     <title>{title}</title>
     <!-- FAWT prevention: apply saved theme before CSS renders -->
     <script is:inline>
@@ -70,6 +73,16 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
     <slot name="head" />
   </head>
   <body>
+    <!-- Offline indicator: shown when navigator.onLine is false -->
+    <div id="offline-indicator" class="offline-indicator" aria-live="polite" aria-label="離線模式" hidden>
+      📵 離線模式
+    </div>
+    <!-- Install prompt: shown on Android Chrome when beforeinstallprompt fires -->
+    <div id="install-banner" class="install-banner" hidden>
+      <span>📲 安裝 APP — 加到主畫面，隨時查詢補助</span>
+      <button id="install-btn" type="button">安裝</button>
+      <button id="install-dismiss" type="button" aria-label="關閉安裝提示">✕</button>
+    </div>
     <header class="site-header">
       <nav class="nav-inner">
         <a href={base} class="logo">📡 補助雷達</a>
@@ -96,12 +109,79 @@ const ogImage = `${siteOrigin}${base}og-image.png`;
       </div>
     </footer>
     <script define:vars={{ swUrl: `${base}sw.js`, swScope: base }}>
+      // ── Service worker registration ──────────────────────────────────────────
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register(swUrl, { scope: swScope })
             .catch(err => console.warn('[subsidy-radar] SW registration failed:', err));
         });
       }
+
+      // ── Offline indicator ────────────────────────────────────────────────────
+      (function() {
+        var indicator = document.getElementById('offline-indicator');
+        if (!indicator) return;
+
+        function updateOnlineStatus() {
+          if (navigator.onLine) {
+            indicator.setAttribute('hidden', '');
+          } else {
+            indicator.removeAttribute('hidden');
+          }
+        }
+
+        updateOnlineStatus();
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+      })();
+
+      // ── PWA install prompt (Android Chrome) ──────────────────────────────────
+      (function() {
+        var deferredPrompt = null;
+        var banner = document.getElementById('install-banner');
+        var installBtn = document.getElementById('install-btn');
+        var dismissBtn = document.getElementById('install-dismiss');
+
+        // Check if user already dismissed
+        var dismissed = false;
+        try { dismissed = !!localStorage.getItem('pwa-install-dismissed'); } catch(e) {}
+
+        // Always preventDefault so the browser mini-infobar is suppressed,
+        // even when the user has already dismissed our custom banner.
+        window.addEventListener('beforeinstallprompt', function(e) {
+          e.preventDefault();
+          if (dismissed) return;
+          deferredPrompt = e;
+          if (banner) banner.removeAttribute('hidden');
+        });
+
+        if (dismissed) return;
+
+        if (installBtn) {
+          installBtn.addEventListener('click', function() {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function() {
+              deferredPrompt = null;
+              if (banner) banner.setAttribute('hidden', '');
+            }).catch(function() {
+              deferredPrompt = null;
+            });
+          });
+        }
+
+        if (dismissBtn) {
+          dismissBtn.addEventListener('click', function() {
+            if (banner) banner.setAttribute('hidden', '');
+            try { localStorage.setItem('pwa-install-dismissed', '1'); } catch(e) {}
+          });
+        }
+
+        // Hide banner once installed
+        window.addEventListener('appinstalled', function() {
+          if (banner) banner.setAttribute('hidden', '');
+        });
+      })();
     </script>
     <script>
       // Theme toggle logic
