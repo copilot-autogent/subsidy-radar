@@ -816,6 +816,8 @@ main {
   align-items: center;
   margin-left: auto;
   flex-shrink: 0;
+  gap: 0.3rem;
+  position: relative;
 }
 
 .tracker-select {
@@ -843,6 +845,56 @@ main {
 .tracker-select.ts-approved  { background: #dcfce7; color: #15803d; border-color: #86efac; }
 .tracker-select.ts-received  { background: #dcfce7; color: #15803d; border-color: #86efac; }
 .tracker-select.ts-ineligible{ background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+
+/* Per-subsidy deadline reminder button */
+.reminder-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  padding: 0;
+  border: 1.5px solid var(--color-border);
+  border-radius: 50%;
+  background: transparent;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+.reminder-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+.reminder-btn.reminder-active {
+  border-color: #f59e0b;
+  background: #fef3c7;
+}
+.reminder-btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.reminder-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.reminder-denied-msg {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #1e293b;
+  color: #f8fafc;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  white-space: normal;
+  z-index: 20;
+  pointer-events: auto;
+  max-width: 14rem;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
 
 /* Print badge: hidden on screen, shown in @media print */
 .tracker-print-badge { display: none; }
