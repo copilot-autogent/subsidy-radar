@@ -1847,7 +1847,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         if (!id || !(id in tracker)) return;
         if (card.dataset.deadlineStatus !== 'closed') return;
         const status = tracker[id];
-        if (status === '未申請' || status === '不符資格') return;
+        if (status === '不符資格') return;
         const title = card.querySelector('.card-title')?.textContent?.trim() ?? id;
         closedTracked.push(title);
       });
@@ -2087,7 +2087,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const _ntdFmt = new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', maximumFractionDigits: 0 });
 
     function updateEligibleTotalBanner() {
-      const filterActive = isQuizActive || activeCategory !== '全部' || activeDifficulty !== '' || searchQuery !== '' || activeSituation !== '' || showTrackedOnly || activeUrgency !== 0 || showClosedSubsidies;
+      const filterActive = isQuizActive || activeCategory !== '全部' || activeDifficulty !== '' || searchQuery !== '' || activeSituation !== '' || showTrackedOnly || activeUrgency !== 0;
       if (!filterActive) {
         eligibleTotalBanner.style.display = 'none';
         return;
