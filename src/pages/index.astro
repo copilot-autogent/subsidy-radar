@@ -1844,7 +1844,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
       cards.forEach(card => {
         const id = card.dataset.id ?? '';
-        if (!id || !(id in tracker)) return;
+        if (!Object.prototype.hasOwnProperty.call(tracker, id)) return;
         if (card.dataset.deadlineStatus !== 'closed') return;
         const status = tracker[id];
         if (status === '不符資格') return;
@@ -2240,7 +2240,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // reach without changing their filter state.
       const noOtherFilters = activeCategory === '全部' && activeSituation === '' &&
         activeDifficulty === '' && activeCounty === '' && activeUrgency === 0 && activeAgency === '' &&
-        !showTrackedOnly && !isQuizActive && !showClosedSubsidies;
+        !showTrackedOnly && !isQuizActive;
       if (searchQuery !== '' && visible === 0 && noOtherFilters) {
         fuzzyScores.forEach((fm, card) => {
           if (!fm.exact && fm.score >= HINT_THRESHOLD && fm.score < FUZZY_THRESHOLD) {
