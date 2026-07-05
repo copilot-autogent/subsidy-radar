@@ -1078,6 +1078,17 @@ main {
 }
 
 
+.tracker-closed-banner {
+  background: linear-gradient(135deg, #1c1917 0%, #44403c 100%);
+  color: #fef3c7;
+  padding: 0.85rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  border: 1px solid #78716c;
+  animation: bannerSlideIn 0.3s ease-out;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -1111,10 +1122,12 @@ main {
 
 .card-expired {
   opacity: 0.6;
+  filter: grayscale(60%);
 }
 
 .card-expired:hover {
   opacity: 0.8;
+  filter: grayscale(30%);
 }
 
 .card-header {
@@ -2668,6 +2681,7 @@ main {
   .eligibility-banner,
   .eligible-total-banner,
   .tracker-deadline-banner,
+  .tracker-closed-banner,
   .tracker-summary-banner,
   .deadline-panel,
   .results-row,

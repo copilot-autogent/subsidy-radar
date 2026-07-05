@@ -651,6 +651,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       <button class="sort-btn tracker-filter-btn" id="trackerFilter" type="button" aria-pressed="false">
         📌 只看追蹤中
       </button>
+      <button class="sort-btn show-closed-btn" id="showClosedBtn" type="button" aria-pressed="false">
+        ⏸ 顯示已截止補助
+      </button>
     </div>
   </div>
 
@@ -670,6 +673,14 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       <button class="tracker-deadline-dismiss" id="trackerDeadlineDismiss" type="button" aria-label="關閉截止提醒">✕ 關閉</button>
     </div>
     <ul class="tracker-deadline-list" id="trackerDeadlineList"></ul>
+  </div>
+
+  <div class="tracker-closed-banner" id="trackerClosedBanner" style="display:none" role="alert" aria-live="polite">
+    <div class="tracker-deadline-banner-header">
+      <span>⚠️ 你追蹤中的補助已截止申請：</span>
+      <button class="tracker-deadline-dismiss" id="trackerClosedDismiss" type="button" aria-label="關閉已截止提醒">✕ 關閉</button>
+    </div>
+    <ul class="tracker-deadline-list" id="trackerClosedList"></ul>
   </div>
 
   <div class="tracker-summary-banner" id="trackerSummaryBanner" style="display:none" role="status" aria-live="polite">
@@ -984,6 +995,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const sortBtn = document.getElementById('sortDifficulty') as HTMLButtonElement;
     const sortAmountBtn = document.getElementById('sortAmount') as HTMLButtonElement;
     const trackerFilterBtn = document.getElementById('trackerFilter') as HTMLButtonElement;
+    const showClosedBtn = document.getElementById('showClosedBtn') as HTMLButtonElement;
 
     // Normalize county names: 臺→台 so data variants match the dropdown values
     const normalizeCounty = (c: string) => c.replace(/臺/g, '台');
@@ -996,6 +1008,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     /** 0 = off, 1 = high→low, 2 = low→high */
     let sortAmountState: 0 | 1 | 2 = 0;
     let showTrackedOnly = false;
+    let showClosedSubsidies = false;
     let isQuizActive = false;
     let activeCounty = '';
     let activeAgency = '';
@@ -1464,7 +1477,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           || cardCounties.length === 0
           || cardCounties.some(c => normalizeCounty(c) === activeCountyNorm);
 
-        const matchOverall = matchSituation && matchYouth && matchCounty;
+        const matchOverall = matchSituation && matchYouth && matchCounty && (showClosedSubsidies || card.dataset.deadlineStatus !== 'closed');
         
         card.style.display = matchOverall ? '' : 'none';
         if (matchOverall) visible++;
@@ -1696,6 +1709,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             }
           }
           renderTrackerDeadlineBanner();
+          renderTrackerClosedBanner();
           updateTrackerSummaryBanner();
           if (showTrackedOnly) updateDisplay();
         });
@@ -1804,6 +1818,58 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       if (dismissBtn) {
         dismissBtn.onclick = () => {
           try { sessionStorage.setItem(TRACKER_BANNER_DISMISSED_KEY, '1'); } catch { /* blocked */ }
+          banner.style.display = 'none';
+        };
+      }
+    }
+
+    // ── Tracker closed-subsidy warning banner ────────────────────────────────
+    const TRACKER_CLOSED_BANNER_DISMISSED_KEY = 'tracker-closed-banner-dismissed';
+
+    function renderTrackerClosedBanner() {
+      const banner = document.getElementById('trackerClosedBanner');
+      const list = document.getElementById('trackerClosedList');
+      const dismissBtn = document.getElementById('trackerClosedDismiss') as HTMLButtonElement | null;
+      if (!banner || !list) return;
+
+      try {
+        if (sessionStorage.getItem(TRACKER_CLOSED_BANNER_DISMISSED_KEY)) {
+          banner.style.display = 'none';
+          return;
+        }
+      } catch { /* sessionStorage blocked */ }
+
+      const tracker = loadTracker();
+      const closedTracked: string[] = [];
+
+      cards.forEach(card => {
+        const id = card.dataset.id ?? '';
+        if (!Object.prototype.hasOwnProperty.call(tracker, id)) return;
+        if (card.dataset.deadlineStatus !== 'closed') return;
+        const status = tracker[id];
+        if (status === '不符資格') return;
+        const title = card.querySelector('.card-title')?.textContent?.trim() ?? id;
+        closedTracked.push(title);
+      });
+
+      if (closedTracked.length === 0) {
+        banner.style.display = 'none';
+        return;
+      }
+
+      list.innerHTML = '';
+      closedTracked.forEach(title => {
+        const li = document.createElement('li');
+        li.className = 'tracker-deadline-item';
+        li.textContent = `🔴 ${title} — 此計畫申請期限已結束`;
+        list.appendChild(li);
+      });
+
+      banner.style.display = '';
+
+      if (dismissBtn) {
+        dismissBtn.onclick = () => {
+          try { sessionStorage.setItem(TRACKER_CLOSED_BANNER_DISMISSED_KEY, '1'); } catch { /* blocked */ }
           banner.style.display = 'none';
         };
       }
@@ -2146,7 +2212,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // Agency filter: if no agency selected, show all; otherwise match card's normalized agency.
         const matchAgency = activeAgency === '' || card.dataset.agency === activeAgency;
 
-        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty && matchUrgency && matchAgency;
+        const matchClosed = showClosedSubsidies || (card.dataset.deadlineStatus !== 'closed');
+        const show = matchCat && matchSituation && matchSearch && matchTracked && matchDifficulty && matchCounty && matchUrgency && matchAgency && matchClosed;
         card.style.display = show ? '' : 'none';
         if (show) {
           visible++;
@@ -2446,6 +2513,19 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       showTrackedOnly = !showTrackedOnly;
       updateTrackerFilterLabel();
       updateDisplay();
+    });
+
+    // ── Show closed subsidies toggle ─────────────────────────────────────────
+    showClosedBtn?.addEventListener('click', () => {
+      showClosedSubsidies = !showClosedSubsidies;
+      showClosedBtn.classList.toggle('active', showClosedSubsidies);
+      showClosedBtn.setAttribute('aria-pressed', String(showClosedSubsidies));
+      showClosedBtn.textContent = showClosedSubsidies ? '⏸ 隱藏已截止補助' : '⏸ 顯示已截止補助';
+      if (isQuizActive) {
+        applyQuizFilter();
+      } else {
+        updateDisplay();
+      }
     });
 
     // ── County filter ────────────────────────────────────────────────────────
@@ -3171,6 +3251,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     renderCountdownBadges();
     renderRecencyBadges();
     renderTrackerDeadlineBanner();
+    renderTrackerClosedBanner();
     initShareLinks();
     initFromQueryParams();
     initUrgencyCounts();
