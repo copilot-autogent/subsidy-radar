@@ -483,6 +483,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     </div>
   </section>
 
+  <!-- ── Quiz Top-3 Best Match Panel ── -->
+  <div id="quiz-top3-panel" class="quiz-top3-panel" style="display:none" role="region" aria-label="您的最佳配對結果" aria-live="polite">
+    <div class="top3-panel-header">
+      <h2 class="top3-panel-title">🎯 您的最佳配對</h2>
+      <button class="top3-dismiss-btn" id="top3DismissBtn" type="button" aria-label="關閉最佳配對面板並重新作答">✕ 重新作答</button>
+    </div>
+    <div class="top3-cards-container" id="top3CardsContainer"></div>
+    <p class="top3-no-match" id="top3NoMatch" style="display:none">沒有高度符合的補助，請嘗試調整篩選條件</p>
+  </div>
+
   <!-- ── Persona Strip ── -->
   <div class="persona-strip" role="group" aria-label="快速人物誌篩選">
     <span class="persona-strip-label">我是：</span>
@@ -1235,6 +1245,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const quizShareContainer = document.getElementById('quizShareContainer')!;
     const quizShareBtn = document.getElementById('quizShareBtn') as HTMLButtonElement;
 
+    const quizTop3Panel = document.getElementById('quiz-top3-panel') as HTMLElement;
+    const top3CardsContainer = document.getElementById('top3CardsContainer') as HTMLElement;
+    const top3NoMatch = document.getElementById('top3NoMatch') as HTMLElement;
+    const top3DismissBtn = document.getElementById('top3DismissBtn') as HTMLButtonElement;
+
     // Valid answer sets for each question key
     const VALID_QUIZ_VALUES: Record<string, Set<string>> = {
       age:           new Set(['youth', 'adult', 'senior']),
@@ -1418,6 +1433,81 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       return situations;
     }
 
+    const MIN_TOP3_SCORE = 30; // minimum match score % to appear in top panel
+
+    function showTop3Panel() {
+      // Collect all visible cards with their quiz scores (set by applyQuizFilter)
+      const scored: Array<{ card: HTMLElement; score: number; title: string; amount: string; deadline: string; deadlineStatus: string; url: string; id: string }> = [];
+      cards.forEach(card => {
+        if (card.style.display === 'none') return;
+        const score = parseInt(card.dataset.quizScore ?? '0', 10);
+        if (score < MIN_TOP3_SCORE) return;
+        const title = card.querySelector<HTMLElement>('.card-title')?.textContent?.trim() ?? '';
+        const amount = card.querySelector<HTMLElement>('.amount-text')?.textContent?.trim() ?? '';
+        const deadline = card.dataset.deadline ?? '';
+        const deadlineStatus = card.dataset.deadlineStatus ?? '';
+        const url = card.dataset.url ?? '';
+        const id = card.dataset.id ?? '';
+        scored.push({ card, score, title, amount, deadline, deadlineStatus, url, id });
+      });
+
+      // Sort by score descending, take top 5
+      scored.sort((a, b) => b.score - a.score);
+      const top = scored.slice(0, 5);
+
+      top3CardsContainer.innerHTML = '';
+
+      if (top.length === 0) {
+        top3NoMatch.style.display = '';
+      } else {
+        top3NoMatch.style.display = 'none';
+        top.forEach(({ score, title, amount, deadline, deadlineStatus, url, id }) => {
+          const card = document.createElement('div');
+          card.className = 'top3-result-card';
+
+          // Score badge
+          let scoreCls = 'score-low';
+          if (score >= 70) scoreCls = 'score-high';
+          else if (score >= 40) scoreCls = 'score-medium';
+
+          // Deadline display
+          let deadlineHtml = '';
+          if (deadline) {
+            const isClosed = deadlineStatus === 'closed';
+            const deadlineLabel = isClosed ? '⚠️ 申請已截止' : `🗓️ ${deadline}`;
+            deadlineHtml = `<span class="top3-deadline ${isClosed ? 'top3-deadline-closed' : ''}">${deadlineLabel}</span>`;
+          }
+
+          // Apply link
+          const applyHtml = url
+            ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="top3-apply-btn" aria-label="前往申請 ${title}（新視窗開啟）">立即申請 →</a>`
+            : `<a href="#${id}" class="top3-apply-btn top3-apply-btn-detail" aria-label="查看 ${title} 詳情">查看詳情 →</a>`;
+
+          card.innerHTML = `
+            <div class="top3-card-header">
+              <span class="top3-score-badge match-score-pill ${scoreCls}">${score}% 符合</span>
+              <h3 class="top3-card-title">${title}</h3>
+            </div>
+            <div class="top3-card-amount">💰 ${amount}</div>
+            <div class="top3-card-footer">
+              ${deadlineHtml}
+              ${applyHtml}
+            </div>
+          `;
+          top3CardsContainer.appendChild(card);
+        });
+      }
+
+      quizTop3Panel.style.display = '';
+      quizTop3Panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function hideTop3Panel() {
+      quizTop3Panel.style.display = 'none';
+      top3CardsContainer.innerHTML = '';
+      top3NoMatch.style.display = 'none';
+    }
+
     function applyQuizFilter() {
       const situations = matchQuizToSituations();
 
@@ -1546,6 +1636,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             applyQuizFilter();
             updateQuizUrl();
             quizShareContainer.style.display = 'block';
+            showTop3Panel();
           }, 300);
         }
       });
@@ -1578,6 +1669,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
     });
 
+    top3DismissBtn.addEventListener('click', () => {
+      quizResetBtn.click();
+    });
+
     quizResetBtn.addEventListener('click', () => {
       quizAnswers = {};
       currentQuestionIndex = 0;
@@ -1593,6 +1688,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
       showQuizQuestion(0);
       quizShareContainer.style.display = 'none';
+      hideTop3Panel();
       clearQuizUrl();
       
       // Reset filters
@@ -3022,6 +3118,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         currentQuestionIndex = quizQuestions.length;
         applyQuizFilter();
         quizShareContainer.style.display = 'block';
+        showTop3Panel();
       } else if (q123Valid && q4Valid && q5 === '') {
         // Old 4-answer share URL (pre-Q5): restore q1–q4 and advance to Q5 so user answers it
         quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4 };
