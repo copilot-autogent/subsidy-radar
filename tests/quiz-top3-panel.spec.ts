@@ -65,26 +65,22 @@ function selectTop3(
 test.describe('Quiz Top-3 Best Match Panel — logic spec (issue #156)', () => {
 
   test('panel is gated on quiz completion: selectTop3 only runs after all answers collected', () => {
-    // The completion gate in index.astro fires when currentQuestionIndex >= quizQuestions.length.
-    // This test verifies the spec invariant: the panel must NOT run before quiz is complete.
-    // We simulate the completion state by checking that quizSituations is only non-empty
-    // after all required questions have been answered.
-    const quizQuestions = ['age', 'employment', 'housing', 'disability', 'single-parent',
-                           'young-child', 'student', 'worker', 'middle-aged', 'county'];
-    const totalQuestions = quizQuestions.length;
+    // This test verifies the spec invariant expressed in the JS control flow:
+    // showTop3Panel() is called ONLY in the "quiz complete" branch
+    // (currentQuestionIndex >= quizQuestions.length), never for partial answers.
+    //
+    // We test this at the data-logic level: with zero quizSituations (what you'd get
+    // from an unanswered quiz), computeMatchScore returns 0 for every subsidy,
+    // so selectTop3 yields empty — the panel must not appear.
+    const subsidies = loadSubsidies();
+    const emptyQuizResult = selectTop3(subsidies, []); // no answers → situations = []
+    // computeMatchScore returns 0 when quizSituations is empty, so nothing passes MIN_TOP3_SCORE
+    expect(emptyQuizResult).toHaveLength(0);
 
-    // Before any answers: situations empty → showTop3Panel would not be called
-    const partialAnswers: Record<string, string> = { age: 'youth', employment: 'fresh-grad' };
-    const answeredCount = Object.keys(partialAnswers).length;
-    expect(answeredCount).toBeLessThan(totalQuestions);
-
-    // After all answers: currentQuestionIndex reaches quizQuestions.length → panel fires
-    const allAnswers: Record<string, string> = {
-      age: 'youth', employment: 'fresh-grad', housing: 'renter', disability: 'no',
-      'single-parent': 'no', 'young-child': 'no', student: 'yes', worker: 'no',
-      'middle-aged': 'no', county: '台北市',
-    };
-    expect(Object.keys(allAnswers).length).toBe(totalQuestions);
+    // With a full set of situations, results CAN be non-empty (proven in the next test).
+    // The full-quiz guard (10 required keys) is part of the production JS control flow and
+    // is not duplicatable here without a browser; the logic contract is: only a non-empty
+    // quizSituations (from a complete quiz) can ever yield panel entries.
   });
 
   test('panel shows highest-scoring subsidies (score ≥ 30%) sorted by score descending', () => {
@@ -92,6 +88,9 @@ test.describe('Quiz Top-3 Best Match Panel — logic spec (issue #156)', () => {
 
     // Find a situation tag that exists in the real data (guaranteed non-zero matches)
     const allTags = subsidies.flatMap(s => s.situations ?? []);
+    if (allTags.length === 0) {
+      throw new Error('Data integrity: no subsidies have situation tags — selectTop3 tests are vacuous');
+    }
     const tagCounts = new Map<string, number>();
     allTags.forEach(t => tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1));
     // Pick the most common tag so at least one subsidy has ONLY that tag (score = 100%)

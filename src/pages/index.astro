@@ -1520,7 +1520,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
             applyLink.target = '_blank';
             applyLink.rel = 'noopener noreferrer';
           } else {
-            applyLink.href = `#${escHtml(id)}`;
+            applyLink.href = `#${encodeURIComponent(id)}`;
             applyLink.textContent = '查看詳情 →';
           }
           footer.appendChild(applyLink);
