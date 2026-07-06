@@ -90,14 +90,19 @@ test.describe('Quiz Top-3 Best Match Panel — logic spec (issue #156)', () => {
   test('panel shows highest-scoring subsidies (score ≥ 30%) sorted by score descending', () => {
     const subsidies = loadSubsidies();
 
-    // Use a quiz that targets renter + student + fresh-grad situations
-    const quizSituations = ['renter', 'student', 'fresh-grad'];
+    // Find a situation tag that exists in the real data (guaranteed non-zero matches)
+    const allTags = subsidies.flatMap(s => s.situations ?? []);
+    const tagCounts = new Map<string, number>();
+    allTags.forEach(t => tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1));
+    // Pick the most common tag so at least one subsidy has ONLY that tag (score = 100%)
+    const [mostCommonTag] = [...tagCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+
+    // A subsidy with only [mostCommonTag] will score 100% for quiz [mostCommonTag]
+    const quizSituations = [mostCommonTag];
     const top = selectTop3(subsidies, quizSituations);
 
-    if (top.length === 0) {
-      // All scores < 30% — valid "no match" path; test still passes
-      return;
-    }
+    // With the most common tag, we're guaranteed ≥ 1 match
+    expect(top.length).toBeGreaterThan(0);
 
     // All returned entries must have score ≥ 30%
     for (const entry of top) {
@@ -109,13 +114,14 @@ test.describe('Quiz Top-3 Best Match Panel — logic spec (issue #156)', () => {
       expect(top[i].score).toBeGreaterThanOrEqual(top[i + 1].score);
     }
 
-    // At most 5 results
+    // At most TOP3_MAX_RESULTS results
     expect(top.length).toBeLessThanOrEqual(5);
 
     // The top result should have the highest score among ALL subsidies ≥ 30%
     const allScored = subsidies
       .map(s => computeMatchScore(quizSituations, s.situations ?? []))
       .filter(s => s >= MIN_TOP3_SCORE);
+    expect(allScored.length).toBeGreaterThan(0);
     const maxScore = Math.max(...allScored);
     expect(top[0].score).toBe(maxScore);
   });
