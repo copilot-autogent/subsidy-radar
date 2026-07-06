@@ -2048,9 +2048,6 @@ main {
   .top3-panel-title {
     font-size: 1.05rem;
   }
-}
-
-@media (max-width: 640px) {
   .quiz-options {
     grid-template-columns: 1fr 1fr;
   }

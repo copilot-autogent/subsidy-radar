@@ -1436,11 +1436,6 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const MIN_TOP3_SCORE = 30; // minimum match score % to appear in top panel
     const TOP3_MAX_RESULTS = 5; // show up to 5 (issue #156: "Top 3–5")
 
-    /** Safely escape text content for DOM insertion. */
-    function escHtml(str: string): string {
-      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
     function showTop3Panel() {
       // Collect all visible cards with their quiz scores (set by applyQuizFilter)
       const scored: Array<{ score: number; title: string; amount: string; deadline: string; deadlineStatus: string; url: string; id: string }> = [];
@@ -1510,12 +1505,12 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           }
 
           const applyLink = document.createElement('a');
-          applyLink.className = url ? 'top3-apply-btn' : 'top3-apply-btn top3-apply-btn-detail';
-          applyLink.setAttribute('aria-label', url ? `前往申請 ${title}（新視窗開啟）` : `查看 ${title} 詳情`);
-          if (url) {
-            // Validate scheme before assigning to href to prevent javascript: injection
-            const isHttp = /^https?:\/\//i.test(url);
-            applyLink.href = isHttp ? url : '#';
+          const isHttp = /^https?:\/\//i.test(url);
+          const useApplyLink = url && isHttp;
+          applyLink.className = useApplyLink ? 'top3-apply-btn' : 'top3-apply-btn top3-apply-btn-detail';
+          applyLink.setAttribute('aria-label', useApplyLink ? `前往申請 ${title}（新視窗開啟）` : `查看 ${title} 詳情`);
+          if (useApplyLink) {
+            applyLink.href = url;
             applyLink.textContent = '立即申請 →';
             applyLink.target = '_blank';
             applyLink.rel = 'noopener noreferrer';
