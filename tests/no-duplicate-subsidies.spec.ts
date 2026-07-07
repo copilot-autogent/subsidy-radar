@@ -105,4 +105,22 @@ test.describe('subsidies.json data integrity', () => {
 
     expect(missing.length).toBe(0);
   });
+
+  test('every subsidy has a non-empty deadline string', () => {
+    const missing: string[] = [];
+
+    for (const s of subsidies) {
+      if (typeof (s as Record<string, unknown>).deadline !== 'string' || ((s as Record<string, unknown>).deadline as string).trim() === '') {
+        missing.push(`  id="${s.id}"`);
+      }
+    }
+
+    if (missing.length > 0) {
+      throw new Error(
+        `Found ${missing.length} subsidy(ies) with missing or empty deadline:\n${missing.join('\n')}`,
+      );
+    }
+
+    expect(missing.length).toBe(0);
+  });
 });
