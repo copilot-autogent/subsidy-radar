@@ -2114,6 +2114,302 @@
     ]
   },
   {
+    "id": "disability-medical-expense-subsidy",
+    "title": "身心障礙者醫療費用補助",
+    "category": "醫療",
+    "agency": "各縣市政府衛生局／社會局",
+    "summary": "各縣市政府補助持有身心障礙手冊（證明）者，就醫時產生的部分負擔費用及醫療相關費用，減輕障礙者及家庭的醫療財務負擔。補助金額與範圍因縣市而異，請向戶籍地縣市衛生局或社會局洽詢。",
+    "eligibility": [
+      "持有身心障礙手冊或身心障礙證明（各類別均適用）",
+      "設籍並實際居住於申請縣市",
+      "符合各縣市訂定之收入財產門檻（部分縣市無收入限制）",
+      "就醫費用為健保給付後尚需自行負擔之部分"
+    ],
+    "amount": "各縣市不同，一般每年補助上限 2,000–12,000 元；重度、極重度障礙者補助額較高，部分縣市可全額補助部分負擔",
+    "deadline": "全年常態受理，各縣市每季或每年核定一次",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://dep.mohw.gov.tw/DOMHAOH/cp-535-10833-107.html",
+    "officialUrl": "https://dep.mohw.gov.tw/DOMHAOH/cp-535-10833-107.html",
+    "tags": [
+      "身心障礙",
+      "醫療費用補助",
+      "部分負擔",
+      "衛生局",
+      "縣市政府"
+    ],
+    "situations": [
+      "disabled",
+      "low-income"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-07-07",
+    "steps": [
+      "備齊身心障礙手冊（證明）、健保卡、就醫收據等文件",
+      "向戶籍地縣市政府衛生局或社會局提出申請（或至區公所轉送）",
+      "填寫補助申請表，檢附就醫費用收據正本",
+      "審核通過後，依核定金額撥入申請人帳戶"
+    ],
+    "addedDate": "2026-07-07",
+    "maxAmount": 12000,
+    "lastVerifiedDate": "2026-07-07",
+    "source": "https://dep.mohw.gov.tw/DOMHAOH/cp-535-10833-107.html",
+    "requiredDocs": [
+      "身心障礙手冊或身心障礙證明影本",
+      "健保卡影本",
+      "就醫費用收據正本及診斷書",
+      "戶口名簿影本",
+      "身分證影本",
+      "銀行帳戶存摺影本"
+    ]
+  },
+  {
+    "id": "low-income-medical-expense-subsidy",
+    "title": "低收入戶及中低收入戶醫療費用補助",
+    "category": "醫療",
+    "agency": "衛生福利部／各縣市政府社會局",
+    "summary": "低收入戶及中低收入戶持健保卡就醫時，健保自動免收或減收部分負擔費用，無需事後報銷，確保弱勢民眾可獲得即時完整的醫療照護。另有部分縣市對住院自行負擔費用提供額外補助，可向戶籍地公所或社會局申請。",
+    "eligibility": [
+      "已取得政府核定之低收入戶或中低收入戶資格",
+      "持有健保卡並有實際就醫費用需自行負擔",
+      "低收入戶：門診及住院部分負擔費用可全額補助",
+      "中低收入戶：補助比例依縣市規定，一般補助 50–100%"
+    ],
+    "amount": "低收入戶：門診部分負擔全免（健保自動核減）；住院費用依縣市規定補助；中低收入戶：部分負擔依健保規定減免或縣市政府補助",
+    "deadline": "全年常態，就醫時自動適用；縣市住院補助3個月內申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.nhi.gov.tw/Content_List.aspx?n=25&topn=5FE8C9FEAE863B46",
+    "officialUrl": "https://www.nhi.gov.tw/Content_List.aspx?n=25&topn=5FE8C9FEAE863B46",
+    "tags": [
+      "低收入戶",
+      "中低收入戶",
+      "醫療費用",
+      "部分負擔補助",
+      "社會救助"
+    ],
+    "situations": [
+      "low-income",
+      "unemployed",
+      "disabled"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-07-07",
+    "steps": [
+      "確認已取得低收入戶或中低收入戶資格（向戶籍地公所社會課申請）",
+      "持健保卡及低收入戶資格文件至健保特約醫療院所就醫",
+      "就診時門診部分負擔由健保自動免收，無需另行申請",
+      "若縣市政府另設住院費用補助，保留醫療收據，3個月內向戶籍地公所或社會局申請"
+    ],
+    "addedDate": "2026-07-07",
+    "lastVerifiedDate": "2026-07-07",
+    "source": "https://www.nhi.gov.tw/Content_List.aspx?n=25&topn=5FE8C9FEAE863B46",
+    "requiredDocs": [
+      "健保卡",
+      "低收入戶或中低收入戶核定通知書",
+      "住院費用收據正本（如另申請縣市住院補助時）",
+      "身分證影本",
+      "銀行帳戶存摺影本（如另申請縣市補助時）"
+    ]
+  },
+  {
+    "id": "child-dental-health-subsidy",
+    "title": "兒童口腔健康補助（塗氟及窩溝封填）",
+    "category": "醫療",
+    "agency": "衛生福利部國民健康署",
+    "summary": "國健署提供6歲以下兒童每半年一次免費牙齒塗氟；健保另提供12歲以下兒童每半年一次兒童牙科預防保健服務（含塗氟）。後牙窩溝封填則分別針對6–9歲（第一大臼齒）及9–12歲（第二大臼齒）提供免費服務，有效預防蛀牙。持健保卡至健保特約牙醫診所即可免費接受。",
+    "eligibility": [
+      "6歲以下（72個月以下）兒童：國健署補助每半年一次免費塗氟",
+      "12歲以下兒童：健保補助每半年一次兒童牙科預防保健（含塗氟）",
+      "窩溝封填：6–9歲（第一大臼齒萌出後）或9–12歲（第二大臼齒萌出後）兒童各補助一次",
+      "持健保卡至健保特約牙醫診所申請"
+    ],
+    "amount": "全程免費（100% 政府補助），不須自行負擔；6歲以下塗氟每次省約 250–400 元，窩溝封填每顆省約 1,000–1,500 元",
+    "deadline": "全年常態受理，符合年齡即可至牙醫診所預約",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.hpa.gov.tw/Pages/Detail.aspx?nodeid=1718&pid=5548",
+    "officialUrl": "https://www.hpa.gov.tw/Pages/Detail.aspx?nodeid=1718&pid=5548",
+    "tags": [
+      "兒童牙科",
+      "塗氟",
+      "窩溝封填",
+      "口腔健康",
+      "國健署",
+      "兒童預防保健"
+    ],
+    "situations": [
+      "parent"
+    ],
+    "isYouthHighlight": true,
+    "difficulty": "easy",
+    "updatedAt": "2026-07-07",
+    "steps": [
+      "查詢兒童年齡是否符合塗氟或窩溝封填條件",
+      "持兒童健保卡至健保特約牙醫診所預約（可事先詢問是否提供此項服務）",
+      "到診時出示健保卡，完成免費塗氟或窩溝封填服務",
+      "每半年可再次申請塗氟；窩溝封填完成後定期追蹤即可"
+    ],
+    "addedDate": "2026-07-07",
+    "lastVerifiedDate": "2026-07-07",
+    "source": "https://www.hpa.gov.tw/Pages/Detail.aspx?nodeid=1718&pid=5548",
+    "requiredDocs": [
+      "兒童健保卡",
+      "至特約牙醫診所出示健保卡即可，無需其他文件"
+    ]
+  },
+  {
+    "id": "mental-health-community-care-subsidy",
+    "title": "嚴重精神疾病社區居家治療補助",
+    "category": "醫療",
+    "agency": "衛生福利部心理及口腔健康司",
+    "summary": "衛福部補助各縣市設立精神科居家治療及社區復健服務，由醫療團隊主動至患者家中提供治療，協助嚴重精神病患（如思覺失調症、躁鬱症）穩定在社區生活，減少住院次數，並減輕照顧者負擔。服務費用由健保及政府補助，民眾自行負擔極低或免費，屬照護服務給付而非現金補助。",
+    "eligibility": [
+      "經精神科醫師評估為嚴重精神疾病（思覺失調症、情感性精神病、重度憂鬱症等）",
+      "持有健保卡並加入健保",
+      "因疾病特性不便外出就醫，由醫療機構評估納入居家治療服務",
+      "照顧者可同步申請「家庭照顧者支持服務」"
+    ],
+    "amount": "居家治療費用由健保給付為主，自行負擔極低（門診部分負擔標準）；部分縣市對低收入戶提供全額補助",
+    "deadline": "全年常態受理，由醫療機構評估後轉介",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.mohw.gov.tw/cp-4703-60220-1.html",
+    "officialUrl": "https://www.mohw.gov.tw/cp-4703-60220-1.html",
+    "tags": [
+      "精神疾病",
+      "社區居家治療",
+      "思覺失調症",
+      "躁鬱症",
+      "精神照護補助",
+      "衛福部"
+    ],
+    "situations": [
+      "disabled",
+      "low-income"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-07",
+    "steps": [
+      "由精神科醫師、社工或家屬主動向醫療機構居家治療團隊提出申請",
+      "醫療團隊進行評估，確認患者符合居家治療條件",
+      "排定居家訪視時間，由護理師、社工等組成的醫療團隊定期入戶服務",
+      "持續追蹤病情，配合門診複診或視訊看診維持治療"
+    ],
+    "addedDate": "2026-07-07",
+    "lastVerifiedDate": "2026-07-07",
+    "source": "https://www.mohw.gov.tw/cp-4703-60220-1.html",
+    "requiredDocs": [
+      "健保卡",
+      "精神科診斷書或病歷摘要（醫師評估用）",
+      "監護人或照顧者同意書（部分情況需要）"
+    ]
+  },
+  {
+    "id": "rare-disease-medical-subsidy",
+    "title": "罕見疾病醫療費用補助",
+    "category": "醫療",
+    "agency": "衛生福利部（社會及家庭署）",
+    "summary": "罕見疾病患者除可申請健保重大傷病免部分負擔外，衛福部另補助罕見疾病患者非健保給付之特殊醫療費用（含特殊奶粉、低蛋白食品、特殊藥物等），減輕患者家庭沉重的醫療財務負擔。",
+    "eligibility": [
+      "經衛福部認定之罕見疾病（台灣現認定約200種罕見疾病）",
+      "持有罕見疾病診斷證明書或罕見疾病病人證明",
+      "補助項目：特殊醫療費用（非健保給付部分）、特殊奶粉及低蛋白食品、罕見疾病藥物",
+      "部分縣市另提供交通費、喘息服務等附加補助"
+    ],
+    "amount": "依疾病類型及實際醫療需求核定；特殊食品補助每月約 3,000–15,000 元；特殊醫療費用依核定額度補助，每年可達數萬至數十萬元",
+    "deadline": "全年常態受理，依診斷確認後儘速申請",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.mohw.gov.tw/cp-88-235-1.html",
+    "officialUrl": "https://www.mohw.gov.tw/cp-88-235-1.html",
+    "tags": [
+      "罕見疾病",
+      "特殊奶粉",
+      "醫療費用補助",
+      "衛福部",
+      "罕病基金"
+    ],
+    "situations": [
+      "disabled",
+      "low-income",
+      "parent"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "medium",
+    "updatedAt": "2026-07-07",
+    "steps": [
+      "由主治醫師（罕病中心）申請衛福部「罕見疾病認定」，取得罕見疾病病人身分",
+      "備妥罕見疾病診斷書、醫療費用收據、特殊食品購買收據等文件",
+      "向戶籍地縣市政府社會局或衛生局提出各項補助申請",
+      "審核通過後，按核定金額補助，定期重審資格"
+    ],
+    "addedDate": "2026-07-07",
+    "maxAmount": 180000,
+    "lastVerifiedDate": "2026-07-07",
+    "source": "https://www.mohw.gov.tw/cp-88-235-1.html",
+    "requiredDocs": [
+      "罕見疾病診斷書或衛福部罕見疾病認定文件",
+      "健保卡影本",
+      "就醫費用收據正本",
+      "特殊食品購買收據（如適用）",
+      "戶口名簿影本",
+      "身分證影本",
+      "銀行帳戶存摺影本"
+    ]
+  },
+  {
+    "id": "chronic-disease-prescription-subsidy",
+    "title": "慢性病連續處方箋用藥費用減免",
+    "category": "醫療",
+    "agency": "衛生福利部中央健康保險署",
+    "summary": "健保署對慢性病患者實施連續處方箋制度，每次處方最多可開立90天用藥，至特約藥局分次領藥，減少反覆回診次數。實際部分負擔金額依處方種類及就醫身份而異；持有重大傷病證明者、低收入戶及65歲以上老人依健保規定享有減免或免除部分負擔。詳細金額請洽健保署或特約藥局確認。",
+    "eligibility": [
+      "確診並長期接受治療之慢性病患者（如高血壓、糖尿病、高血脂、氣喘等）",
+      "由醫師開立慢性病連續處方箋（最多90天用藥量）",
+      "持有重大傷病證明者：免除部分負擔（依健保重大傷病規定）",
+      "低收入戶：連續處方箋取藥部分負擔由政府補助",
+      "65歲以上老人、身障者：依健保規定享有部分負擔減免"
+    ],
+    "amount": "部分負擔依藥費總額及就醫身份計算，一般民眾藥費部分負擔上限 200 元/次；重大傷病患者、低收入戶全免；實際金額以健保規定為準",
+    "deadline": "全年常態，醫師開立處方後即適用",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.nhi.gov.tw/Content_List.aspx?n=5765",
+    "officialUrl": "https://www.nhi.gov.tw/Content_List.aspx?n=5765",
+    "tags": [
+      "慢性病",
+      "連續處方箋",
+      "用藥補助",
+      "健保",
+      "部分負擔減免",
+      "高血壓",
+      "糖尿病"
+    ],
+    "situations": [
+      "employed",
+      "unemployed",
+      "senior",
+      "disabled",
+      "low-income"
+    ],
+    "isYouthHighlight": false,
+    "difficulty": "easy",
+    "updatedAt": "2026-07-07",
+    "steps": [
+      "至醫院或診所就診，請醫師評估是否適合開立慢性病連續處方箋",
+      "醫師確認後開立連續處方箋（最多90天用藥量，可分次至特約藥局領藥）",
+      "持健保卡及處方箋至健保特約藥局依處方取藥，繳交應付部分負擔",
+      "下次看診前回診複診，由醫師評估後再次開立處方"
+    ],
+    "addedDate": "2026-07-07",
+    "lastVerifiedDate": "2026-07-07",
+    "source": "https://www.nhi.gov.tw/Content_List.aspx?n=5765",
+    "requiredDocs": [
+      "健保卡",
+      "醫師開立之慢性病連續處方箋",
+      "重大傷病證明卡（如適用，免部分負擔）",
+      "身障手冊（如適用）"
+    ]
+  },
+  {
     "id": "new-immigrant-adaptation-course",
     "title": "新住民生活適應輔導課程補助",
     "category": "生活",
