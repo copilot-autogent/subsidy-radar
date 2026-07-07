@@ -7,6 +7,8 @@ interface Subsidy {
   id: string;
   title: string;
   category?: string;
+  deadlineStatus?: string;
+  deadline?: string;
 }
 
 /** Normalize title for dedup comparison: trim, collapse whitespace, 臺→台. */
@@ -84,5 +86,42 @@ test.describe('subsidies.json data integrity', () => {
     }
 
     expect(dupes.length).toBe(0);
+  });
+
+  test('every subsidy has a valid deadlineStatus field', () => {
+    const validValues = new Set(['open', 'ongoing', 'periodic', 'closed', 'seasonal']);
+    const missing: string[] = [];
+
+    for (const s of subsidies) {
+      if (typeof s.deadlineStatus !== 'string' || !validValues.has(s.deadlineStatus)) {
+        missing.push(`  id="${s.id}" (deadlineStatus=${JSON.stringify(s.deadlineStatus)})`);
+      }
+    }
+
+    if (missing.length > 0) {
+      throw new Error(
+        `Found ${missing.length} subsidy(ies) with missing or invalid deadlineStatus:\n${missing.join('\n')}`,
+      );
+    }
+
+    expect(missing.length).toBe(0);
+  });
+
+  test('every subsidy has a non-empty deadline string', () => {
+    const missing: string[] = [];
+
+    for (const s of subsidies) {
+      if (typeof s.deadline !== 'string' || s.deadline.trim() === '') {
+        missing.push(`  id="${s.id}"`);
+      }
+    }
+
+    if (missing.length > 0) {
+      throw new Error(
+        `Found ${missing.length} subsidy(ies) with missing or empty deadline:\n${missing.join('\n')}`,
+      );
+    }
+
+    expect(missing.length).toBe(0);
   });
 });

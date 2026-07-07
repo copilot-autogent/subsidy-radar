@@ -3234,7 +3234,9 @@
       "職業訓練費用繳費收據（上傳系統）",
       "勞工保險被保險人身分證明",
       "依itraining.mol.gov.tw線上系統辦理"
-    ]
+    ],
+    "deadline": "常態受理（全年可申請）",
+    "deadlineStatus": "ongoing"
   },
   {
     "id": "employment-insurance-maternity",
@@ -3267,7 +3269,9 @@
       "嬰兒出生證明書",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "deadline": "常態受理（生育日起 2 年內申請）",
+    "deadlineStatus": "ongoing"
   },
   {
     "id": "occupational-injury-subsidy",
@@ -3298,7 +3302,9 @@
       "職業傷病診斷書（醫院開立）",
       "身分證影本",
       "勞工保險被保險人證明"
-    ]
+    ],
+    "deadline": "常態受理（職業傷病就醫後可申請）",
+    "deadlineStatus": "ongoing"
   },
   {
     "id": "middle-aged-on-job-training",
