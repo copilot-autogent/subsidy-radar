@@ -8,6 +8,7 @@ interface Subsidy {
   title: string;
   category?: string;
   deadlineStatus?: string;
+  deadline?: string;
 }
 
 /** Normalize title for dedup comparison: trim, collapse whitespace, 臺→台. */
@@ -110,7 +111,7 @@ test.describe('subsidies.json data integrity', () => {
     const missing: string[] = [];
 
     for (const s of subsidies) {
-      if (typeof (s as Record<string, unknown>).deadline !== 'string' || ((s as Record<string, unknown>).deadline as string).trim() === '') {
+      if (typeof s.deadline !== 'string' || s.deadline.trim() === '') {
         missing.push(`  id="${s.id}"`);
       }
     }
