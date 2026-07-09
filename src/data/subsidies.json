@@ -855,14 +855,15 @@
     ],
     "addedDate": "2026-06-20",
     "deadlineDate": "2026-09-22",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.etax.nat.gov.tw/etwmain/front/ETW158W1",
     "requiredDocs": [
       "自用住宅申請書",
       "身分證影本",
       "房屋稅單或建物登記謄本",
       "戶籍謄本（確認戶籍設於該住宅）"
-    ]
+    ],
+    "officialUrl": "https://www.etax.nat.gov.tw/etwmain/front/ETW158W1"
   },
   {
     "id": "sbir-sme-innovation",
@@ -949,13 +950,14 @@
       "審查通過後簽訂補助合約，按計畫執行並定期繳交進度報告，完成後辦理成果驗收與核銷"
     ],
     "addedDate": "2026-06-20",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://gcis.nat.gov.tw/neo-s/",
     "requiredDocs": [
       "服務創新計畫申請書（依系統格式）",
       "公司設立登記文件",
       "計畫預算及執行說明"
-    ]
+    ],
+    "officialUrl": "https://www.commerce.gov.tw/"
   },
   {
     "id": "nstc-research-startup",
@@ -995,13 +997,14 @@
       "審查通過後簽訂合約，按計畫推進技術授權或衍生新創設立，完成驗收及成果報告"
     ],
     "addedDate": "2026-06-20",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.nstc.gov.tw",
     "requiredDocs": [
       "科研創業計畫書（依國科會系統格式）",
       "技術或研究成果證明文件",
       "申請人及所屬學術機構相關證明"
-    ]
+    ],
+    "officialUrl": "https://www.nstc.gov.tw/"
   },
   {
     "id": "labor-child-education-grant",
@@ -1047,7 +1050,7 @@
     "eligibilityStartEvent": "child-enrollment",
     "applyWithinMonths": 2,
     "timelineNote": "每學期開學6週受理，勿錯過申請窗口",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.mol.gov.tw/topic/3075/6074/",
     "requiredDocs": [
       "失業認定通知書或失業給付核付通知",
@@ -1055,7 +1058,8 @@
       "學費繳費收據",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.mol.gov.tw/topic/3075/6074/"
   },
   {
     "id": "indigenous-student-scholarship",
@@ -1097,14 +1101,15 @@
     "addedDate": "2026-06-20",
     "maxAmount": 60000,
     "deadlineDate": "2026-10-31",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://cipgrant.fju.edu.tw/",
     "requiredDocs": [
       "原住民族身分證明文件",
       "在學證明",
       "前一學期成績單",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.apc.gov.tw/portal/docList.html?CID=F39B2AAE6F91D95E"
   },
   {
     "id": "employment-promotion-subsidy",
@@ -1145,7 +1150,7 @@
     ],
     "addedDate": "2026-06-20",
     "maxAmount": 66000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=6DD5A8BE5EE84F37",
     "requiredDocs": [
       "就業促進津貼申請書",
@@ -1153,7 +1158,8 @@
       "在職證明",
       "薪資資料",
       "身分證影本"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=6DD5A8BE5EE84F37"
   },
   {
     "id": "mid-age-employment-reward",
@@ -1194,7 +1200,7 @@
     ],
     "addedDate": "2026-06-20",
     "maxAmount": 50000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=BE85A9FE95C61A78",
     "requiredDocs": [
       "聘僱合約書",
@@ -1202,7 +1208,8 @@
       "在職證明",
       "薪資單",
       "身分證影本"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=BE85A9FE95C61A78"
   },
   {
     "id": "cross-region-employment-subsidy",
@@ -1242,7 +1249,7 @@
     ],
     "addedDate": "2026-06-20",
     "maxAmount": 30000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=CB87D1FAA95D0FBB",
     "requiredDocs": [
       "跨域就業補助申請書",
@@ -1250,7 +1257,8 @@
       "搬遷收據（租屋契約或搬家費收據）",
       "薪資資料",
       "身分證影本"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=CB87D1FAA95D0FBB"
   },
   {
     "id": "itraining-subsidy",
@@ -1290,13 +1298,14 @@
     ],
     "addedDate": "2026-06-20",
     "maxAmount": 10000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://itraining.wda.gov.tw/",
     "requiredDocs": [
       "在職訓練課程繳費收據（上傳系統）",
       "勞工保險被保險人身分證明",
       "依itraining.wda.gov.tw線上系統辦理"
-    ]
+    ],
+    "officialUrl": "https://itraining.wda.gov.tw/"
   },
   {
     "id": "youth-startup-loan-2025",
@@ -1333,14 +1342,15 @@
     ],
     "deadlineDate": "2026-01-31",
     "addedDate": "2025-10-01",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.moeasmea.gov.tw/",
     "requiredDocs": [
       "創業計畫書",
       "身分證影本",
       "公司或商業設立登記文件",
       "創業研習課程結業證書（18小時以上）"
-    ]
+    ],
+    "officialUrl": "https://www.moeasmea.gov.tw/"
   },
   {
     "id": "rent-subsidy-2",
@@ -1381,14 +1391,15 @@
     ],
     "deadlineDate": "2026-08-31",
     "addedDate": "2026-06-24",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://has.nlma.gov.tw/subsidyOnline/",
     "requiredDocs": [
       "房屋租賃契約書（合法書面）",
       "戶籍謄本或戶口名簿",
       "全家財產及所得資料",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://has.nlma.gov.tw/subsidyOnline/"
   },
   {
     "id": "social-housing-priority-points",
@@ -1438,14 +1449,15 @@
       "台南市",
       "高雄市"
     ],
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.socialhousing.tw/Portal/",
     "requiredDocs": [
       "身分證影本",
       "戶籍謄本",
       "財產所得資料",
       "弱勢身分證明文件（育兒、身心障礙、低收入戶等）"
-    ]
+    ],
+    "officialUrl": "https://www.socialhousing.tw/Portal/"
   },
   {
     "id": "mortgage-interest-tax-deduction",
@@ -1484,13 +1496,14 @@
     ],
     "deadlineDate": "2027-05-31",
     "addedDate": "2026-06-24",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.etax.nat.gov.tw/",
     "requiredDocs": [
       "房貸利息繳納明細（貸款銀行開立）",
       "購屋借款合約影本（首次申報需附）",
       "依年度綜合所得稅申報系統提示辦理"
-    ]
+    ],
+    "officialUrl": "https://www.etax.nat.gov.tw/"
   },
   {
     "id": "senior-low-income-living-allowance",
@@ -1678,14 +1691,15 @@
       "新竹市",
       "新竹縣"
     ],
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.sfaa.gov.tw/SFAA/Pages/Detail.aspx?nodeid=272&pid=4935",
     "requiredDocs": [
       "身分證影本",
       "戶口名簿影本",
       "獨居老人緊急救援系統服務申請書",
       "獨居確認文件（公所出具或家訪確認）"
-    ]
+    ],
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/Detail.aspx?nodeid=272&pid=4935"
   },
   {
     "id": "senior-old-age-allowance",
@@ -1724,14 +1738,15 @@
     ],
     "addedDate": "2026-06-30",
     "maxAmount": 45264,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.bli.gov.tw/0100010.html",
     "requiredDocs": [
       "國民年金老年基本保證年金申請書",
       "身分證影本",
       "戶口名簿影本",
       "金融機構存摺封面影本"
-    ]
+    ],
+    "officialUrl": "https://www.bli.gov.tw/0100010.html"
   },
   {
     "id": "senior-friendly-housing-repair",
@@ -1771,14 +1786,15 @@
     ],
     "addedDate": "2026-06-30",
     "maxAmount": 120000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.sfaa.gov.tw/SFAA/Pages/Detail.aspx?nodeid=272",
     "requiredDocs": [
       "身分證影本",
       "戶口名簿影本",
       "房屋所有權狀影本",
       "中低收入戶核定通知書"
-    ]
+    ],
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/Detail.aspx?nodeid=272"
   },
   {
     "id": "disability-assistive-devices",
@@ -1823,8 +1839,9 @@
       "身分證影本",
       "銀行帳戶資料"
     ],
-    "lastVerifiedDate": "2026-06-26",
-    "source": "https://newrepat.sfaa.gov.tw/home/repat-subsidy/assistive-device"
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://newrepat.sfaa.gov.tw/home/repat-subsidy/assistive-device",
+    "officialUrl": "https://newrepat.sfaa.gov.tw/home/repat-subsidy/assistive-device"
   },
   {
     "id": "disability-home-care",
@@ -1862,14 +1879,15 @@
       "評估通過後由縣市政府媒合居家服務機構，安排照顧服務員定期到府服務"
     ],
     "addedDate": "2026-06-26",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://dpws.sfaa.gov.tw/home-care",
     "requiredDocs": [
       "身心障礙證明影本",
       "戶籍謄本或戶口名簿",
       "最近一年所得及財產資料",
       "居家服務申請書"
-    ]
+    ],
+    "officialUrl": "https://dpws.sfaa.gov.tw/home-care"
   },
   {
     "id": "disability-vocational-rehab",
@@ -1908,13 +1926,14 @@
       "就業後持續提供職場支持（工作適應訓練、雇主溝通等），協助穩定就業"
     ],
     "addedDate": "2026-06-26",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.wda.gov.tw/Business.aspx?n=11579&sms=9388",
     "requiredDocs": [
       "身心障礙證明影本",
       "身分證影本",
       "職業重建個案管理服務申請書"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/Business.aspx?n=11579&sms=9388"
   },
   {
     "id": "nhia-premium-subsidy",
@@ -1956,14 +1975,15 @@
     ],
     "addedDate": "2026-06-27",
     "maxAmount": 14400,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.nhi.gov.tw/Content_List.aspx?n=25&topn=5FE8C9FEAE863B46",
     "requiredDocs": [
       "低收入戶或中低收入戶核定通知書",
       "健保卡影本",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.nhi.gov.tw/Content_List.aspx?n=25&topn=5FE8C9FEAE863B46"
   },
   {
     "id": "cancer-screening-subsidy",
@@ -2054,14 +2074,15 @@
     ],
     "addedDate": "2026-06-27",
     "maxAmount": 30000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.nhi.gov.tw/Content_List.aspx?n=5765",
     "requiredDocs": [
       "重大傷病申請書（主治醫師填寫）",
       "診斷書及病歷摘要",
       "身分證影本",
       "健保卡影本"
-    ]
+    ],
+    "officialUrl": "https://www.nhi.gov.tw/Content_List.aspx?n=5765"
   },
   {
     "id": "infertility-treatment-subsidy",
@@ -2103,7 +2124,7 @@
     ],
     "addedDate": "2026-06-27",
     "maxAmount": 160000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.mohw.gov.tw/cp-18-75631-1.html",
     "requiredDocs": [
       "人工生殖需求診斷證明書",
@@ -2111,7 +2132,8 @@
       "結婚證明書",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.mohw.gov.tw/cp-18-75631-1.html"
   },
   {
     "id": "disability-medical-expense-subsidy",
@@ -2443,13 +2465,14 @@
       "免費參加課程，托育及交通費補助依各縣市規定另行申請"
     ],
     "addedDate": "2026-06-28",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.immigration.gov.tw/5385/7244/7250/7317/",
     "requiredDocs": [
       "居留證或定居證影本",
       "護照影本",
       "新住民生活適應輔導課程報名表"
-    ]
+    ],
+    "officialUrl": "https://www.immigration.gov.tw/5385/7244/7250/7317/"
   },
   {
     "id": "foreign-spouse-fund-subsidy",
@@ -2485,14 +2508,15 @@
       "免費參加各項服務課程；如有急難救助需求，由社工評估後協助申請地方補助"
     ],
     "addedDate": "2026-06-28",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.immigration.gov.tw/5385/7244/7250/7318/",
     "requiredDocs": [
       "居留證或定居證影本",
       "結婚證書影本",
       "護照影本",
       "身分證影本（已歸化者）"
-    ]
+    ],
+    "officialUrl": "https://www.immigration.gov.tw/5385/7244/7250/7318/"
   },
   {
     "id": "new-immigrant-employment-program",
@@ -2530,13 +2554,14 @@
       "完成訓練後按規定申請訓練費用補助及就業獎勵金，約2–4週撥款"
     ],
     "addedDate": "2026-06-28",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.wda.gov.tw/News_Content.aspx?n=9454E8C2E34C4B6A",
     "requiredDocs": [
       "身分證或居留（定居）證影本",
       "外籍配偶身分或歸化證明文件",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=9454E8C2E34C4B6A"
   },
   {
     "id": "indigenous-entrepreneurship-loan",
@@ -2582,8 +2607,9 @@
       "戶籍謄本",
       "公司或商業登記文件"
     ],
-    "lastVerifiedDate": "2026-06-29",
-    "source": "https://www.apc.gov.tw/portal/docList.html?CID=940F9579765AC6A0"
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://www.apc.gov.tw/portal/docList.html?CID=940F9579765AC6A0",
+    "officialUrl": "https://www.apc.gov.tw/portal/docList.html?CID=940F9579765AC6A0"
   },
   {
     "id": "indigenous-housing-subsidy",
@@ -2622,14 +2648,15 @@
     ],
     "addedDate": "2026-06-29",
     "maxAmount": 300000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.apc.gov.tw/portal/docList.html?CID=9EF048B7A04BBAD9",
     "requiredDocs": [
       "原住民族身分證明文件",
       "房屋所有權狀影本",
       "修繕需求說明書",
       "修繕工程費用估價單"
-    ]
+    ],
+    "officialUrl": "https://www.apc.gov.tw/portal/docList.html?CID=9EF048B7A04BBAD9"
   },
   {
     "id": "indigenous-culture-grant",
@@ -2668,14 +2695,15 @@
     ],
     "addedDate": "2026-06-29",
     "maxAmount": 500000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.titv.org.tw/",
     "requiredDocs": [
       "申請人身分證明文件",
       "原住民族身分證明文件",
       "文化傳承計畫書（依規定格式）",
       "計畫預算說明書"
-    ]
+    ],
+    "officialUrl": "https://www.apc.gov.tw/"
   },
   {
     "id": "disability-transport-subsidy",
@@ -2714,14 +2742,15 @@
     ],
     "addedDate": "2026-06-29",
     "maxAmount": 12000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341",
     "requiredDocs": [
       "身分證影本",
       "身心障礙證明正本及影本",
       "銀行存摺封面影本",
       "交通費補助申請書"
-    ]
+    ],
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341"
   },
   {
     "id": "low-income-emergency-relief",
@@ -2762,7 +2791,7 @@
     ],
     "addedDate": "2026-06-29",
     "maxAmount": 30000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html",
     "requiredDocs": [
       "身分證影本",
@@ -2770,7 +2799,8 @@
       "低收入戶或中低收入戶核定通知書",
       "急難事實佐證文件（診斷書或失業證明等）",
       "急難救助申請書"
-    ]
+    ],
+    "officialUrl": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html"
   },
   {
     "id": "low-income-education-grant",
@@ -2814,14 +2844,15 @@
     "addedDate": "2026-06-29",
     "maxAmount": 120000,
     "deadlineDate": "2026-08-31",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://helpdreams.moe.edu.tw/",
     "requiredDocs": [
       "低收入戶或中低收入戶核定通知書",
       "在學證明",
       "學費繳費收據",
       "弱勢助學申請書"
-    ]
+    ],
+    "officialUrl": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "special-circumstance-living-allowance",
@@ -2863,7 +2894,7 @@
     ],
     "addedDate": "2026-06-30",
     "maxAmount": 96000,
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html",
     "requiredDocs": [
       "身分證影本",
@@ -2871,7 +2902,8 @@
       "特殊境遇佐證文件（離婚文件或配偶死亡戶籍謄本等）",
       "特殊境遇家庭扶助申請書",
       "最近一年所得及財產資料"
-    ]
+    ],
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=538"
   },
   {
     "id": "single-parent-afterschool-subsidy",
@@ -2918,14 +2950,15 @@
     "eligibilityStartEvent": "child-enrollment",
     "applyWithinMonths": 2,
     "timelineNote": "每學期開學後申請課後照顧補助",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.edu.tw/Default.aspx",
     "requiredDocs": [
       "低收入戶或中低收入戶核定通知書",
       "戶口名簿影本",
       "子女在學證明",
       "課後照顧費用收據"
-    ]
+    ],
+    "officialUrl": "https://depart.moe.edu.tw/ED4500/News.aspx"
   },
   {
     "id": "private-nursery-subsidy",
@@ -2973,8 +3006,9 @@
     "eligibilityStartEvent": "birth",
     "applyWithinMonths": null,
     "timelineNote": "嬰幼兒0至未滿2歲，送托後立即可申請",
-    "lastVerifiedDate": "2026-06-30",
-    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383"
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383",
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383"
   },
   {
     "id": "preschool-county-subsidy",
@@ -3015,14 +3049,15 @@
     "eligibilityStartEvent": "child-enrollment",
     "applyWithinMonths": 2,
     "timelineNote": "入園後每學期申請，通常於2月及8月受理",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.ece.moe.edu.tw/",
     "requiredDocs": [
       "幼兒在籍證明",
       "幼兒園繳費收據",
       "家長（申請人）身分證影本",
       "戶口名簿影本"
-    ]
+    ],
+    "officialUrl": "https://www.ece.moe.edu.tw/"
   },
   {
     "id": "moe-disadvantaged-scholarship",
@@ -3066,8 +3101,9 @@
       "低/中低收入戶證明文件",
       "銀行帳戶資料"
     ],
-    "lastVerifiedDate": "2026-07-01",
-    "source": "https://helpdreams.moe.edu.tw/"
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://helpdreams.moe.edu.tw/",
+    "officialUrl": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "university-tuition-subsidy",
@@ -3111,8 +3147,9 @@
       "身分證影本",
       "銀行帳戶資料"
     ],
-    "lastVerifiedDate": "2026-07-01",
-    "source": "https://helpdreams.moe.edu.tw/"
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://helpdreams.moe.edu.tw/",
+    "officialUrl": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "graduate-scholarship",
@@ -3156,8 +3193,9 @@
       "指導教授推薦函（視各校規定）",
       "銀行帳戶資料"
     ],
-    "lastVerifiedDate": "2026-07-01",
-    "source": "https://www.edu.tw/"
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://www.edu.tw/",
+    "officialUrl": "https://depart.moe.edu.tw/ED2200/News.aspx"
   },
   {
     "id": "student-employment-program",
@@ -3200,8 +3238,9 @@
       "身分證影本",
       "最高學曆成績單"
     ],
-    "lastVerifiedDate": "2026-07-01",
-    "source": "https://kys.wda.gov.tw/"
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://kys.wda.gov.tw/",
+    "officialUrl": "https://kys.wda.gov.tw/"
   },
   {
     "id": "worker-training-voucher",
