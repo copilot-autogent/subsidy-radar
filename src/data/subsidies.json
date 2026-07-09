@@ -957,7 +957,7 @@
       "公司設立登記文件",
       "計畫預算及執行說明"
     ],
-    "officialUrl": "https://gcis.nat.gov.tw/neo-s/"
+    "officialUrl": "https://www.commerce.gov.tw/"
   },
   {
     "id": "nstc-research-startup",
@@ -1109,7 +1109,7 @@
       "前一學期成績單",
       "銀行帳戶資料"
     ],
-    "officialUrl": "https://www.apc.gov.tw/"
+    "officialUrl": "https://www.apc.gov.tw/portal/docList.html?CID=F39B2AAE6F91D95E"
   },
   {
     "id": "employment-promotion-subsidy",
@@ -2903,7 +2903,7 @@
       "特殊境遇家庭扶助申請書",
       "最近一年所得及財產資料"
     ],
-    "officialUrl": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html"
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=538"
   },
   {
     "id": "single-parent-afterschool-subsidy",
@@ -2958,7 +2958,7 @@
       "子女在學證明",
       "課後照顧費用收據"
     ],
-    "officialUrl": "https://www.edu.tw/"
+    "officialUrl": "https://depart.moe.edu.tw/ED4500/News.aspx"
   },
   {
     "id": "private-nursery-subsidy",
@@ -3195,7 +3195,7 @@
     ],
     "lastVerifiedDate": "2026-07-01",
     "source": "https://www.edu.tw/",
-    "officialUrl": "https://www.edu.tw/"
+    "officialUrl": "https://depart.moe.edu.tw/ED2200/News.aspx"
   },
   {
     "id": "student-employment-program",
