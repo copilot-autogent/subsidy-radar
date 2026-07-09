@@ -1456,6 +1456,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       if (veteran === 'yes') {
         situations.push('veteran');
       }
+
+      return situations;
     }
 
     const MIN_TOP3_SCORE = 30; // minimum match score % to appear in top panel
