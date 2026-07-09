@@ -862,7 +862,8 @@
       "身分證影本",
       "房屋稅單或建物登記謄本",
       "戶籍謄本（確認戶籍設於該住宅）"
-    ]
+    ],
+    "officialUrl": "https://www.etax.nat.gov.tw/etwmain/front/ETW158W1"
   },
   {
     "id": "sbir-sme-innovation",
@@ -955,7 +956,8 @@
       "服務創新計畫申請書（依系統格式）",
       "公司設立登記文件",
       "計畫預算及執行說明"
-    ]
+    ],
+    "officialUrl": "https://gcis.nat.gov.tw/neo-s/"
   },
   {
     "id": "nstc-research-startup",
@@ -1001,7 +1003,8 @@
       "科研創業計畫書（依國科會系統格式）",
       "技術或研究成果證明文件",
       "申請人及所屬學術機構相關證明"
-    ]
+    ],
+    "officialUrl": "https://www.nstc.gov.tw/"
   },
   {
     "id": "labor-child-education-grant",
@@ -1055,7 +1058,8 @@
       "學費繳費收據",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.mol.gov.tw/topic/3075/6074/"
   },
   {
     "id": "indigenous-student-scholarship",
@@ -1104,7 +1108,8 @@
       "在學證明",
       "前一學期成績單",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.apc.gov.tw/"
   },
   {
     "id": "employment-promotion-subsidy",
@@ -1153,7 +1158,8 @@
       "在職證明",
       "薪資資料",
       "身分證影本"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=6DD5A8BE5EE84F37"
   },
   {
     "id": "mid-age-employment-reward",
@@ -1202,7 +1208,8 @@
       "在職證明",
       "薪資單",
       "身分證影本"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=BE85A9FE95C61A78"
   },
   {
     "id": "cross-region-employment-subsidy",
@@ -1250,7 +1257,8 @@
       "搬遷收據（租屋契約或搬家費收據）",
       "薪資資料",
       "身分證影本"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=CB87D1FAA95D0FBB"
   },
   {
     "id": "itraining-subsidy",
@@ -1296,7 +1304,8 @@
       "在職訓練課程繳費收據（上傳系統）",
       "勞工保險被保險人身分證明",
       "依itraining.wda.gov.tw線上系統辦理"
-    ]
+    ],
+    "officialUrl": "https://itraining.wda.gov.tw/"
   },
   {
     "id": "youth-startup-loan-2025",
@@ -1340,7 +1349,8 @@
       "身分證影本",
       "公司或商業設立登記文件",
       "創業研習課程結業證書（18小時以上）"
-    ]
+    ],
+    "officialUrl": "https://www.moeasmea.gov.tw/"
   },
   {
     "id": "rent-subsidy-2",
@@ -1388,7 +1398,8 @@
       "戶籍謄本或戶口名簿",
       "全家財產及所得資料",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://has.nlma.gov.tw/subsidyOnline/"
   },
   {
     "id": "social-housing-priority-points",
@@ -1445,7 +1456,8 @@
       "戶籍謄本",
       "財產所得資料",
       "弱勢身分證明文件（育兒、身心障礙、低收入戶等）"
-    ]
+    ],
+    "officialUrl": "https://www.socialhousing.tw/Portal/"
   },
   {
     "id": "mortgage-interest-tax-deduction",
@@ -1490,7 +1502,8 @@
       "房貸利息繳納明細（貸款銀行開立）",
       "購屋借款合約影本（首次申報需附）",
       "依年度綜合所得稅申報系統提示辦理"
-    ]
+    ],
+    "officialUrl": "https://www.etax.nat.gov.tw/"
   },
   {
     "id": "senior-low-income-living-allowance",
@@ -1685,7 +1698,8 @@
       "戶口名簿影本",
       "獨居老人緊急救援系統服務申請書",
       "獨居確認文件（公所出具或家訪確認）"
-    ]
+    ],
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/Detail.aspx?nodeid=272&pid=4935"
   },
   {
     "id": "senior-old-age-allowance",
@@ -1731,7 +1745,8 @@
       "身分證影本",
       "戶口名簿影本",
       "金融機構存摺封面影本"
-    ]
+    ],
+    "officialUrl": "https://www.bli.gov.tw/0100010.html"
   },
   {
     "id": "senior-friendly-housing-repair",
@@ -1778,7 +1793,8 @@
       "戶口名簿影本",
       "房屋所有權狀影本",
       "中低收入戶核定通知書"
-    ]
+    ],
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/Detail.aspx?nodeid=272"
   },
   {
     "id": "disability-assistive-devices",
@@ -1824,7 +1840,8 @@
       "銀行帳戶資料"
     ],
     "lastVerifiedDate": "2026-06-26",
-    "source": "https://newrepat.sfaa.gov.tw/home/repat-subsidy/assistive-device"
+    "source": "https://newrepat.sfaa.gov.tw/home/repat-subsidy/assistive-device",
+    "officialUrl": "https://newrepat.sfaa.gov.tw/home/repat-subsidy/assistive-device"
   },
   {
     "id": "disability-home-care",
@@ -1869,7 +1886,8 @@
       "戶籍謄本或戶口名簿",
       "最近一年所得及財產資料",
       "居家服務申請書"
-    ]
+    ],
+    "officialUrl": "https://dpws.sfaa.gov.tw/home-care"
   },
   {
     "id": "disability-vocational-rehab",
@@ -1914,7 +1932,8 @@
       "身心障礙證明影本",
       "身分證影本",
       "職業重建個案管理服務申請書"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/Business.aspx?n=11579&sms=9388"
   },
   {
     "id": "nhia-premium-subsidy",
@@ -1963,7 +1982,8 @@
       "健保卡影本",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.nhi.gov.tw/Content_List.aspx?n=25&topn=5FE8C9FEAE863B46"
   },
   {
     "id": "cancer-screening-subsidy",
@@ -2061,7 +2081,8 @@
       "診斷書及病歷摘要",
       "身分證影本",
       "健保卡影本"
-    ]
+    ],
+    "officialUrl": "https://www.nhi.gov.tw/Content_List.aspx?n=5765"
   },
   {
     "id": "infertility-treatment-subsidy",
@@ -2111,7 +2132,8 @@
       "結婚證明書",
       "身分證影本",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.mohw.gov.tw/cp-18-75631-1.html"
   },
   {
     "id": "disability-medical-expense-subsidy",
@@ -2449,7 +2471,8 @@
       "居留證或定居證影本",
       "護照影本",
       "新住民生活適應輔導課程報名表"
-    ]
+    ],
+    "officialUrl": "https://www.immigration.gov.tw/5385/7244/7250/7317/"
   },
   {
     "id": "foreign-spouse-fund-subsidy",
@@ -2492,7 +2515,8 @@
       "結婚證書影本",
       "護照影本",
       "身分證影本（已歸化者）"
-    ]
+    ],
+    "officialUrl": "https://www.immigration.gov.tw/5385/7244/7250/7318/"
   },
   {
     "id": "new-immigrant-employment-program",
@@ -2536,7 +2560,8 @@
       "身分證或居留（定居）證影本",
       "外籍配偶身分或歸化證明文件",
       "銀行帳戶資料"
-    ]
+    ],
+    "officialUrl": "https://www.wda.gov.tw/News_Content.aspx?n=9454E8C2E34C4B6A"
   },
   {
     "id": "indigenous-entrepreneurship-loan",
@@ -2583,7 +2608,8 @@
       "公司或商業登記文件"
     ],
     "lastVerifiedDate": "2026-06-29",
-    "source": "https://www.apc.gov.tw/portal/docList.html?CID=940F9579765AC6A0"
+    "source": "https://www.apc.gov.tw/portal/docList.html?CID=940F9579765AC6A0",
+    "officialUrl": "https://www.apc.gov.tw/portal/docList.html?CID=940F9579765AC6A0"
   },
   {
     "id": "indigenous-housing-subsidy",
@@ -2629,7 +2655,8 @@
       "房屋所有權狀影本",
       "修繕需求說明書",
       "修繕工程費用估價單"
-    ]
+    ],
+    "officialUrl": "https://www.apc.gov.tw/portal/docList.html?CID=9EF048B7A04BBAD9"
   },
   {
     "id": "indigenous-culture-grant",
@@ -2675,7 +2702,8 @@
       "原住民族身分證明文件",
       "文化傳承計畫書（依規定格式）",
       "計畫預算說明書"
-    ]
+    ],
+    "officialUrl": "https://www.apc.gov.tw/"
   },
   {
     "id": "disability-transport-subsidy",
@@ -2721,7 +2749,8 @@
       "身心障礙證明正本及影本",
       "銀行存摺封面影本",
       "交通費補助申請書"
-    ]
+    ],
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341"
   },
   {
     "id": "low-income-emergency-relief",
@@ -2770,7 +2799,8 @@
       "低收入戶或中低收入戶核定通知書",
       "急難事實佐證文件（診斷書或失業證明等）",
       "急難救助申請書"
-    ]
+    ],
+    "officialUrl": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html"
   },
   {
     "id": "low-income-education-grant",
@@ -2821,7 +2851,8 @@
       "在學證明",
       "學費繳費收據",
       "弱勢助學申請書"
-    ]
+    ],
+    "officialUrl": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "special-circumstance-living-allowance",
@@ -2871,7 +2902,8 @@
       "特殊境遇佐證文件（離婚文件或配偶死亡戶籍謄本等）",
       "特殊境遇家庭扶助申請書",
       "最近一年所得及財產資料"
-    ]
+    ],
+    "officialUrl": "https://dep.mohw.gov.tw/DOSAASW/lp-549-103.html"
   },
   {
     "id": "single-parent-afterschool-subsidy",
@@ -2925,7 +2957,8 @@
       "戶口名簿影本",
       "子女在學證明",
       "課後照顧費用收據"
-    ]
+    ],
+    "officialUrl": "https://www.edu.tw/"
   },
   {
     "id": "private-nursery-subsidy",
@@ -2974,7 +3007,8 @@
     "applyWithinMonths": null,
     "timelineNote": "嬰幼兒0至未滿2歲，送托後立即可申請",
     "lastVerifiedDate": "2026-06-30",
-    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383"
+    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383",
+    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383"
   },
   {
     "id": "preschool-county-subsidy",
@@ -3022,7 +3056,8 @@
       "幼兒園繳費收據",
       "家長（申請人）身分證影本",
       "戶口名簿影本"
-    ]
+    ],
+    "officialUrl": "https://www.ece.moe.edu.tw/"
   },
   {
     "id": "moe-disadvantaged-scholarship",
@@ -3067,7 +3102,8 @@
       "銀行帳戶資料"
     ],
     "lastVerifiedDate": "2026-07-01",
-    "source": "https://helpdreams.moe.edu.tw/"
+    "source": "https://helpdreams.moe.edu.tw/",
+    "officialUrl": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "university-tuition-subsidy",
@@ -3112,7 +3148,8 @@
       "銀行帳戶資料"
     ],
     "lastVerifiedDate": "2026-07-01",
-    "source": "https://helpdreams.moe.edu.tw/"
+    "source": "https://helpdreams.moe.edu.tw/",
+    "officialUrl": "https://helpdreams.moe.edu.tw/"
   },
   {
     "id": "graduate-scholarship",
@@ -3157,7 +3194,8 @@
       "銀行帳戶資料"
     ],
     "lastVerifiedDate": "2026-07-01",
-    "source": "https://www.edu.tw/"
+    "source": "https://www.edu.tw/",
+    "officialUrl": "https://www.edu.tw/"
   },
   {
     "id": "student-employment-program",
@@ -3201,7 +3239,8 @@
       "最高學曆成績單"
     ],
     "lastVerifiedDate": "2026-07-01",
-    "source": "https://kys.wda.gov.tw/"
+    "source": "https://kys.wda.gov.tw/",
+    "officialUrl": "https://kys.wda.gov.tw/"
   },
   {
     "id": "worker-training-voucher",
