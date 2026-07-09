@@ -3,7 +3,8 @@ import subsidiesRaw from '../data/subsidies.json';
 export type Situation =
   | 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad'
   | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant'
-  | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student';
+  | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student'
+  | 'farmer';
 
 export type Subsidy = typeof subsidiesRaw[number] & {
   isYouthHighlight?: boolean;
@@ -121,4 +122,5 @@ export const situationLabel: Record<string, { icon: string; label: string }> = {
   'single-parent':{ icon: '👩‍👧', label: '單親家庭' },
   'young-child':  { icon: '🍼', label: '育兒(0-6歲)' },
   'student':      { icon: '📚', label: '在學學生' },
+  'farmer':       { icon: '🌾', label: '農民' },
 };
