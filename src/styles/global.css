@@ -786,6 +786,30 @@ main {
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* Veteran filter — amber/gold tone (military honour) */
+.filter-btn.veteran-filter {
+  border-color: #92400e;
+  color: #78350f;
+  background: #fef3c7;
+  font-weight: 600;
+}
+
+.filter-btn.veteran-filter:hover,
+.filter-btn.veteran-filter.active {
+  background: #92400e;
+  border-color: #92400e;
+  color: white;
+}
+
+.filter-btn.veteran-filter .count-badge {
+  background: rgba(146, 64, 14, 0.15);
+}
+
+.filter-btn.veteran-filter:hover .count-badge,
+.filter-btn.veteran-filter.active .count-badge {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .subsidy-card.youth-highlight {
   border-color: #fbbf24;
   background: linear-gradient(to bottom right, #fffbeb, #ffffff);
@@ -3185,7 +3209,8 @@ main {
   .filter-btn.low-income-filter,
   .filter-btn.single-parent-filter,
   .filter-btn.young-child-filter,
-  .filter-btn.worker-filter {
+  .filter-btn.worker-filter,
+  .filter-btn.veteran-filter {
     border: 2px solid ButtonText;
     background: ButtonFace;
     color: ButtonText;
