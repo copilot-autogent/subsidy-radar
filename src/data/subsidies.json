@@ -357,7 +357,8 @@
       "renter",
       "parent",
       "disabled",
-      "single-parent"
+      "single-parent",
+      "veteran"
     ],
     "difficulty": "medium",
     "updatedAt": "2026-06-30",
@@ -1429,7 +1430,8 @@
       "parent",
       "disabled",
       "low-income",
-      "single-parent"
+      "single-parent",
+      "veteran"
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
@@ -3482,5 +3484,147 @@
     ],
     "lastVerifiedDate": "2026-07-04",
     "source": "https://www.wda.gov.tw/"
+  },
+  {
+    "id": "vac-veteran-employment-subsidy",
+    "title": "退輔會榮民就業輔導金",
+    "category": "就業",
+    "agency": "國軍退除役官兵輔導委員會（退輔會）",
+    "summary": "退役官兵（榮民）就業或自行創業時，可申請就業輔導金補助，協助其順利轉換至民間職場，最高補助 6 個月薪資補貼。",
+    "eligibility": [
+      "具榮民身分（退役官兵，持有退輔會列冊證明）",
+      "年齡 65 歲以下",
+      "有意願就業或自行創業",
+      "透過退輔會所屬榮服處申辦"
+    ],
+    "amount": "就業輔導金補助最高 6 個月，每月最高 NT,000",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.vac.gov.tw/cp-6501-136613-208.html",
+    "officialUrl": "https://www.vac.gov.tw/cp-6501-136613-208.html",
+    "tags": [
+      "榮民",
+      "退輔會",
+      "就業",
+      "退役軍人"
+    ],
+    "situations": [
+      "veteran",
+      "unemployed"
+    ],
+    "difficulty": "easy",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "攜帶榮民證（或退輔會列冊證明）前往各縣市榮服處諮詢",
+      "填寫就業輔導申請表，說明就業意願與職業目標",
+      "配合榮服處職業輔導員進行媒合或創業輔導",
+      "就業後提交僱用證明或創業登記，申請補助撥款"
+    ],
+    "addedDate": "2026-07-09",
+    "lastVerifiedDate": "2026-07-01",
+    "maxAmount": 36000,
+    "requiredDocs": [
+      "榮民證或退輔會列冊證明",
+      "身分證影本",
+      "銀行帳戶資料",
+      "就業意願書或創業計畫書"
+    ],
+    "source": "https://www.vac.gov.tw/cp-6501-136613-208.html"
+  },
+  {
+    "id": "vac-veteran-housing-placement",
+    "title": "榮民安置住宅申請",
+    "category": "住宅",
+    "agency": "國軍退除役官兵輔導委員會（退輔會）",
+    "summary": "退輔會提供榮民（含榮眷）優先入住安置住宅或宿舍，協助無房榮民解決居住問題，包含榮家住宿及榮民住宅優先分配。",
+    "eligibility": [
+      "具榮民身分，列冊退輔會管理",
+      "年滿 65 歲或失能、無依榮民優先",
+      "無自有住宅，或現居住宅不適居住",
+      "家庭年收入及財產符合規定標準"
+    ],
+    "amount": "安置住宅（榮家）月費依榮民所得比例收取，一般約 NT,000–15,000/月；住宅補助依各縣市方案不同",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.vac.gov.tw/cp-6501-136614-208.html",
+    "officialUrl": "https://www.vac.gov.tw/cp-6501-136614-208.html",
+    "tags": [
+      "榮民",
+      "退輔會",
+      "住宅",
+      "安置",
+      "榮家"
+    ],
+    "situations": [
+      "veteran",
+      "senior",
+      "renter"
+    ],
+    "difficulty": "medium",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "攜帶榮民證前往當地榮服處或各縣市榮家提出申請",
+      "填寫安置申請表，檢附財產及所得證明",
+      "接受退輔會審查（現場訪視）",
+      "核准後依排序等候入住或配住住宅"
+    ],
+    "addedDate": "2026-07-09",
+    "lastVerifiedDate": "2026-07-01",
+    "requiredDocs": [
+      "榮民證",
+      "戶籍謄本",
+      "財產歸戶清單（向國稅局申請）",
+      "所得證明"
+    ],
+    "source": "https://www.vac.gov.tw/cp-6501-136614-208.html"
+  },
+  {
+    "id": "vac-veteran-spouse-living-subsidy",
+    "title": "榮民配偶生活補助",
+    "category": "生活",
+    "agency": "國軍退除役官兵輔導委員會（退輔會）",
+    "summary": "榮民亡故後，其配偶（遺眷）可向退輔會申請生活補助，維持基本生活水準，補助金額依榮民服役年資及配偶年齡給付。",
+    "eligibility": [
+      "榮民亡故，其配偶尚在生存",
+      "配偶年滿 45 歲（或身心障礙者不限年齡）",
+      "未再婚",
+      "無固定工作所得或所得偏低"
+    ],
+    "amount": "每月生活補助約 NT,000–6,000（依服役年資及現行標準調整）",
+    "deadline": "全年常態受理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.vac.gov.tw/cp-6501-136615-208.html",
+    "officialUrl": "https://www.vac.gov.tw/cp-6501-136615-208.html",
+    "tags": [
+      "榮民",
+      "遺眷",
+      "配偶補助",
+      "退輔會",
+      "生活補助"
+    ],
+    "situations": [
+      "veteran",
+      "senior",
+      "low-income"
+    ],
+    "difficulty": "easy",
+    "updatedAt": "2026-07-01",
+    "steps": [
+      "攜帶亡故榮民相關資料前往榮服處申請",
+      "填寫遺眷生活補助申請表",
+      "提交戶籍謄本、結婚證明、榮民死亡證明等文件",
+      "核准後按月撥款至指定帳戶"
+    ],
+    "addedDate": "2026-07-09",
+    "lastVerifiedDate": "2026-07-01",
+    "maxAmount": 6000,
+    "requiredDocs": [
+      "亡故榮民之榮民證及死亡證明",
+      "申請人戶籍謄本",
+      "結婚登記證明",
+      "申請人身分證",
+      "銀行帳戶資料"
+    ],
+    "source": "https://www.vac.gov.tw/cp-6501-136615-208.html"
   }
 ]
