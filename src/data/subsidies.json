@@ -3626,5 +3626,236 @@
       "銀行帳戶資料"
     ],
     "source": "https://www.vac.gov.tw/cp-6501-136615-208.html"
+  },
+  {
+    "id": "moa-agricultural-disaster-relief",
+    "title": "農業天災救助（現金救助）",
+    "category": "農業",
+    "agency": "農業部",
+    "summary": "颱風、水災、旱災等天災造成農作物損失時，政府提供現金補助，協助農民盡速恢復生產。依受損面積及作物種類計算補助金額，最高可達數十萬元。",
+    "eligibility": [
+      "台灣本國籍農民，具農民身分（加入農民健康保險）",
+      "於天災發生期間遭受農作物損失",
+      "損失面積達規定標準（各縣市稍有差異）",
+      "在規定期限內完成災害申報"
+    ],
+    "amount": "依受損面積及作物種類計算，每公頃補助金額不等，嚴重者最高數十萬元",
+    "deadline": "天災後 10 日內申報，各縣市農業局公告辦理期程",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://www.afa.gov.tw/cht/index.php?code=list&flag=detail&ids=146",
+    "officialUrl": "https://www.moa.gov.tw/ws.php?id=2505975",
+    "tags": [
+      "農民",
+      "天災救助",
+      "農作物",
+      "現金補助",
+      "農業補助"
+    ],
+    "situations": [
+      "farmer"
+    ],
+    "difficulty": "medium",
+    "updatedAt": "2026-07-09",
+    "steps": [
+      "天災發生後 10 日內向鄉（鎮、市、區）公所農業課申報受損",
+      "公所人員現地勘查確認損失面積與程度",
+      "填寫天災救助申請書，檢附農民手冊、農業用地清冊",
+      "縣市農業局核定後撥款至申請人帳戶"
+    ],
+    "addedDate": "2026-07-09",
+    "maxAmount": 500000,
+    "requiredDocs": [
+      "農民健康保險卡（農保卡）",
+      "身分證",
+      "農業用地所有權狀或租約",
+      "銀行帳戶資料"
+    ],
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://www.moa.gov.tw/ws.php?id=2505975"
+  },
+  {
+    "id": "moa-agricultural-insurance-premium-subsidy",
+    "title": "農業保險保費補助",
+    "category": "農業",
+    "agency": "農業部",
+    "summary": "政府補貼農民投保農業保險之保費，補助比率達 50%–75%，有效分擔農民面對天災、病蟲害等風險，保障農業收入穩定。",
+    "eligibility": [
+      "具農民身分（農民健康保險被保險人）或農業相關從業人員",
+      "於主管機關公告之保險商品期間投保",
+      "投保保險標的符合各保險商品規範"
+    ],
+    "amount": "補助保費 50%–75%，農民自付 25%–50%；各保險商品補助比率不同",
+    "deadline": "各保險商品投保截止日期依農業部公告，長期辦理",
+    "deadlineStatus": "ongoing",
+    "applicationUrl": "https://www.agriins.com.tw/",
+    "officialUrl": "https://www.moa.gov.tw/ws.php?id=2505964",
+    "tags": [
+      "農民",
+      "農業保險",
+      "保費補助",
+      "風險管理",
+      "農業補助"
+    ],
+    "situations": [
+      "farmer"
+    ],
+    "difficulty": "easy",
+    "updatedAt": "2026-07-09",
+    "steps": [
+      "至農業保險資訊平台（agriins.com.tw）查詢可投保的保險商品",
+      "確認自己符合投保資格（農民身分或農業從業者）",
+      "向各縣市農會、漁會或合作金庫等承保單位申請投保",
+      "繳交自付保費後，政府補助部分由農業部直接補貼給保險公司"
+    ],
+    "addedDate": "2026-07-09",
+    "requiredDocs": [
+      "農民健康保險卡（農保卡）或農業從業証明",
+      "身分證",
+      "農業用地證明或租約（視保險商品要求）"
+    ],
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://www.moa.gov.tw/ws.php?id=2505964"
+  },
+  {
+    "id": "moa-young-farmer-startup-subsidy",
+    "title": "青年農民返鄉創業補助",
+    "category": "農業",
+    "agency": "農業部農村發展及水土保持署",
+    "summary": "鼓勵 45 歲以下青年返鄉務農，提供農業創業輔導、設備補助及青農圓夢計畫，最高補助 100 萬元，並有農村生活及農業技術輔導配套。",
+    "eligibility": [
+      "年齡 45 歲以下（申請時），本國籍",
+      "有意返鄉從事農業生產，具農業創業計畫",
+      "完成農業部指定之農業培訓課程（或農業相關學歷）",
+      "設籍農村，取得農業用地使用同意"
+    ],
+    "amount": "青農圓夢計畫最高補助 100 萬元（設備、生產資材等費用）；另有農村生活補貼及農業輔導",
+    "deadline": "每年農業部公告受理期間，定期開放申請",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://www.ardswc.gov.tw/",
+    "officialUrl": "https://www.ardswc.gov.tw/cp-30-9000-202.html",
+    "tags": [
+      "青年農民",
+      "返鄉創業",
+      "農業補助",
+      "創業",
+      "青農"
+    ],
+    "situations": [
+      "farmer",
+      "entrepreneur"
+    ],
+    "difficulty": "hard",
+    "updatedAt": "2026-07-09",
+    "steps": [
+      "查詢農業部或農村發展及水土保持署每年公告之青農補助計畫",
+      "完成農業部指定培訓課程，取得結業證明",
+      "準備農業創業計畫書、農業用地文件、財務計畫",
+      "向各縣市農業改良場或農業部轄管機關提出申請",
+      "通過書面審查及計畫評估後，核定補助並分期撥款"
+    ],
+    "addedDate": "2026-07-09",
+    "maxAmount": 1000000,
+    "requiredDocs": [
+      "身分證",
+      "農業培訓結業證明",
+      "農業創業計畫書",
+      "農業用地租約或使用同意書",
+      "銀行帳戶資料"
+    ],
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://www.ardswc.gov.tw/cp-30-9000-202.html"
+  },
+  {
+    "id": "moa-organic-farming-transition-subsidy",
+    "title": "有機農業轉型補助",
+    "category": "農業",
+    "agency": "農業部",
+    "summary": "補助慣行農業轉型為有機農業期間之生產損失，鼓勵農民採用友善環境的有機耕作方式，每公頃每年補助 3 萬至 6 萬元，轉型期間最長 3 年。",
+    "eligibility": [
+      "現為慣行農業農民，有意轉型為有機農業",
+      "農業用地位於台灣，面積達規定標準",
+      "承諾依有機農業促進法規定辦理",
+      "未領取其他相同用途之補助"
+    ],
+    "amount": "轉型期每公頃每年補助新台幣 3 萬至 6 萬元，最長補助 3 年；視地區及作物種類調整",
+    "deadline": "每年農業部公告受理，定期開放申請",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://www.moa.gov.tw/ws.php?id=2505978",
+    "officialUrl": "https://www.moa.gov.tw/ws.php?id=2505978",
+    "tags": [
+      "農民",
+      "有機農業",
+      "轉型補助",
+      "友善環境",
+      "農業補助"
+    ],
+    "situations": [
+      "farmer"
+    ],
+    "difficulty": "medium",
+    "updatedAt": "2026-07-09",
+    "steps": [
+      "確認農業用地符合申請資格，查詢農業部每年公告之申請截止日期",
+      "向所在縣市農業改良場提出轉型申請，提交農業用地清冊",
+      "改良場進行現地輔導與查驗，確認轉型意願與計畫可行性",
+      "核定後依轉型面積及進度分年撥款補助"
+    ],
+    "addedDate": "2026-07-09",
+    "maxAmount": 180000,
+    "requiredDocs": [
+      "農民身分證明（農保卡）",
+      "農業用地所有權狀或租約",
+      "轉型計畫書",
+      "身分證"
+    ],
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://www.moa.gov.tw/ws.php?id=2505978"
+  },
+  {
+    "id": "moa-agricultural-machinery-subsidy",
+    "title": "農業機械補助",
+    "category": "農業",
+    "agency": "農業部",
+    "summary": "補助農民購置農業機械設備，降低生產成本、提升農業生產效率，補助購置費用 30%–50%，加速農業機械化與智慧農業發展。",
+    "eligibility": [
+      "具農民身分（農保被保險人）或農業生產合作社",
+      "購置符合補助項目之農業機械設備",
+      "農業用地面積達最低標準（視機型而定）",
+      "未重複領取其他相同用途補助"
+    ],
+    "amount": "補助購置費用 30%–50%，單項最高補助金額依機型而異（約數萬至數十萬元）",
+    "deadline": "每年農業部及各縣市農業局公告受理，定期開放申請",
+    "deadlineStatus": "periodic",
+    "applicationUrl": "https://www.moa.gov.tw/ws.php?id=2505988",
+    "officialUrl": "https://www.moa.gov.tw/ws.php?id=2505988",
+    "tags": [
+      "農民",
+      "農業機械",
+      "設備補助",
+      "農業現代化",
+      "農業補助"
+    ],
+    "situations": [
+      "farmer"
+    ],
+    "difficulty": "medium",
+    "updatedAt": "2026-07-09",
+    "steps": [
+      "查詢農業部或縣市農業局每年公告之農業機械補助清單及申請期間",
+      "確認欲購置機械在補助名單內，向承辦單位（農業改良場或農會）提出申請",
+      "提交農民身分證明、農業用地文件及機械購置報價單",
+      "審核通過後採購機械，繳交自付款，補助款直接撥付或事後核銷"
+    ],
+    "addedDate": "2026-07-09",
+    "maxAmount": 300000,
+    "requiredDocs": [
+      "農民健康保險卡（農保卡）",
+      "身分證",
+      "農業用地所有權狀或租約",
+      "欲購置機械之報價單或合約書",
+      "銀行帳戶資料"
+    ],
+    "lastVerifiedDate": "2026-07-09",
+    "source": "https://www.moa.gov.tw/ws.php?id=2505988"
   }
 ]

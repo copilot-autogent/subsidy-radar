@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import subsidiesRaw from '../data/subsidies.json';
 
-type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student' | 'worker' | 'middle-aged' | 'veteran';
+type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student' | 'worker' | 'middle-aged' | 'veteran' | 'farmer';
 type Subsidy = typeof subsidiesRaw[number] & { isYouthHighlight?: boolean; difficulty?: string; steps?: string[]; deadlineDate?: string; addedDate?: string; situations?: Situation[]; maxAmount?: number; counties?: string[]; requiredDocs?: string[]; officialUrl?: string; lastVerifiedDate?: string; source?: string };
 const subsidies = subsidiesRaw as Subsidy[];
 
@@ -127,7 +127,10 @@ const MIDDLE_AGED_LABEL = '⭐ 中高齡補助';
 const middleAgedCount = subsidies.filter(s => s.situations?.includes('middle-aged')).length;
 const VETERAN_LABEL = '⭐ 榮民補助';
 const veteranCount = subsidies.filter(s => s.situations?.includes('veteran')).length;
-const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, WORKER_LABEL, MIDDLE_AGED_LABEL, VETERAN_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY))];
+const FARMER_LABEL = '⭐ 農業補助';
+const FARMER_CATEGORY = '農業';
+const farmerCount = subsidies.filter(s => s.situations?.includes('farmer')).length;
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, WORKER_LABEL, MIDDLE_AGED_LABEL, VETERAN_LABEL, FARMER_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY && c !== FARMER_CATEGORY))];
 const youthCount = youthHighlightCount;
 
 // ── Agency filter — normalize full agency names to parent-ministry groups ─
@@ -141,6 +144,7 @@ function normalizeAgency(agency: string): string {
   if (agency.startsWith('國家科學及技術委員會')) return '國科會';
   if (agency.startsWith('經濟部')) return '經濟部';
   if (agency.startsWith('財政部')) return '財政部';
+  if (agency.startsWith('農業部')) return '農業部';
   if (agency.startsWith('各縣市')) return '各縣市';
   return '其他';
 }
@@ -152,7 +156,7 @@ subsidies.forEach(s => {
 });
 
 // Display order: highest-count ministries first, then alphabetical
-const AGENCY_DISPLAY_ORDER = ['勞動部', '衛福部', '內政部', '教育部', '原民會', '經濟部', '財政部', '各縣市', '國科會', '其他'];
+const AGENCY_DISPLAY_ORDER = ['勞動部', '衛福部', '內政部', '教育部', '原民會', '經濟部', '財政部', '農業部', '各縣市', '國科會', '其他'];
 const agencies = AGENCY_DISPLAY_ORDER.filter(a => agencyCounts[a] > 0);
 
 // Difficulty filter counts
@@ -247,6 +251,7 @@ const personas = [
   { key: 'disabled',      icon: '♿', label: '身障朋友' },
   { key: 'low-income',    icon: '💰', label: '低/中低收入戶' },
   { key: 'veteran',       icon: '🎖️', label: '榮民' },
+  { key: 'farmer',        icon: '🌾', label: '農民' },
 ];
 
 // Build JSON-LD ItemList for Google rich results (static, build-time, zero runtime cost)
@@ -459,8 +464,22 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       </div>
     </div>
 
+    <div class="quiz-question" data-question="farmer" style="display:none">
+      <label id="quiz-label-farmer" class="quiz-label">11. 您是否為農民或農業從業者？</label>
+      <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-farmer">
+        <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">🌾</span>
+          <span class="option-text">是（農民、農業從業者或農業相關從業人員）</span>
+        </button>
+        <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+          <span class="option-icon">✓</span>
+          <span class="option-text">否</span>
+        </button>
+      </div>
+    </div>
+
     <div class="quiz-question" data-question="county" style="display:none">
-      <label id="quiz-label-county" class="quiz-label">11. 您目前居住在哪個縣市？</label>
+      <label id="quiz-label-county" class="quiz-label">12. 您目前居住在哪個縣市？</label>
       <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-county">
         <button class="quiz-option" data-value="台北市" type="button" role="radio" aria-checked="false">
           <span class="option-icon">🏙️</span>
@@ -578,13 +597,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           ? middleAgedCount
           : cat === VETERAN_LABEL
           ? veteranCount
+          : cat === FARMER_LABEL
+          ? farmerCount
           : cat === RECENCY_LABEL
           ? recencyCount
           : categoryCounts[cat] || 0;
         return (
           <button
-            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === SINGLE_PARENT_LABEL ? 'single-parent-filter' : ''} ${cat === YOUNG_CHILD_LABEL ? 'young-child-filter' : ''} ${cat === STUDENT_LABEL ? 'student-filter' : ''} ${cat === WORKER_LABEL ? 'worker-filter' : ''} ${cat === MIDDLE_AGED_LABEL ? 'middle-aged-filter' : ''} ${cat === VETERAN_LABEL ? 'veteran-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
-            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : cat === SINGLE_PARENT_LABEL ? 'singleParentFilterBtn' : cat === YOUNG_CHILD_LABEL ? 'youngChildFilterBtn' : cat === STUDENT_LABEL ? 'studentFilterBtn' : cat === WORKER_LABEL ? 'workerFilterBtn' : cat === MIDDLE_AGED_LABEL ? 'middleAgedFilterBtn' : cat === VETERAN_LABEL ? 'veteranFilterBtn' : undefined}
+            class={`filter-btn ${cat === '全部' ? 'active' : ''} ${cat === '⭐ 青年必看' ? 'youth-filter' : ''} ${cat === SENIOR_LABEL ? 'senior-filter' : ''} ${cat === DISABILITY_LABEL ? 'disability-filter' : ''} ${cat === NEW_IMMIGRANT_LABEL ? 'new-immigrant-filter' : ''} ${cat === INDIGENOUS_LABEL ? 'indigenous-filter' : ''} ${cat === LOW_INCOME_LABEL ? 'low-income-filter' : ''} ${cat === SINGLE_PARENT_LABEL ? 'single-parent-filter' : ''} ${cat === YOUNG_CHILD_LABEL ? 'young-child-filter' : ''} ${cat === STUDENT_LABEL ? 'student-filter' : ''} ${cat === WORKER_LABEL ? 'worker-filter' : ''} ${cat === MIDDLE_AGED_LABEL ? 'middle-aged-filter' : ''} ${cat === VETERAN_LABEL ? 'veteran-filter' : ''} ${cat === FARMER_LABEL ? 'farmer-filter' : ''} ${cat === RECENCY_LABEL ? 'recency-filter' : ''}`}
+            id={cat === RECENCY_LABEL ? 'recencyFilterBtn' : cat === SENIOR_LABEL ? 'seniorFilterBtn' : cat === DISABILITY_LABEL ? 'disabilityFilterBtn' : cat === NEW_IMMIGRANT_LABEL ? 'newImmigrantFilterBtn' : cat === INDIGENOUS_LABEL ? 'indigenousFilterBtn' : cat === LOW_INCOME_LABEL ? 'lowIncomeFilterBtn' : cat === SINGLE_PARENT_LABEL ? 'singleParentFilterBtn' : cat === YOUNG_CHILD_LABEL ? 'youngChildFilterBtn' : cat === STUDENT_LABEL ? 'studentFilterBtn' : cat === WORKER_LABEL ? 'workerFilterBtn' : cat === MIDDLE_AGED_LABEL ? 'middleAgedFilterBtn' : cat === VETERAN_LABEL ? 'veteranFilterBtn' : cat === FARMER_LABEL ? 'farmerFilterBtn' : undefined}
             data-category={cat}
             data-recency-days={cat === RECENCY_LABEL ? RECENCY_DAYS : undefined}
             type="button"
@@ -1250,6 +1271,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const WORKER_FILTER_LABEL = (document.getElementById('workerFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 勞工補助';
     const MIDDLE_AGED_FILTER_LABEL = (document.getElementById('middleAgedFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 中高齡補助';
     const VETERAN_FILTER_LABEL = (document.getElementById('veteranFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 榮民補助';
+    const FARMER_FILTER_LABEL = (document.getElementById('farmerFilterBtn') as HTMLElement | null)?.dataset.category ?? '⭐ 農業補助';
 
     const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
 
@@ -1282,6 +1304,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       'worker':        new Set(['yes', 'no']),
       'middle-aged':   new Set(['yes', 'no']),
       'veteran':       new Set(['yes', 'no']),
+      'farmer':        new Set(['yes', 'no']),
       'county':        new Set(['台北市', '新北市', '桃園市', '台中市', '高雄市', 'other']),
     };
 
@@ -1298,6 +1321,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.set('q9', quizAnswers['worker'] ?? '');
       params.set('q10', quizAnswers['middle-aged'] ?? '');
       params.set('q11', quizAnswers['veteran'] ?? '');
+      params.set('q12', quizAnswers['farmer'] ?? '');
       history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
     }
 
@@ -1314,6 +1338,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       params.delete('q9');
       params.delete('q10');
       params.delete('q11');
+      params.delete('q12');
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
     }
@@ -1423,6 +1448,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const worker = quizAnswers['worker'];
       const middleAged = quizAnswers['middle-aged'];
       const veteran = quizAnswers['veteran'];
+      const farmer = quizAnswers['farmer'];
 
       // Map quiz answers to situations
       if (age === 'senior') situations.push('senior');
@@ -1455,6 +1481,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
       if (veteran === 'yes') {
         situations.push('veteran');
+      }
+      if (farmer === 'yes') {
+        situations.push('farmer');
       }
 
       return situations;
@@ -2325,6 +2354,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
           // Veteran entries span multiple categories — tag-only matching is intentional.
           : activeCategory === VETERAN_FILTER_LABEL
           ? situations.includes('veteran')
+          // Farmer entries span multiple categories — tag-only matching is intentional.
+          : activeCategory === FARMER_FILTER_LABEL
+          ? situations.includes('farmer')
           : activeCategory === RECENCY_FILTER_LABEL
           ? isRecentlyAdded(card)
           : cat === activeCategory;
@@ -2558,6 +2590,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       'low-income':   'low-income',
       'middle-aged':  'middle-aged',
       'veteran':      'veteran',
+      'farmer':       'farmer',
     };
 
     personaBtns.forEach(btn => {
@@ -3123,6 +3156,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       const q9 = params.get('q9') ?? '';
       const q10 = params.get('q10') ?? '';
       const q11 = params.get('q11') ?? '';
+      const q12 = params.get('q12') ?? '';
 
       const q123Valid =
         VALID_QUIZ_VALUES.age.has(q1) &&
@@ -3148,10 +3182,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // q11 is optional: empty string means user hadn't reached this question yet (backward-compat
       // with URLs shared before the veteran question was added in #117).
       const q11Valid = q11 === '' || VALID_QUIZ_VALUES['veteran'].has(q11);
+      // q12 is optional: empty string means user hadn't reached this question yet (backward-compat
+      // with URLs shared before the farmer question was added in #164).
+      const q12Valid = q12 === '' || VALID_QUIZ_VALUES['farmer'].has(q12);
 
-      if (q123Valid && q4Valid && q5Valid && q6Valid && q7Valid && q8Valid && q9Valid && q10Valid && q11Valid) {
+      if (q123Valid && q4Valid && q5Valid && q6Valid && q7Valid && q8Valid && q9Valid && q10Valid && q11Valid && q12Valid) {
         // All answers present and valid — restore full quiz state
-        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5, ...(q6 ? { 'young-child': q6 } : {}), ...(q7 ? { 'student': q7 } : {}), ...(q8 ? { 'county': q8 } : {}), ...(q9 ? { 'worker': q9 } : {}), ...(q10 ? { 'middle-aged': q10 } : {}), ...(q11 ? { 'veteran': q11 } : {}) };
+        quizAnswers = { age: q1, employment: q2, housing: q3, disability: q4, 'single-parent': q5, ...(q6 ? { 'young-child': q6 } : {}), ...(q7 ? { 'student': q7 } : {}), ...(q8 ? { 'county': q8 } : {}), ...(q9 ? { 'worker': q9 } : {}), ...(q10 ? { 'middle-aged': q10 } : {}), ...(q11 ? { 'veteran': q11 } : {}), ...(q12 ? { 'farmer': q12 } : {}) };
         // Mark each answer as selected in the UI; sync roving tabindex per group
         quizQuestions.forEach(q => { q.style.display = 'none'; });
         quizResetContainer.style.display = 'block';
@@ -3295,7 +3332,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         const VALID_SITUATIONS = new Set([
           'renter', 'homebuyer', 'entrepreneur', 'parent', 'fresh-grad',
           'unemployed', 'employed', 'senior', 'disabled', 'new-immigrant', 'indigenous', 'low-income',
-          'single-parent', 'young-child', 'student', 'worker', 'middle-aged', 'veteran',
+          'single-parent', 'young-child', 'student', 'worker', 'middle-aged', 'veteran', 'farmer',
         ]);
         const sitParam = params.get('sit') ?? '';
         if (sitParam && VALID_SITUATIONS.has(sitParam)) {
