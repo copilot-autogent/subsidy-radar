@@ -71,10 +71,12 @@ test.describe('farmer persona — data & filter logic', () => {
   // ── 6. All farmer entries have expected fields ────────────────────────────
   test('all farmer entries have title, agency, and situations fields', () => {
     const farmerEntries = subsidies.filter(s => s.situations?.includes('farmer'));
+    expect(farmerEntries.length, 'Expected at least 5 farmer entries').toBeGreaterThanOrEqual(5);
     for (const entry of farmerEntries) {
       expect(entry.id, 'Entry must have id').toBeTruthy();
       expect((entry as Record<string, unknown>).title, `${entry.id} must have title`).toBeTruthy();
       expect((entry as Record<string, unknown>).agency, `${entry.id} must have agency`).toBeTruthy();
+      expect(entry.situations, `${entry.id} must have situations containing 'farmer'`).toContain('farmer');
     }
   });
 });
