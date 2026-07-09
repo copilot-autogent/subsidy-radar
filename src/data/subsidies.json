@@ -3670,7 +3670,7 @@
       "農業用地所有權狀或租約",
       "銀行帳戶資料"
     ],
-    "lastVerifiedDate": "2026-07-01",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.moa.gov.tw/ws.php?id=2505975"
   },
   {
@@ -3708,13 +3708,13 @@
       "繳交自付保費後，政府補助部分由農業部直接補貼給保險公司"
     ],
     "addedDate": "2026-07-09",
-    "maxAmount": 0,
+    "maxAmount": null,
     "requiredDocs": [
       "農民健康保險卡（農保卡）或農業從業証明",
       "身分證",
       "農業用地證明或租約（視保險商品要求）"
     ],
-    "lastVerifiedDate": "2026-07-01",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.moa.gov.tw/ws.php?id=2505964"
   },
   {
@@ -3743,8 +3743,7 @@
     ],
     "situations": [
       "farmer",
-      "entrepreneur",
-      "fresh-grad"
+      "entrepreneur"
     ],
     "difficulty": "hard",
     "updatedAt": "2026-07-09",
@@ -3764,7 +3763,7 @@
       "農業用地租約或使用同意書",
       "銀行帳戶資料"
     ],
-    "lastVerifiedDate": "2026-07-01",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.ardswc.gov.tw/cp-30-9000-202.html"
   },
   {
@@ -3810,7 +3809,7 @@
       "轉型計畫書",
       "身分證"
     ],
-    "lastVerifiedDate": "2026-07-01",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.moa.gov.tw/ws.php?id=2505978"
   },
   {
@@ -3857,7 +3856,7 @@
       "欲購置機械之報價單或合約書",
       "銀行帳戶資料"
     ],
-    "lastVerifiedDate": "2026-07-01",
+    "lastVerifiedDate": "2026-07-09",
     "source": "https://www.moa.gov.tw/ws.php?id=2505988"
   }
 ]

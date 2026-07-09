@@ -4,7 +4,7 @@ export type Situation =
   | 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad'
   | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant'
   | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student'
-  | 'farmer';
+  | 'worker' | 'middle-aged' | 'veteran' | 'farmer';
 
 export type Subsidy = typeof subsidiesRaw[number] & {
   isYouthHighlight?: boolean;
@@ -122,5 +122,8 @@ export const situationLabel: Record<string, { icon: string; label: string }> = {
   'single-parent':{ icon: '👩‍👧', label: '單親家庭' },
   'young-child':  { icon: '🍼', label: '育兒(0-6歲)' },
   'student':      { icon: '📚', label: '在學學生' },
+  'worker':       { icon: '👷', label: '勞工/就業' },
+  'middle-aged':  { icon: '👨‍💼', label: '中高齡(45+)' },
+  'veteran':      { icon: '🎖️', label: '榮民' },
   'farmer':       { icon: '🌾', label: '農民' },
 };
