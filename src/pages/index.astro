@@ -128,8 +128,9 @@ const middleAgedCount = subsidies.filter(s => s.situations?.includes('middle-age
 const VETERAN_LABEL = '⭐ 榮民補助';
 const veteranCount = subsidies.filter(s => s.situations?.includes('veteran')).length;
 const FARMER_LABEL = '⭐ 農業補助';
+const FARMER_CATEGORY = '農業';
 const farmerCount = subsidies.filter(s => s.situations?.includes('farmer')).length;
-const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, WORKER_LABEL, MIDDLE_AGED_LABEL, VETERAN_LABEL, FARMER_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY))];
+const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, WORKER_LABEL, MIDDLE_AGED_LABEL, VETERAN_LABEL, FARMER_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY && c !== FARMER_CATEGORY))];
 const youthCount = youthHighlightCount;
 
 // ── Agency filter — normalize full agency names to parent-ministry groups ─
@@ -468,7 +469,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-farmer">
         <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
           <span class="option-icon">🌾</span>
-          <span class="option-text">是（農民、漁民、林業或牧業從業者）</span>
+          <span class="option-text">是（農民、農業從業者或農業相關從業人員）</span>
         </button>
         <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
           <span class="option-icon">✓</span>
