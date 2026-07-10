@@ -10,10 +10,17 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('Comparison overlay is hidden on fresh load (#167)', () => {
   test.beforeEach(async ({ page }) => {
+    // Clear the compare selection BEFORE any page script runs, so the very
+    // first render is guaranteed to start from a clean, empty state (no
+    // stale sessionStorage side effects on first paint).
+    await page.addInitScript(() => {
+      try {
+        sessionStorage.removeItem('subsidy-compare-selection');
+      } catch {
+        /* sessionStorage may be unavailable pre-navigation; ignore */
+      }
+    });
     await page.goto('/subsidy-radar/');
-    // Guarantee a clean state, then reload so the page initializes fresh.
-    await page.evaluate(() => sessionStorage.removeItem('subsidy-compare-selection'));
-    await page.reload();
   });
 
   test('overlay has computed display none on fresh load', async ({ page }) => {
@@ -29,6 +36,7 @@ test.describe('Comparison overlay is hidden on fresh load (#167)', () => {
 
   test('compare bar has computed display none on fresh load', async ({ page }) => {
     const bar = page.locator('#compareBar');
+    await expect(bar).toHaveAttribute('hidden', '');
     await expect(bar).toBeHidden();
 
     const display = await bar.evaluate((el) => getComputedStyle(el).display);
@@ -46,10 +54,22 @@ test.describe('Comparison overlay is hidden on fresh load (#167)', () => {
     expect(insideOverlay).toBe(false);
   });
 
-  test('a central interactive element is clickable on fresh load', async ({ page }) => {
-    // Pick a compare checkbox (present on every card) and confirm the overlay
-    // does not intercept the click. If the overlay were covering the viewport,
-    // this click would time out / hit the overlay instead.
+  test('the element at the viewport center is clickable (not overlay-blocked)', async ({ page }) => {
+    // Directly exercise the reported outage: dispatch a real click at the
+    // viewport center and confirm the element that receives it is NOT the
+    // compare overlay (which, when the bug is present, covers the whole page
+    // and swallows every click).
+    const hitOverlay = await page.evaluate(() => {
+      const cx = Math.floor(window.innerWidth / 2);
+      const cy = Math.floor(window.innerHeight / 2);
+      const target = document.elementFromPoint(cx, cy);
+      if (!target) return true; // nothing hittable => something is covering it
+      return !!target.closest('.compare-overlay');
+    });
+    expect(hitOverlay).toBe(false);
+
+    // Also confirm a real interactive control can be toggled (the overlay is
+    // not intercepting pointer events anywhere it should not).
     const checkbox = page.locator('.compare-checkbox').first();
     await expect(checkbox).toBeVisible();
     await checkbox.check();
