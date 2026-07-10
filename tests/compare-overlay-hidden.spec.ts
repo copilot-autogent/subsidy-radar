@@ -10,13 +10,23 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('Comparison overlay is hidden on fresh load (#167)', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear the compare selection BEFORE any page script runs, so the very
-    // first render is guaranteed to start from a clean, empty state (no
-    // stale sessionStorage side effects on first paint). Not wrapped in a
-    // swallow-all catch: if storage access unexpectedly throws, the test
-    // SHOULD fail loudly rather than silently proceed on a dirty state.
+    // Runs in every frame before that frame's scripts. Scope side effects to
+    // the top document so a cross-origin child frame can't throw a
+    // SecurityError (or double-install the click probe).
     await page.addInitScript(() => {
+      if (window !== window.top) return;
+      // Start each first render from a clean, empty compare state.
       sessionStorage.removeItem('subsidy-compare-selection');
+      // Capture-phase probe: records the element that receives a real,
+      // browser-hit-tested click so a test can assert what the click landed on.
+      (window as unknown as { __lastClickTarget: EventTarget | null }).__lastClickTarget = null;
+      document.addEventListener(
+        'click',
+        (e) => {
+          (window as unknown as { __lastClickTarget: EventTarget | null }).__lastClickTarget = e.target;
+        },
+        true,
+      );
     });
     await page.goto('/subsidy-radar/');
   });
@@ -60,35 +70,29 @@ test.describe('Comparison overlay is hidden on fresh load (#167)', () => {
     expect(insideOverlay).toBe(false);
   });
 
-  test('the element at the viewport center is clickable (not overlay-blocked)', async ({ page }) => {
-    // Directly exercise the reported outage: dispatch a REAL click at the
-    // exact viewport center and capture which element actually receives it.
-    // When the bug is present, the overlay covers the whole page and is the
-    // click target; when fixed, the click lands on real page content.
+  test('a real click at the viewport center is not swallowed by the overlay', async ({ page }) => {
+    // Use Playwright's real input pipeline (browser hit-testing + pointer-events),
+    // NOT a synthetic dispatchEvent, so a full-screen overlay would genuinely
+    // intercept the click when the bug is present.
+    const { cx, cy } = await page.evaluate(() => ({
+      cx: Math.floor(window.innerWidth / 2),
+      cy: Math.floor(window.innerHeight / 2),
+    }));
+    await page.mouse.click(cx, cy);
+
     const clickHitOverlay = await page.evaluate(() => {
-      const cx = Math.floor(window.innerWidth / 2);
-      const cy = Math.floor(window.innerHeight / 2);
-      const target = document.elementFromPoint(cx, cy);
-      if (!target) return true; // nothing hittable => something is covering it
-
-      let received: EventTarget | null = null;
-      const handler = (e: Event) => {
-        received = e.target;
-      };
-      document.addEventListener('click', handler, true);
-      target.dispatchEvent(
-        new MouseEvent('click', { bubbles: true, clientX: cx, clientY: cy }),
-      );
-      document.removeEventListener('click', handler, true);
-
-      const el = received as Element | null;
-      return !el || !!el.closest('.compare-overlay');
+      const el = (window as unknown as { __lastClickTarget: Element | null })
+        .__lastClickTarget;
+      // No target recorded => the click was swallowed before reaching content.
+      if (!el || typeof el.closest !== 'function') return true;
+      return !!el.closest('.compare-overlay');
     });
     expect(clickHitOverlay).toBe(false);
 
-    // And confirm a real interactive control can be toggled (pointer events
-    // are not being intercepted where they should not be).
+    // And confirm a real interactive control can be toggled (pointer events are
+    // not intercepted where they should not be). Guard against an empty render.
     const checkbox = page.locator('.compare-checkbox').first();
+    await expect(page.locator('.compare-checkbox')).not.toHaveCount(0);
     await expect(checkbox).toBeVisible();
     await checkbox.check();
     await expect(checkbox).toBeChecked();
