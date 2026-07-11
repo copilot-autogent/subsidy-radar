@@ -130,7 +130,6 @@ const veteranCount = subsidies.filter(s => s.situations?.includes('veteran')).le
 const FARMER_LABEL = '⭐ 農業補助';
 const FARMER_CATEGORY = '農業';
 const farmerCount = subsidies.filter(s => s.situations?.includes('farmer')).length;
-const nonClosedCount = subsidies.filter(s => s.deadlineStatus !== 'closed').length;
 const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, WORKER_LABEL, MIDDLE_AGED_LABEL, VETERAN_LABEL, FARMER_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY && c !== FARMER_CATEGORY))];
 const youthCount = youthHighlightCount;
 
@@ -768,7 +767,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   <div class="match-mode-banner" id="matchModeBanner" style="display:none" role="status" aria-live="polite" data-testid="match-mode-banner">
     <span class="banner-emoji">🎯</span>
     <span id="matchModeBannerMatch" class="match-mode-banner-text">根據您的回答，找到 <strong><span id="matchModeCount">0</span></strong> 項符合補助，依配對分數排序</span>
-    <span id="matchModeBannerNoMatch" class="match-mode-banner-text" style="display:none">您的回答暫無符合的補助，請嘗試調整條件</span>
+    <span id="matchModeBannerNoMatch" class="match-mode-banner-text" style="display:none">目前條件下無符合的補助，可調整篩選條件後重試</span>
     <button class="match-mode-exit-btn" id="matchModeExitBtn" type="button" aria-label="退出配對模式，查看全部補助">查看全部補助 ✕</button>
   </div>
 
@@ -1701,6 +1700,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
       
       resultsCount.textContent = `共 ${visible} 項補助符合你的情況`;
+      noResults.hidden = visible !== 0;
       eligibilityBanner.style.display = 'none';
       isQuizActive = true;
       // Show match-mode banner: always visible so user can exit; text differs on zero results
