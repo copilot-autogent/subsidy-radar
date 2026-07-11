@@ -763,6 +763,14 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     >🖨️ 列印補助清單</button>
   </div>
 
+  <!-- ── Quiz Match Mode Banner ── -->
+  <div class="match-mode-banner" id="matchModeBanner" style="display:none" role="status" aria-live="polite" data-testid="match-mode-banner">
+    <span class="banner-emoji">🎯</span>
+    <span id="matchModeBannerMatch" class="match-mode-banner-text">根據您的回答，找到 <strong><span id="matchModeCount">0</span></strong> 項符合補助，依配對分數排序</span>
+    <span id="matchModeBannerNoMatch" class="match-mode-banner-text" style="display:none">目前條件下無符合的補助，可調整篩選條件後重試</span>
+    <button class="match-mode-exit-btn" id="matchModeExitBtn" type="button" aria-label="退出配對模式，查看全部補助">查看全部補助 ✕</button>
+  </div>
+
   <div class="print-header" id="printHeader" aria-hidden="true">
     <h1>補助追蹤清單</h1>
     <p>列印於 <span id="printDate"></span></p>
@@ -1042,6 +1050,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const bannerText = document.getElementById('bannerText')!;
     const eligibleTotalBanner = document.getElementById('eligibleTotalBanner')!;
     const totalBannerText = document.getElementById('totalBannerText')!;
+    const matchModeBanner = document.getElementById('matchModeBanner')!;
+    const matchModeCount = document.getElementById('matchModeCount')!;
+    const matchModeBannerMatch = document.getElementById('matchModeBannerMatch')!;
+    const matchModeBannerNoMatch = document.getElementById('matchModeBannerNoMatch')!;
+    const matchModeExitBtn = document.getElementById('matchModeExitBtn') as HTMLButtonElement;
     const sortBtn = document.getElementById('sortDifficulty') as HTMLButtonElement;
     const sortAmountBtn = document.getElementById('sortAmount') as HTMLButtonElement;
     const trackerFilterBtn = document.getElementById('trackerFilter') as HTMLButtonElement;
@@ -1687,8 +1700,15 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
       
       resultsCount.textContent = `共 ${visible} 項補助符合你的情況`;
+      noResults.hidden = visible !== 0;
       eligibilityBanner.style.display = 'none';
       isQuizActive = true;
+      // Show match-mode banner: always visible so user can exit; text differs on zero results
+      matchModeCount.textContent = String(visible);
+      matchModeBannerMatch.style.display = visible > 0 ? '' : 'none';
+      matchModeBannerNoMatch.style.display = visible === 0 ? '' : 'none';
+      matchModeBanner.style.display = '';
+      applySort();
       updateEligibleTotalBanner();
     }
 
@@ -1758,6 +1778,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       quizResetBtn.click();
     });
 
+    // Exit match mode: reset quiz and return to the full subsidy list
+    matchModeExitBtn.addEventListener('click', () => {
+      quizResetBtn.click();
+    });
+
     quizResetBtn.addEventListener('click', () => {
       quizAnswers = {};
       currentQuestionIndex = 0;
@@ -1811,6 +1836,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       });
       resultsCount.textContent = `共 ${cards.length} 項補助`;
       eligibilityBanner.style.display = 'none';
+      matchModeBanner.style.display = 'none';
       isQuizActive = false;
       updateFilterUrl();
       updateEligibleTotalBanner();
@@ -2441,6 +2467,13 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
       resultsCount.textContent = `共 ${visible} 項補助`;
       noResults.hidden = visible !== 0;
+      // Keep match-mode banner count in sync if user applies additional filters on top of quiz
+      if (isQuizActive) {
+        matchModeCount.textContent = String(visible);
+        matchModeBannerMatch.style.display = visible > 0 ? '' : 'none';
+        matchModeBannerNoMatch.style.display = visible === 0 ? '' : 'none';
+        matchModeBanner.style.display = '';
+      }
 
       // Fuzzy hint: show only when search is active, results are found via fuzzy (not exact)
       fuzzyHint.textContent = '';
