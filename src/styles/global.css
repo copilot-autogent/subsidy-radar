@@ -1049,6 +1049,49 @@ main {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Quiz Match Mode Banner ── */
+.match-mode-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: linear-gradient(135deg, #1e3a5f 0%, #0f6fbd 100%);
+  color: #eff6ff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  border: 1px solid #3b82f6;
+  animation: bannerSlideIn 0.3s ease-out;
+  flex-wrap: wrap;
+}
+
+.match-mode-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.match-mode-exit-btn {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #eff6ff;
+  border-radius: 9999px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.match-mode-exit-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+.match-mode-exit-btn:focus-visible {
+  outline: 2px solid #eff6ff;
+  outline-offset: 2px;
+}
+
 /* ── Tracker Deadline Banner ── */
 .tracker-deadline-banner {
   background: linear-gradient(135deg, #431407 0%, #7c2d12 100%);
