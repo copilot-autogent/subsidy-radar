@@ -130,6 +130,7 @@ const veteranCount = subsidies.filter(s => s.situations?.includes('veteran')).le
 const FARMER_LABEL = '⭐ 農業補助';
 const FARMER_CATEGORY = '農業';
 const farmerCount = subsidies.filter(s => s.situations?.includes('farmer')).length;
+const nonClosedCount = subsidies.filter(s => s.deadlineStatus !== 'closed').length;
 const categories = ['全部', '⭐ 青年必看', SENIOR_LABEL, DISABILITY_LABEL, NEW_IMMIGRANT_LABEL, INDIGENOUS_LABEL, LOW_INCOME_LABEL, SINGLE_PARENT_LABEL, YOUNG_CHILD_LABEL, STUDENT_LABEL, WORKER_LABEL, MIDDLE_AGED_LABEL, VETERAN_LABEL, FARMER_LABEL, RECENCY_LABEL, ...new Set(subsidies.map(s => s.category).filter(c => c !== SENIOR_CATEGORY && c !== YOUNG_CHILD_CATEGORY && c !== FARMER_CATEGORY))];
 const youthCount = youthHighlightCount;
 
@@ -767,7 +768,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   <div class="match-mode-banner" id="matchModeBanner" style="display:none" role="status" aria-live="polite" data-testid="match-mode-banner">
     <span class="banner-emoji">🎯</span>
     <span id="matchModeBannerText" class="match-mode-banner-text">根據您的回答，找到 <strong><span id="matchModeCount">0</span></strong> 項符合補助，依配對分數排序</span>
-    <button class="match-mode-exit-btn" id="matchModeExitBtn" type="button" aria-label="退出配對模式，查看全部補助">查看全部 <span id="matchModeTotalCount">{subsidies.length}</span> 項 ✕</button>
+    <button class="match-mode-exit-btn" id="matchModeExitBtn" type="button" aria-label="退出配對模式，查看全部補助">查看全部 <span id="matchModeTotalCount">{nonClosedCount}</span> 項 ✕</button>
   </div>
 
   <div class="print-header" id="printHeader" aria-hidden="true">
@@ -1700,9 +1701,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       resultsCount.textContent = `共 ${visible} 項補助符合你的情況`;
       eligibilityBanner.style.display = 'none';
       isQuizActive = true;
-      // Show match mode banner with count and exit button
+      // Show match mode banner with count and exit button (hide banner when no matches)
       matchModeCount.textContent = String(visible);
-      matchModeBanner.style.display = '';
+      matchModeBanner.style.display = visible > 0 ? '' : 'none';
       applySort();
       updateEligibleTotalBanner();
     }
@@ -1773,7 +1774,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       quizResetBtn.click();
     });
 
-    // Exit match mode: hide the match banner and show all cards without resetting the quiz
+    // Exit match mode: reset quiz and return to the full subsidy list
     matchModeExitBtn.addEventListener('click', () => {
       quizResetBtn.click();
     });
@@ -2462,6 +2463,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
       resultsCount.textContent = `共 ${visible} 項補助`;
       noResults.hidden = visible !== 0;
+      // Keep match-mode banner count in sync if user applies additional filters on top of quiz
+      if (isQuizActive) {
+        matchModeCount.textContent = String(visible);
+        matchModeBanner.style.display = visible > 0 ? '' : 'none';
+      }
 
       // Fuzzy hint: show only when search is active, results are found via fuzzy (not exact)
       fuzzyHint.textContent = '';
