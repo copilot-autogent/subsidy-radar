@@ -767,8 +767,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
   <!-- ── Quiz Match Mode Banner ── -->
   <div class="match-mode-banner" id="matchModeBanner" style="display:none" role="status" aria-live="polite" data-testid="match-mode-banner">
     <span class="banner-emoji">🎯</span>
-    <span id="matchModeBannerText" class="match-mode-banner-text">根據您的回答，找到 <strong><span id="matchModeCount">0</span></strong> 項符合補助，依配對分數排序</span>
-    <button class="match-mode-exit-btn" id="matchModeExitBtn" type="button" aria-label="退出配對模式，查看全部補助">查看全部 <span id="matchModeTotalCount">{nonClosedCount}</span> 項 ✕</button>
+    <span id="matchModeBannerMatch" class="match-mode-banner-text">根據您的回答，找到 <strong><span id="matchModeCount">0</span></strong> 項符合補助，依配對分數排序</span>
+    <span id="matchModeBannerNoMatch" class="match-mode-banner-text" style="display:none">您的回答暫無符合的補助，請嘗試調整條件</span>
+    <button class="match-mode-exit-btn" id="matchModeExitBtn" type="button" aria-label="退出配對模式，查看全部補助">查看全部補助 ✕</button>
   </div>
 
   <div class="print-header" id="printHeader" aria-hidden="true">
@@ -1052,7 +1053,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const totalBannerText = document.getElementById('totalBannerText')!;
     const matchModeBanner = document.getElementById('matchModeBanner')!;
     const matchModeCount = document.getElementById('matchModeCount')!;
-    const matchModeTotalCount = document.getElementById('matchModeTotalCount')!;
+    const matchModeBannerMatch = document.getElementById('matchModeBannerMatch')!;
+    const matchModeBannerNoMatch = document.getElementById('matchModeBannerNoMatch')!;
     const matchModeExitBtn = document.getElementById('matchModeExitBtn') as HTMLButtonElement;
     const sortBtn = document.getElementById('sortDifficulty') as HTMLButtonElement;
     const sortAmountBtn = document.getElementById('sortAmount') as HTMLButtonElement;
@@ -1701,9 +1703,11 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       resultsCount.textContent = `共 ${visible} 項補助符合你的情況`;
       eligibilityBanner.style.display = 'none';
       isQuizActive = true;
-      // Show match mode banner with count and exit button (hide banner when no matches)
+      // Show match-mode banner: always visible so user can exit; text differs on zero results
       matchModeCount.textContent = String(visible);
-      matchModeBanner.style.display = visible > 0 ? '' : 'none';
+      matchModeBannerMatch.style.display = visible > 0 ? '' : 'none';
+      matchModeBannerNoMatch.style.display = visible === 0 ? '' : 'none';
+      matchModeBanner.style.display = '';
       applySort();
       updateEligibleTotalBanner();
     }
@@ -2466,7 +2470,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       // Keep match-mode banner count in sync if user applies additional filters on top of quiz
       if (isQuizActive) {
         matchModeCount.textContent = String(visible);
-        matchModeBanner.style.display = visible > 0 ? '' : 'none';
+        matchModeBannerMatch.style.display = visible > 0 ? '' : 'none';
+        matchModeBannerNoMatch.style.display = visible === 0 ? '' : 'none';
+        matchModeBanner.style.display = '';
       }
 
       // Fuzzy hint: show only when search is active, results are found via fuzzy (not exact)
