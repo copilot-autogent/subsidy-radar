@@ -42,7 +42,7 @@ function computeMatchScore(quizSituations: string[], cardSituations: string[]): 
 }
 
 const MIN_SCORE = 30;
-const AMOUNT_REGEX = /最高?\s*([\d,]+)\s*元/;
+const AMOUNT_REGEX = /最高\s*([\d,]+)\s*元/;
 
 /** Mirror of parseQuizAmountFromCard from index.astro. */
 function parseQuizAmount(maxAmount: number | undefined, amountText: string | undefined): number {
@@ -196,9 +196,12 @@ test.describe('Quiz Summary Banner — logic spec (issue #171)', () => {
     const subsidies = loadSubsidies();
     // Find a tag common enough to guarantee ≥ 2 matches
     const allTags = subsidies.flatMap(s => s.situations ?? []);
+    if (allTags.length === 0) throw new Error('No situation tags in subsidies.json');
     const tagCounts = new Map<string, number>();
     allTags.forEach(t => tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1));
-    const [mostCommonTag] = [...tagCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+    const topEntry = [...tagCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+    if (!topEntry) throw new Error('No tags found');
+    const [mostCommonTag] = topEntry;
 
     const result = computeSummary(subsidies, [mostCommonTag]);
     // At least 2 matched (since most common tag has many subsidies)

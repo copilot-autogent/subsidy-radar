@@ -524,9 +524,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     <div class="quiz-summary-main">
       <span class="quiz-summary-emoji" aria-hidden="true">🎯</span>
       <div class="quiz-summary-body">
-        <span class="quiz-summary-label">根據你的條件，最高可領</span>
+        <span class="quiz-summary-label" id="quizSummaryLabel">根據你的條件，最高可領</span>
         <span class="quiz-summary-amount" id="quizSummaryAmount"></span>
-        <span class="quiz-summary-note">預估上限</span>
+        <span class="quiz-summary-note" id="quizSummaryNote">預估上限</span>
       </div>
     </div>
     <p class="quiz-summary-counts" id="quizSummaryCounts"></p>
@@ -1321,6 +1321,8 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const quizSummaryBanner = document.getElementById('quiz-summary-banner') as HTMLElement;
     const quizSummaryAmountEl = document.getElementById('quizSummaryAmount') as HTMLElement;
     const quizSummaryCountsEl = document.getElementById('quizSummaryCounts') as HTMLElement;
+    const quizSummaryLabelEl = document.getElementById('quizSummaryLabel') as HTMLElement;
+    const quizSummaryNoteEl = document.getElementById('quizSummaryNote') as HTMLElement;
 
     // Valid answer sets for each question key
     const VALID_QUIZ_VALUES: Record<string, Set<string>> = {
@@ -1615,7 +1617,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
       quizTop3Panel.style.display = '';
       showQuizSummaryBanner();
-      quizTop3Panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Scroll to summary banner (above Top-3) so user sees the full result block
+      const scrollTarget = (quizSummaryBanner.style.display !== 'none' ? quizSummaryBanner : quizTop3Panel);
+      scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function hideTop3Panel() {
@@ -1636,7 +1640,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         if (Number.isFinite(val) && val > 0) return val;
       }
       const amountText = card.querySelector<HTMLElement>('.amount-text')?.textContent ?? '';
-      const m = /最高?\s*([\d,]+)\s*元/.exec(amountText);
+      const m = /最高\s*([\d,]+)\s*元/.exec(amountText);
       if (m) {
         const val = parseInt(m[1].replace(/,/g, ''), 10);
         if (val > 0) return val;
@@ -1673,13 +1677,18 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
 
       if (countWithAmount > 0) {
+        // Show amount + breakdown labels
+        quizSummaryLabelEl.style.display = '';
+        quizSummaryNoteEl.style.display = '';
         quizSummaryAmountEl.textContent = ntdFmt.format(totalAmount);
         const countParts: string[] = [`共 ${totalMatched} 項符合資格`];
         if (countWithoutAmount > 0) countParts.push(`另有 ${countWithoutAmount} 項依條件核定`);
         quizSummaryCountsEl.textContent = countParts.join('，');
       } else {
-        // All matched subsidies have conditional/unparseable amounts — don't show NT$0
-        quizSummaryAmountEl.textContent = '—';
+        // All amounts conditional — hide the "最高可領 / 預估上限" labels to avoid misleading display
+        quizSummaryLabelEl.style.display = 'none';
+        quizSummaryNoteEl.style.display = 'none';
+        quizSummaryAmountEl.textContent = '📋 符合資格補助';
         quizSummaryCountsEl.textContent = `共 ${totalMatched} 項符合資格（金額依個別條件核定）`;
       }
       quizSummaryBanner.style.display = '';
