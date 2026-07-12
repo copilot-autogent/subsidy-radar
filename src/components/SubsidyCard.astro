@@ -1,0 +1,209 @@
+---
+import { deadlineLabel, difficultyLabel, safeUrl, parseAmountValue, normalizeAgency } from '../utils/helpers.ts';
+import { getFreshnessBadge } from '../utils/freshness.ts';
+
+type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student' | 'worker' | 'middle-aged' | 'veteran' | 'farmer';
+
+interface Subsidy {
+  id: string;
+  title: string;
+  category: string;
+  agency: string;
+  summary: string;
+  eligibility: string[];
+  amount: string;
+  deadline: string;
+  deadlineStatus?: string;
+  applicationUrl: string;
+  officialUrl?: string;
+  tags: string[];
+  situations?: Situation[];
+  isYouthHighlight?: boolean;
+  difficulty?: string;
+  updatedAt?: string;
+  steps?: string[];
+  deadlineDate?: string;
+  addedDate?: string;
+  maxAmount?: number;
+  counties?: string[];
+  requiredDocs?: string[];
+  lastVerifiedDate?: string;
+  source?: string;
+}
+
+interface Props {
+  subsidy: Subsidy;
+  related: Subsidy[];
+  siteBase: string;
+}
+
+const { subsidy: s, related, siteBase } = Astro.props;
+
+const status = deadlineLabel[s.deadlineStatus ?? ''] ?? deadlineLabel['ongoing'];
+const diff = difficultyLabel[s.difficulty ?? 'medium'];
+const freshness = getFreshnessBadge(s.lastVerifiedDate);
+const olu = safeUrl(s.officialUrl);
+---
+
+<article
+  id={s.id}
+  class={`subsidy-card ${s.isYouthHighlight ? 'youth-highlight' : ''}`}
+  tabindex="0"
+  aria-label={`${s.title} - 金額：${s.amount} - 主辦機關：${s.agency}`}
+  data-category={s.category}
+  data-youth={s.isYouthHighlight ? 'true' : 'false'}
+  data-situations={JSON.stringify(s.situations ?? [])}
+  data-difficulty={s.difficulty ?? 'medium'}
+  data-search={`${s.title} ${s.summary} ${s.tags.join(' ')} ${s.agency}`}
+  data-id={s.id}
+  data-deadline={s.deadlineDate ?? ''}
+  data-deadline-status={s.deadlineStatus ?? ''}
+  data-added-date={s.addedDate ?? ''}
+  data-amount-value={parseAmountValue(s.amount ?? '')}
+  data-max-amount={s.maxAmount != null ? String(s.maxAmount) : ''}
+  data-counties={s.counties ? JSON.stringify(s.counties) : ''}
+  data-agency={normalizeAgency(s.agency)}
+  data-url={s.applicationUrl ?? ''}
+  data-steps={s.steps ? String(s.steps.length) : '0'}
+  data-last-verified={s.lastVerifiedDate ?? ''}
+>
+  <label class="compare-label">
+    <input
+      type="checkbox"
+      class="compare-checkbox"
+      data-id={s.id}
+      data-title={s.title}
+      data-amount={s.amount}
+      data-difficulty={s.difficulty ?? 'medium'}
+      data-deadline={s.deadline}
+      data-url={s.applicationUrl ?? ''}
+      data-steps={s.steps ? String(s.steps.length) : '0'}
+      aria-label={`加入比較：${s.title}`}
+    />
+    比較
+  </label>
+  <div class="card-header">
+    <h2 class="card-title">{s.title}</h2>
+    <div class="card-badges">
+      {s.isYouthHighlight && <span class="youth-badge">⭐ 青年必看</span>}
+      <span class="recency-badge" data-recency-badge style="display:none">🆕 最新</span>
+      <span class={`freshness-badge ${freshness.cls}`} title={s.source ? `資料來源：${s.source}` : undefined}>{freshness.label}</span>
+      <span class="category-badge">{s.category}</span>
+      <span class="match-score-pill" data-match-score-pill style="display:none"></span>
+    </div>
+    <div class="tracker-control">
+      <select class="tracker-select ts-none" data-id={s.id} aria-label={`申請狀態：未申請 — ${s.title}`}>
+        <option value="未申請">未申請</option>
+        <option value="申請中">申請中</option>
+        <option value="已核准">已核准</option>
+        <option value="已領取">已領取</option>
+        <option value="不符資格">不符資格</option>
+      </select>
+      <span class="tracker-print-badge ts-none" aria-hidden="true">未申請</span>
+      {s.deadlineDate && (
+        <button
+          class="reminder-btn"
+          data-reminder-btn
+          data-id={s.id}
+          data-title={s.title}
+          data-deadline={s.deadlineDate}
+          type="button"
+          aria-label={`設定截止提醒：${s.title}`}
+          aria-pressed="false"
+          title="設定截止提醒（瀏覽器通知）"
+        >🔔</button>
+      )}
+    </div>
+  </div>
+  <p class="card-agency">📋 {s.agency}</p>
+  <div class="card-amount-highlight">
+    <span class="amount-icon">💰</span>
+    <span class="amount-text">{s.amount}</span>
+  </div>
+  <p class="card-summary">{s.summary}</p>
+  <div class="card-meta-row">
+    <div class="card-deadline">
+      <span class={`deadline-status ${status.cls}`}>{status.text}</span>
+      <span class="deadline-text">🗓️ {s.deadline}</span>
+      {s.deadlineDate && <span class="countdown-badge" data-deadline-badge></span>}
+    </div>
+    <span class={`difficulty-badge ${diff.cls}`} data-tooltip={diff.tooltip}>{diff.text}</span>
+  </div>
+  {olu && (
+    <a href={olu} target="_blank" rel="nofollow noopener noreferrer" class="card-official-link" aria-label={`查看 ${s.title} 官方說明（新視窗）`}>
+      🔗 查看官方說明 →
+    </a>
+  )}
+  <details class="card-eligibility">
+    <summary>申請資格條件</summary>
+    <ul>
+      {s.eligibility.map(e => <li>{e}</li>)}
+    </ul>
+  </details>
+  {s.requiredDocs && s.requiredDocs.length > 0 && (
+    <details class="card-docs">
+      <summary>查看申請文件</summary>
+      <ul class="docs-list">
+        {s.requiredDocs.map(doc => <li>✅ {doc}</li>)}
+      </ul>
+    </details>
+  )}
+  <div class="card-tags">
+    {s.tags.map(tag => <span class="tag">{tag}</span>)}
+  </div>
+  {s.steps && s.steps.length > 0 && (
+    <details class="card-steps">
+      <summary>📋 如何申請？（{s.steps.length} 個步驟）</summary>
+      <ol class="steps-list">
+        {s.steps.map(step => <li>{step}</li>)}
+      </ol>
+      {related.length > 0 && (
+        <div class="related-subsidies">
+          <h3 class="related-title">💡 你可能也符合</h3>
+          <ul class="related-list">
+            {related.map(r => (
+              <li class="related-item">
+                <span class="related-category-pill">{r.category}</span>
+                <span class="related-name">{r.title}</span>
+                <a href={`#${r.id}`} class="related-view-btn" aria-label={`查看 ${r.title}`}>查看 →</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </details>
+  )}
+  <div class="card-actions">
+    <button
+      class="share-link-btn"
+      data-id={s.id}
+      data-title={s.title}
+      data-amount={s.amount}
+      data-agency={s.agency}
+      title="分享此補助"
+      type="button"
+      aria-label={`分享 ${s.title}`}
+    >
+      <span class="share-icon">📤</span>
+      <span class="share-text">分享</span>
+    </button>
+    <a
+      class="line-share-btn"
+      href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(siteBase + 'subsidy/' + s.id + '/')}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-id={s.id}
+      aria-label={`分享到 LINE：${s.title}`}
+      title="分享到 LINE"
+    >
+      <span class="line-share-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+          <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+        </svg>
+      </span>
+      <span class="line-share-text">LINE</span>
+    </a>
+    <a href={`${siteBase}subsidy/${s.id}/`} class="card-detail-link" aria-label={`查看 ${s.title} 詳細資訊`}>📄 詳情頁</a>
+    <a href={s.applicationUrl} target="_blank" rel="noopener noreferrer" class="card-link" aria-label={`前往申請 ${s.title}（新視窗開啟）`}>立即申請 →</a>
+  </div>
+</article>

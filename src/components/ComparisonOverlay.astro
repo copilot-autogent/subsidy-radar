@@ -1,0 +1,64 @@
+---
+// Comparison overlay (comparison bar + panel) — static HTML, dynamic via JS
+---
+
+<!-- ── Comparison Bar (sticky bottom) ── -->
+<div id="compareBar" class="compare-bar" role="region" aria-label="比較補助" hidden>
+  <span id="compareBarLabel" class="compare-bar-label">已選 <strong id="compareCount">0</strong> 項補助</span>
+  <button id="compareOpenBtn" class="compare-bar-open" type="button">比較已選補助</button>
+  <button id="compareClearBtn" class="compare-bar-clear" type="button" aria-label="清除比較選取">✕ 清除</button>
+</div>
+
+<!-- ── Comparison Panel (overlay) ── -->
+<div id="compareOverlay" class="compare-overlay" role="dialog" aria-modal="true" aria-label="補助比較表" hidden>
+  <div class="compare-panel">
+    <div class="compare-panel-header">
+      <h2 class="compare-panel-title">補助比較</h2>
+      <button id="compareCloseBtn" class="compare-panel-close" type="button" aria-label="關閉比較">✕</button>
+    </div>
+    <div class="compare-table-wrap">
+      <table class="compare-table" id="compareTable">
+        <thead>
+          <tr>
+            <th scope="col" class="compare-row-label compare-corner"></th>
+            <th scope="col" id="compare-name-0" class="compare-cell compare-col-header"></th>
+            <th scope="col" id="compare-name-1" class="compare-cell compare-col-header"></th>
+            <th scope="col" id="compare-name-2" class="compare-cell compare-col-header"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row" class="compare-row-label">最高金額</th>
+            <td id="compare-amount-0" class="compare-cell"></td>
+            <td id="compare-amount-1" class="compare-cell"></td>
+            <td id="compare-amount-2" class="compare-cell"></td>
+          </tr>
+          <tr>
+            <th scope="row" class="compare-row-label">申請難度</th>
+            <td id="compare-difficulty-0" class="compare-cell"></td>
+            <td id="compare-difficulty-1" class="compare-cell"></td>
+            <td id="compare-difficulty-2" class="compare-cell"></td>
+          </tr>
+          <tr>
+            <th scope="row" class="compare-row-label">截止日期</th>
+            <td id="compare-deadline-0" class="compare-cell"></td>
+            <td id="compare-deadline-1" class="compare-cell"></td>
+            <td id="compare-deadline-2" class="compare-cell"></td>
+          </tr>
+          <tr>
+            <th scope="row" class="compare-row-label">申請步驟數</th>
+            <td id="compare-steps-0" class="compare-cell"></td>
+            <td id="compare-steps-1" class="compare-cell"></td>
+            <td id="compare-steps-2" class="compare-cell"></td>
+          </tr>
+          <tr>
+            <th scope="row" class="compare-row-label">立即申請</th>
+            <td id="compare-cta-0" class="compare-cell"></td>
+            <td id="compare-cta-1" class="compare-cell"></td>
+            <td id="compare-cta-2" class="compare-cell"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
