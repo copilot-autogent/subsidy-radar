@@ -26,7 +26,7 @@ export function getFreshnessBadge(
   referenceDate?: Date,
 ): { cls: string; label: string } {
   if (!lastVerifiedDate) {
-    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+    return { cls: 'freshness-outdated', label: '⚠️ 未更新' };
   }
   const ref = referenceDate ?? (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
   const parts = lastVerifiedDate.split('-').map(Number);
@@ -46,7 +46,7 @@ export function getFreshnessBadge(
     verified.getDate() === d &&
     verified <= ref;
   if (!isValid) {
-    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+    return { cls: 'freshness-outdated', label: '⚠️ 未更新' };
   }
   const monthsAgo = calendarMonthsAgo(y, m, d, ref);
   const label = `✓ 已更新 ${String(y)}-${String(m).padStart(2, '0')}`;
