@@ -1,0 +1,26 @@
+---
+// Quiz result panels (summary banner + top-3 best match) — static HTML, dynamic via JS
+---
+
+<!-- ── Quiz Summary Banner ── -->
+<div id="quiz-summary-banner" class="quiz-summary-banner" style="display:none" role="status" aria-live="polite" aria-label="補助金額總摘要">
+  <div class="quiz-summary-main">
+    <span class="quiz-summary-emoji" aria-hidden="true">🎯</span>
+    <div class="quiz-summary-body">
+      <span class="quiz-summary-label" id="quizSummaryLabel">根據你的條件，最高可領</span>
+      <span class="quiz-summary-amount" id="quizSummaryAmount"></span>
+      <span class="quiz-summary-note" id="quizSummaryNote">預估上限</span>
+    </div>
+  </div>
+  <p class="quiz-summary-counts" id="quizSummaryCounts"></p>
+</div>
+
+<!-- ── Quiz Top-3 Best Match Panel ── -->
+<div id="quiz-top3-panel" class="quiz-top3-panel" style="display:none" role="region" aria-label="您的最佳配對結果" aria-live="polite">
+  <div class="top3-panel-header">
+    <h2 class="top3-panel-title">🎯 您的最佳配對</h2>
+    <button class="top3-dismiss-btn" id="top3DismissBtn" type="button" aria-label="關閉最佳配對面板並重新作答">✕ 重新作答</button>
+  </div>
+  <div class="top3-cards-container" id="top3CardsContainer"></div>
+  <p class="top3-no-match" id="top3NoMatch" style="display:none">沒有高度符合的補助，請嘗試調整篩選條件</p>
+</div>

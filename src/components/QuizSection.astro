@@ -1,0 +1,189 @@
+---
+// Static quiz section — no Astro props needed
+// All interactivity handled by the client-side script
+---
+
+<section class="quiz-section" aria-label="快速配對">
+  <h2 class="quiz-title">🎯 找出最適合你的補助（12 個問題）</h2>
+
+  <div class="quiz-question" data-question="age">
+    <label id="quiz-label-age" class="quiz-label">1. 你的年齡是？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-age">
+      <button class="quiz-option" data-value="youth" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🎓</span><span class="option-text">18-29 歲（青年）</span>
+      </button>
+      <button class="quiz-option" data-value="adult" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">👤</span><span class="option-text">30-64 歲</span>
+      </button>
+      <button class="quiz-option" data-value="senior" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">👴</span><span class="option-text">65 歲以上（長者）</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="employment" style="display:none">
+    <label id="quiz-label-employment" class="quiz-label">2. 你的就業狀況是？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-employment">
+      <button class="quiz-option" data-value="fresh-grad" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🎓</span><span class="option-text">應屆畢業生／初次求職</span>
+      </button>
+      <button class="quiz-option" data-value="unemployed" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🔍</span><span class="option-text">待業中</span>
+      </button>
+      <button class="quiz-option" data-value="employed" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">💼</span><span class="option-text">已就業</span>
+      </button>
+      <button class="quiz-option" data-value="entrepreneur" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">💡</span><span class="option-text">想創業</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="housing" style="display:none">
+    <label id="quiz-label-housing" class="quiz-label">3. 你的居住狀況是？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-housing">
+      <button class="quiz-option" data-value="renter" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🏠</span><span class="option-text">租屋中</span>
+      </button>
+      <button class="quiz-option" data-value="homebuyer" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🏡</span><span class="option-text">想買房</span>
+      </button>
+      <button class="quiz-option" data-value="parent" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">👶</span><span class="option-text">育兒家庭</span>
+      </button>
+      <button class="quiz-option" data-value="other" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">其他</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="disability" style="display:none">
+    <label id="quiz-label-disability" class="quiz-label">4. 你是否持有身心障礙證明？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-disability">
+      <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">♿</span><span class="option-text">是（領有身心障礙證明）</span>
+      </button>
+      <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">否</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="single-parent" style="display:none">
+    <label id="quiz-label-single-parent" class="quiz-label">5. 是否為單親家庭？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-single-parent">
+      <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">👩‍👧</span><span class="option-text">是（離婚、喪偶或未婚生子）</span>
+      </button>
+      <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">否</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="young-child" style="display:none">
+    <label id="quiz-label-young-child" class="quiz-label">6. 家中有 0–6 歲子女？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-young-child">
+      <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🍼</span><span class="option-text">是（0–6 歲子女）</span>
+      </button>
+      <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">否</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="student" style="display:none">
+    <label id="quiz-label-student" class="quiz-label">7. 您目前是在學學生（大學／研究所）嗎？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-student">
+      <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">📚</span><span class="option-text">是（大學或研究所在學）</span>
+      </button>
+      <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">否</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="worker" style="display:none">
+    <label id="quiz-label-worker" class="quiz-label">8. 您目前是受僱勞工或近期曾在職？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-worker">
+      <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">👷</span><span class="option-text">是（受僱勞工或近期離職者）</span>
+      </button>
+      <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">否</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="middle-aged" style="display:none">
+    <label id="quiz-label-middle-aged" class="quiz-label">9. 您是否年滿 45 歲？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-middle-aged">
+      <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">👨‍💼</span><span class="option-text">是（45–64 歲，適用中高齡專屬補助）</span>
+      </button>
+      <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">否</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="veteran" style="display:none">
+    <label id="quiz-label-veteran" class="quiz-label">10. 您或您的配偶是否為退役軍人或榮民？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-veteran">
+      <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🎖️</span><span class="option-text">是（退役軍人、榮民或其配偶遺眷）</span>
+      </button>
+      <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">否</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="farmer" style="display:none">
+    <label id="quiz-label-farmer" class="quiz-label">11. 您是否為農民或農業從業者？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-farmer">
+      <button class="quiz-option" data-value="yes" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🌾</span><span class="option-text">是（農民、農業從業者或農業相關從業人員）</span>
+      </button>
+      <button class="quiz-option" data-value="no" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">✓</span><span class="option-text">否</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-question" data-question="county" style="display:none">
+    <label id="quiz-label-county" class="quiz-label">12. 您目前居住在哪個縣市？</label>
+    <div class="quiz-options" role="radiogroup" aria-labelledby="quiz-label-county">
+      <button class="quiz-option" data-value="台北市" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🏙️</span><span class="option-text">台北市</span>
+      </button>
+      <button class="quiz-option" data-value="新北市" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🏙️</span><span class="option-text">新北市</span>
+      </button>
+      <button class="quiz-option" data-value="桃園市" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🏙️</span><span class="option-text">桃園市</span>
+      </button>
+      <button class="quiz-option" data-value="台中市" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🏙️</span><span class="option-text">台中市</span>
+      </button>
+      <button class="quiz-option" data-value="高雄市" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🏙️</span><span class="option-text">高雄市</span>
+      </button>
+      <button class="quiz-option" data-value="other" type="button" role="radio" aria-checked="false">
+        <span class="option-icon">🗺️</span><span class="option-text">其他縣市</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="quiz-reset" style="display:none">
+    <button class="reset-btn" id="quizReset" type="button">↺ 重新開始</button>
+  </div>
+  <div class="quiz-share" id="quizShareContainer" style="display:none">
+    <button class="quiz-share-btn" id="quizShareBtn" type="button">
+      <span class="share-icon">🔗</span>
+      <span class="share-text">分享我的結果</span>
+    </button>
+  </div>
+</section>

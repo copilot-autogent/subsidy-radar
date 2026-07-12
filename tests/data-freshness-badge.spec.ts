@@ -10,12 +10,13 @@ function calendarMonthsAgo(verifiedYear: number, verifiedMonth: number, verified
   return months;
 }
 
+// NOTE: This mirrors src/utils/freshness.ts — keep in sync if the logic changes.
 function getFreshnessBadge(
   lastVerifiedDate: string | null | undefined,
   referenceDate: Date,
 ): { cls: string; label: string } {
   if (!lastVerifiedDate) {
-    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+    return { cls: 'freshness-outdated', label: '⚠️ 未更新' };
   }
   const parts = lastVerifiedDate.split('-').map(Number);
   const [y, m, d] = parts;
@@ -27,10 +28,11 @@ function getFreshnessBadge(
     verified.getFullYear() === y && verified.getMonth() === m - 1 && verified.getDate() === d &&
     verified <= referenceDate;
   if (!isValid) {
-    return { cls: 'freshness-outdated', label: '⚠️ 未核實' };
+    return { cls: 'freshness-outdated', label: '⚠️ 未更新' };
   }
   const monthsAgo = calendarMonthsAgo(y, m, d, referenceDate);
-  const label = `✓ 已核實 ${String(y)}-${String(m).padStart(2, '0')}`;
+  // "已更新" (last updated) rather than "已核實" (officially verified)
+  const label = `✓ 已更新 ${String(y)}-${String(m).padStart(2, '0')}`;
   if (monthsAgo < 3) return { cls: 'freshness-fresh', label };
   if (monthsAgo <= 6) return { cls: 'freshness-stale', label };
   return { cls: 'freshness-outdated', label: `⚠️ ${label}` };
@@ -42,7 +44,7 @@ test.describe('data freshness badge colour', () => {
   test('fresh: verified within 3 months → freshness-fresh', () => {
     const result = getFreshnessBadge('2026-06-01', REF);
     expect(result.cls).toBe('freshness-fresh');
-    expect(result.label).toContain('已核實');
+    expect(result.label).toContain('已更新');
     expect(result.label).toContain('✓');
   });
 
@@ -57,7 +59,7 @@ test.describe('data freshness badge colour', () => {
     // 2026-07-02 minus 4 months = 2026-03-02
     const result = getFreshnessBadge('2026-03-01', REF);
     expect(result.cls).toBe('freshness-stale');
-    expect(result.label).toContain('已核實');
+    expect(result.label).toContain('已更新');
   });
 
   test('stale: exactly 6 calendar months old is still stale, not outdated', () => {
@@ -73,25 +75,25 @@ test.describe('data freshness badge colour', () => {
     expect(result.label).toContain('⚠️');
   });
 
-  test('missing lastVerifiedDate → freshness-outdated with 未核實', () => {
+  test('missing lastVerifiedDate → freshness-outdated with 未更新', () => {
     expect(getFreshnessBadge(undefined, REF)).toEqual({
       cls: 'freshness-outdated',
-      label: '⚠️ 未核實',
+      label: '⚠️ 未更新',
     });
     expect(getFreshnessBadge(null, REF)).toEqual({
       cls: 'freshness-outdated',
-      label: '⚠️ 未核實',
+      label: '⚠️ 未更新',
     });
     expect(getFreshnessBadge('', REF)).toEqual({
       cls: 'freshness-outdated',
-      label: '⚠️ 未核實',
+      label: '⚠️ 未更新',
     });
   });
 
-  test('invalid or future date → freshness-outdated with 未核實', () => {
+  test('invalid or future date → freshness-outdated with 未更新', () => {
     // Future date
     expect(getFreshnessBadge('2027-01-01', REF).cls).toBe('freshness-outdated');
-    expect(getFreshnessBadge('2027-01-01', REF).label).toBe('⚠️ 未核實');
+    expect(getFreshnessBadge('2027-01-01', REF).label).toBe('⚠️ 未更新');
     // Malformed
     expect(getFreshnessBadge('not-a-date', REF).cls).toBe('freshness-outdated');
     // Month 13
