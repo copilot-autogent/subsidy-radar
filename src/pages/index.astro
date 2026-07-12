@@ -1672,10 +1672,16 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         return;
       }
 
-      quizSummaryAmountEl.textContent = ntdFmt.format(totalAmount);
-      const countParts: string[] = [`共 ${countWithAmount} 項符合資格`];
-      if (countWithoutAmount > 0) countParts.push(`另有 ${countWithoutAmount} 項依條件核定`);
-      quizSummaryCountsEl.textContent = countParts.join('，');
+      if (countWithAmount > 0) {
+        quizSummaryAmountEl.textContent = ntdFmt.format(totalAmount);
+        const countParts: string[] = [`共 ${totalMatched} 項符合資格`];
+        if (countWithoutAmount > 0) countParts.push(`另有 ${countWithoutAmount} 項依條件核定`);
+        quizSummaryCountsEl.textContent = countParts.join('，');
+      } else {
+        // All matched subsidies have conditional/unparseable amounts — don't show NT$0
+        quizSummaryAmountEl.textContent = '—';
+        quizSummaryCountsEl.textContent = `共 ${totalMatched} 項符合資格（金額依個別條件核定）`;
+      }
       quizSummaryBanner.style.display = '';
     }
 

@@ -166,6 +166,20 @@ test.describe('Quiz Summary Banner — logic spec (issue #171)', () => {
     expect(result.countWithoutAmount).toBe(2);
   });
 
+  test('all amounts unparseable: banner still shows but marks all as 依條件核定', () => {
+    const subsidies: Subsidy[] = [
+      { id: 'a', title: 'Sub A', situations: ['renter'], amount: '依個人資格核定', deadlineStatus: 'ongoing' },
+      { id: 'b', title: 'Sub B', situations: ['renter'], amount: '訓練費用全額補助', deadlineStatus: 'ongoing' },
+    ];
+    const result = computeSummary(subsidies, ['renter']);
+    expect(result.totalMatched).toBe(2);
+    expect(result.shouldShow).toBe(true);
+    expect(result.totalAmount).toBe(0);
+    expect(result.countWithAmount).toBe(0);
+    expect(result.countWithoutAmount).toBe(2);
+    // Banner should not display NT$0 for this case (handled in UI layer)
+  });
+
   test('amount format: currency with thousands separator', () => {
     const amount = 240000;
     const formatted = new Intl.NumberFormat('zh-TW', {
