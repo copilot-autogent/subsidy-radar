@@ -204,6 +204,8 @@ const olu = safeUrl(s.officialUrl);
       <span class="line-share-text">LINE</span>
     </a>
     <a href={`${siteBase}subsidy/${s.id}/`} class="card-detail-link" aria-label={`查看 ${s.title} 詳細資訊`}>📄 詳情頁</a>
-    <a href={safeUrl(s.applicationUrl) || '#'} target="_blank" rel="noopener noreferrer" class="card-link" aria-label={`前往申請 ${s.title}（新視窗開啟）`}>立即申請 →</a>
+    {safeUrl(s.applicationUrl) && (
+      <a href={safeUrl(s.applicationUrl)} target="_blank" rel="noopener noreferrer" class="card-link" aria-label={`前往申請 ${s.title}（新視窗開啟）`}>立即申請 →</a>
+    )}
   </div>
 </article>

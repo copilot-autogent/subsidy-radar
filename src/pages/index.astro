@@ -8,11 +8,7 @@ import PersonaStrip from '../components/PersonaStrip.astro';
 import FilterBar from '../components/FilterBar.astro';
 import SubsidyCard from '../components/SubsidyCard.astro';
 import ComparisonOverlay from '../components/ComparisonOverlay.astro';
-import { getFreshnessBadge } from '../utils/freshness.ts';
-import {
-  safeUrl, normalizeAgency, parseAmountValue,
-  deadlineLabel, difficultyLabel, personas,
-} from '../utils/helpers.ts';
+import { personas, normalizeAgency } from '../utils/helpers.ts';
 
 type Situation = 'renter' | 'homebuyer' | 'entrepreneur' | 'parent' | 'fresh-grad' | 'unemployed' | 'employed' | 'senior' | 'disabled' | 'new-immigrant' | 'indigenous' | 'low-income' | 'single-parent' | 'young-child' | 'student' | 'worker' | 'middle-aged' | 'veteran' | 'farmer';
 type Subsidy = typeof subsidiesRaw[number] & {
