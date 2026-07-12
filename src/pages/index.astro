@@ -519,6 +519,19 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     </div>
   </section>
 
+  <!-- ── Quiz Summary Banner (issue #171) ── -->
+  <div id="quiz-summary-banner" class="quiz-summary-banner" style="display:none" role="status" aria-live="polite" aria-label="補助金額總摘要">
+    <div class="quiz-summary-main">
+      <span class="quiz-summary-emoji" aria-hidden="true">🎯</span>
+      <div class="quiz-summary-body">
+        <span class="quiz-summary-label">根據你的條件，最高可領</span>
+        <span class="quiz-summary-amount" id="quizSummaryAmount"></span>
+        <span class="quiz-summary-note">預估上限</span>
+      </div>
+    </div>
+    <p class="quiz-summary-counts" id="quizSummaryCounts"></p>
+  </div>
+
   <!-- ── Quiz Top-3 Best Match Panel ── -->
   <div id="quiz-top3-panel" class="quiz-top3-panel" style="display:none" role="region" aria-label="您的最佳配對結果" aria-live="polite">
     <div class="top3-panel-header">
@@ -1305,6 +1318,10 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     const top3NoMatch = document.getElementById('top3NoMatch') as HTMLElement;
     const top3DismissBtn = document.getElementById('top3DismissBtn') as HTMLButtonElement;
 
+    const quizSummaryBanner = document.getElementById('quiz-summary-banner') as HTMLElement;
+    const quizSummaryAmountEl = document.getElementById('quizSummaryAmount') as HTMLElement;
+    const quizSummaryCountsEl = document.getElementById('quizSummaryCounts') as HTMLElement;
+
     // Valid answer sets for each question key
     const VALID_QUIZ_VALUES: Record<string, Set<string>> = {
       age:           new Set(['youth', 'adult', 'senior']),
@@ -1597,6 +1614,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       }
 
       quizTop3Panel.style.display = '';
+      showQuizSummaryBanner();
       quizTop3Panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -1604,6 +1622,65 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
       quizTop3Panel.style.display = 'none';
       top3CardsContainer.innerHTML = '';
       top3NoMatch.style.display = 'none';
+      hideQuizSummaryBanner();
+    }
+
+    // ── Quiz Summary Banner (issue #171) ─────────────────────────────────────
+
+    /** Parse the best numeric amount from a subsidy card for the quiz summary.
+     *  Priority: data-max-amount → regex on .amount-text → 0 (→ "依條件核定"). */
+    function parseQuizAmountFromCard(card: HTMLElement): number {
+      const maxAttr = card.dataset.maxAmount ?? '';
+      if (maxAttr !== '') {
+        const val = Number(maxAttr);
+        if (Number.isFinite(val) && val > 0) return val;
+      }
+      const amountText = card.querySelector<HTMLElement>('.amount-text')?.textContent ?? '';
+      const m = /最高?\s*([\d,]+)\s*元/.exec(amountText);
+      if (m) {
+        const val = parseInt(m[1].replace(/,/g, ''), 10);
+        if (val > 0) return val;
+      }
+      return 0;
+    }
+
+    function showQuizSummaryBanner(): void {
+      const ntdFmt = new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', maximumFractionDigits: 0 });
+      let totalAmount = 0;
+      let countWithAmount = 0;
+      let countWithoutAmount = 0;
+      let totalMatched = 0;
+
+      cards.forEach(card => {
+        if (card.style.display === 'none') return;
+        if (card.dataset.deadlineStatus === 'closed') return;
+        const rawScore = parseInt(card.dataset.quizScore ?? '0', 10);
+        if (isNaN(rawScore) || rawScore < MIN_TOP3_SCORE) return;
+        totalMatched++;
+        const val = parseQuizAmountFromCard(card);
+        if (val > 0) {
+          totalAmount += val;
+          countWithAmount++;
+        } else {
+          countWithoutAmount++;
+        }
+      });
+
+      // Issue spec: hide if < 2 matched subsidies
+      if (totalMatched < 2) {
+        quizSummaryBanner.style.display = 'none';
+        return;
+      }
+
+      quizSummaryAmountEl.textContent = ntdFmt.format(totalAmount);
+      const countParts: string[] = [`共 ${countWithAmount} 項符合資格`];
+      if (countWithoutAmount > 0) countParts.push(`另有 ${countWithoutAmount} 項依條件核定`);
+      quizSummaryCountsEl.textContent = countParts.join('，');
+      quizSummaryBanner.style.display = '';
+    }
+
+    function hideQuizSummaryBanner(): void {
+      quizSummaryBanner.style.display = 'none';
     }
 
     function applyQuizFilter() {
