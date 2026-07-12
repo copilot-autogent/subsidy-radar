@@ -1680,6 +1680,7 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // Show amount + breakdown labels
         quizSummaryLabelEl.style.display = '';
         quizSummaryNoteEl.style.display = '';
+        quizSummaryAmountEl.style.cssText = ''; // reset any prior conditional-mode overrides
         quizSummaryAmountEl.textContent = ntdFmt.format(totalAmount);
         const countParts: string[] = [`共 ${totalMatched} 項符合資格`];
         if (countWithoutAmount > 0) countParts.push(`另有 ${countWithoutAmount} 項依條件核定`);
@@ -1688,8 +1689,9 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
         // All amounts conditional — hide the "最高可領 / 預估上限" labels to avoid misleading display
         quizSummaryLabelEl.style.display = 'none';
         quizSummaryNoteEl.style.display = 'none';
-        quizSummaryAmountEl.textContent = '📋 符合資格補助';
-        quizSummaryCountsEl.textContent = `共 ${totalMatched} 項符合資格（金額依個別條件核定）`;
+        quizSummaryAmountEl.style.cssText = 'font-size: 1.15rem; color: #fff; font-weight: 700;';
+        quizSummaryAmountEl.textContent = '符合資格補助';
+        quizSummaryCountsEl.textContent = `共 ${totalMatched} 項（金額依個別條件核定）`;
       }
       quizSummaryBanner.style.display = '';
     }
