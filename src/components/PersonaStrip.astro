@@ -1,8 +1,8 @@
 ---
-import type { personas as personasType } from '../utils/helpers.ts';
+import { personas as _personas } from '../utils/helpers.ts';
 
 interface Props {
-  personas: typeof personasType;
+  personas: typeof _personas;
 }
 const { personas } = Astro.props;
 ---
