@@ -44,7 +44,7 @@
       "台灣就業通帳號",
       "銀行帳戶資料"
     ],
-    "lastVerifiedDate": "2026-05-09",
+    "lastVerifiedDate": "2026-07-13",
     "source": "https://www.wda.gov.tw/News_Content.aspx?n=3C4C351ECDA27CA0&s=1C9A6C1CD86EADE8"
   },
   {
@@ -468,7 +468,7 @@
       "最近6個月薪資單",
       "銀行存摺封面"
     ],
-    "lastVerifiedDate": "2026-05-14",
+    "lastVerifiedDate": "2026-07-13",
     "source": "https://www.bli.gov.tw/0006445.html"
   },
   {
@@ -618,7 +618,7 @@
     "eligibilityStartEvent": "parental-leave",
     "applyWithinMonths": null,
     "timelineNote": "育嬰假開始後隨時可申請，子女未滿3歲前均可",
-    "lastVerifiedDate": "2026-05-16",
+    "lastVerifiedDate": "2026-07-13",
     "source": "https://www.bli.gov.tw/0015003.html"
   },
   {
@@ -668,7 +668,7 @@
     "eligibilityStartEvent": "birth",
     "applyWithinMonths": 6,
     "timelineNote": "出生後6個月內申請（部分縣市1年內），勿錯過！",
-    "lastVerifiedDate": "2026-05-16",
+    "lastVerifiedDate": "2026-07-13",
     "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=357"
   },
   {
@@ -764,7 +764,7 @@
       "最近3個月薪資單",
       "申請書"
     ],
-    "lastVerifiedDate": "2026-05-16",
+    "lastVerifiedDate": "2026-07-13",
     "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=341"
   },
   {
@@ -880,7 +880,7 @@
     ],
     "amount": "Phase 1（先期研究）：最高 100 萬元，期程6個月；Phase 2（研發執行）個別申請最高 1,000 萬元、聯盟申請最高 3,000 萬元，期程6個月至2年；Phase 2+（加值應用）個別最高 500 萬元；補助款均無須償還",
     "deadline": "每年上半年（約1–6月）受理申請，下半年公告審核結果（請至官網查詢最新公告）",
-    "deadlineStatus": "open",
+    "deadlineStatus": "closed",
     "applicationUrl": "https://www.sbir.org.tw/",
     "officialUrl": "https://www.sbir.org.tw/",
     "tags": [
@@ -905,7 +905,7 @@
       "通過初審後進行現場簡報；審查通過後簽訂合約，按期程執行研發並進行成果驗收"
     ],
     "addedDate": "2026-06-20",
-    "lastVerifiedDate": "2026-07-05",
+    "lastVerifiedDate": "2026-07-13",
     "source": "https://www.sbir.org.tw/",
     "requiredDocs": [
       "計畫申請書（依sbir.org.tw系統格式）",
