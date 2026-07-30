@@ -473,21 +473,20 @@
   },
   {
     "id": "childcare-allowance",
-    "title": "育兒津貼（準公共化托育補助）",
+    "title": "準公共化托育補助（未滿2歲）",
     "category": "育兒",
     "agency": "衛生福利部社會及家庭署",
-    "summary": "0至未滿5歲幼兒送托準公共化或私立托嬰中心、幼兒園，政府每月補助育兒津貼，大幅降低托育費用負擔。雙薪家庭也可申請！",
+    "summary": "未滿2歲幼兒送托準公共托嬰中心或準公共居家托育人員，可申請每月13,000元起托育補助；滿2歲續留符合條件的準公共托育服務者，補助延長至未滿3歲。",
     "eligibility": [
-      "幼兒年齡0至未滿5歲（依各方案略有不同）",
-      "家庭年所得合於規定",
-      "送托合格立案托嬰中心或幼兒園（準公共化機構）",
-      "未請領育嬰假津貼或不重複補助"
+      "幼兒未滿2歲（滿2歲續留符合條件的準公共托育服務者，延長至未滿3歲）",
+      "送托與政府簽約的準公共托嬰中心或準公共居家托育人員",
+      "未接受公費安置，且不重複申領同性質托育補助"
     ],
-    "amount": "0-2歲每月最高 11,500 元；2-5歲每月最高 4,000 元（依縣市及家庭條件有所不同）",
+    "amount": "準公共托育補助每月 13,000 元起；第2名子女起另有加發，依現行規定辦理",
     "deadline": "全年常態受理",
     "deadlineStatus": "ongoing",
     "applicationUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383",
-    "officialUrl": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383",
+    "officialUrl": "https://www.mohw.gov.tw/fp-5130-58003-1.html",
     "tags": [
       "育兒",
       "托育",
@@ -501,15 +500,15 @@
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-06-30",
+    "updatedAt": "2026-07-30",
     "steps": [
-      "確認子女就讀「準公共化托育機構」或使用登記居家保母",
-      "至戶籍地社會局或線上「育兒津貼申請系統」填寫申請表",
-      "附上托育合約、繳費收據、出生證明及家長銀行帳戶資料",
-      "審核通過後（約 2-3 週），補貼每月匯入申請家長帳戶"
+      "確認幼兒未滿2歲，並送托已與政府簽約的準公共托嬰中心或準公共居家托育人員",
+      "備妥托育契約、戶口名簿或出生及戶籍資料、家長身分證明與銀行帳戶資料",
+      "向幼兒戶籍地公所、社會局（處）或地方政府指定的線上系統提出托育補助申請",
+      "審核通過後按月撥付；滿2歲續留符合條件的準公共托育服務者，續領至未滿3歲"
     ],
     "addedDate": "2026-06-20",
-    "maxAmount": 138000,
+    "maxAmount": 156000,
     "requiredDocs": [
       "戶口名簿影本",
       "托育收費收據",
@@ -519,9 +518,9 @@
     ],
     "eligibilityStartEvent": "birth",
     "applyWithinMonths": null,
-    "timelineNote": "幼兒0至未滿5歲期間可持續申請托育補助",
-    "lastVerifiedDate": "2026-06-30",
-    "source": "https://www.sfaa.gov.tw/SFAA/Pages/List.aspx?nodeid=383"
+    "timelineNote": "出生後送托即可申請；適用至未滿2歲，滿2歲續留符合條件的準公共托育服務者可延長至未滿3歲",
+    "lastVerifiedDate": "2026-07-30",
+    "source": "https://www.mohw.gov.tw/fp-5130-58003-1.html"
   },
   {
     "id": "youth-startup-fund",
