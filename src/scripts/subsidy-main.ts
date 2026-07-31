@@ -1869,7 +1869,7 @@
     const startQuizBtn = document.getElementById('startQuizBtn') as HTMLButtonElement | null;
 
     clearFiltersBtn?.addEventListener('click', () => {
-      if (isQuizActive || Object.keys(quizAnswers).length > 0) quizResetBtn.click();
+      if (isQuizActive || Object.keys(quizAnswers).length > 0) quizResetBtn?.click();
       searchInput.value = '';
       searchQuery = '';
       activeCategory = '全部';

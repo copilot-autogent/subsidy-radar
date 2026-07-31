@@ -1940,13 +1940,13 @@ main {
   cursor: pointer;
 }
 
-.quiz-section > summary.quiz-title {
+.quiz-section > summary .quiz-title {
   margin-bottom: 0;
   padding: 0.9rem 1rem;
   text-align: left;
 }
 
-.quiz-section[open] > summary.quiz-title {
+.quiz-section[open] > summary .quiz-title {
   margin-bottom: 1.5rem;
 }
 
