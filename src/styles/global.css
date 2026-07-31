@@ -1948,6 +1948,10 @@ main {
   text-align: left;
 }
 
+.quiz-heading {
+  margin: 1.5rem 0 0.5rem;
+}
+
 .quiz-section[open] > summary.quiz-title {
   margin-bottom: 1.5rem;
 }

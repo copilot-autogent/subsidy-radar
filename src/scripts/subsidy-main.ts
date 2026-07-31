@@ -63,10 +63,14 @@
 
       if (activeLabels.length === 0) {
         activeFilterSummaryText.textContent = '目前未套用進階篩選';
+        activeFilterSummaryText.removeAttribute('role');
+        activeFilterSummaryText.removeAttribute('aria-live');
         clearFiltersBtn.hidden = true;
         return;
       }
       activeFilterSummaryText.textContent = `已套用 ${activeLabels.length} 項條件：${activeLabels.join('、')}`;
+      activeFilterSummaryText.setAttribute('role', 'status');
+      activeFilterSummaryText.setAttribute('aria-live', 'polite');
       clearFiltersBtn.hidden = false;
     }
 
