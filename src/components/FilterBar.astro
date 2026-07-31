@@ -128,39 +128,49 @@ function getCatId(cat: string): string | undefined {
     <ul id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="補助建議清單" hidden></ul>
   </div>
   <div id="fuzzyHint" class="fuzzy-hint" hidden role="status" aria-live="polite" aria-atomic="true"></div>
-  <div class="category-filters" role="toolbar" aria-label="類別篩選">
-    {categories.map((cat) => {
-      const count = getCount(cat);
-      const id = getCatId(cat);
-      return (
-        <button
-          class={getCatClass(cat)}
-          id={id}
-          data-category={cat}
-          data-recency-days={cat === RECENCY_LABEL ? recencyDays : undefined}
-          type="button"
-          aria-pressed={cat === '全部' ? 'true' : 'false'}
-          aria-label={`篩選類別：${cat}（${count} 項）`}
-          tabindex={cat === '全部' ? '0' : '-1'}
-        >
-          {cat} <span class="count-badge">{count}</span>
-        </button>
-      );
-    })}
+  <div class="active-filter-summary" id="activeFilterSummary">
+    <span id="activeFilterSummaryText">目前未套用進階篩選</span>
+    <button id="clearFiltersBtn" class="clear-filters-summary-btn" type="button" hidden>清除篩選</button>
   </div>
-  <div class="difficulty-filters" role="group" aria-label="難度篩選">
-    {difficultyFilters.map(df => (
-      <button class={`filter-btn ${df.cls}`} data-difficulty={df.key} type="button" aria-pressed="false">
-        {df.label} <span class="count-badge">{difficultyCounts[df.key]}</span>
-      </button>
-    ))}
-  </div>
-  <div class="urgency-filters" role="group" aria-label="截止日期篩選">
-    <button class="filter-btn urgency-7-filter" data-urgency="7" type="button" aria-pressed="false">🔴 7天內截止 <span class="count-badge">0</span></button>
-    <button class="filter-btn urgency-30-filter" data-urgency="30" type="button" aria-pressed="false">🟡 30天內截止 <span class="count-badge">0</span></button>
-    <button class="filter-btn urgency-60-filter" data-urgency="60" type="button" aria-pressed="false">📅 60天內截止 <span class="count-badge">0</span></button>
-  </div>
-  <div class="county-filter-row">
+  <details class="advanced-filters" id="advancedFilters">
+    <summary class="advanced-filters-toggle">
+      <span>進階篩選</span>
+      <span class="advanced-filters-hint" id="advancedFiltersHint">類別、難度、期限、地區與排序</span>
+    </summary>
+    <div class="advanced-filters-content">
+      <div class="category-filters" role="toolbar" aria-label="類別篩選">
+        {categories.map((cat) => {
+          const count = getCount(cat);
+          const id = getCatId(cat);
+          return (
+            <button
+              class={getCatClass(cat)}
+              id={id}
+              data-category={cat}
+              data-recency-days={cat === RECENCY_LABEL ? recencyDays : undefined}
+              type="button"
+              aria-pressed={cat === '全部' ? 'true' : 'false'}
+              aria-label={`篩選類別：${cat}（${count} 項）`}
+              tabindex={cat === '全部' ? '0' : '-1'}
+            >
+              {cat} <span class="count-badge">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div class="difficulty-filters" role="group" aria-label="難度篩選">
+        {difficultyFilters.map(df => (
+          <button class={`filter-btn ${df.cls}`} data-difficulty={df.key} type="button" aria-pressed="false">
+            {df.label} <span class="count-badge">{difficultyCounts[df.key]}</span>
+          </button>
+        ))}
+      </div>
+      <div class="urgency-filters" role="group" aria-label="截止日期篩選">
+        <button class="filter-btn urgency-7-filter" data-urgency="7" type="button" aria-pressed="false">🔴 7天內截止 <span class="count-badge">0</span></button>
+        <button class="filter-btn urgency-30-filter" data-urgency="30" type="button" aria-pressed="false">🟡 30天內截止 <span class="count-badge">0</span></button>
+        <button class="filter-btn urgency-60-filter" data-urgency="60" type="button" aria-pressed="false">📅 60天內截止 <span class="count-badge">0</span></button>
+      </div>
+      <div class="county-filter-row">
     <label class="county-filter-label" for="countySelect">📍 縣市篩選</label>
     <select id="countySelect" class="county-select" aria-label="選擇縣市">
       <option value="">全國（顯示所有）</option>
@@ -197,8 +207,8 @@ function getCatId(cat: string): string | undefined {
         <option value="連江縣">連江縣</option>
       </optgroup>
     </select>
-  </div>
-  <div class="agency-filter-row" id="agencyFilterRow">
+      </div>
+      <div class="agency-filter-row" id="agencyFilterRow">
     <button class="agency-toggle-btn" id="agencyToggle" type="button" aria-expanded="true" aria-controls="agencyChips">
       🏛️ 機構
       <span class="agency-toggle-arrow" aria-hidden="true">▼</span>
@@ -210,13 +220,15 @@ function getCatId(cat: string): string | undefined {
         </button>
       ))}
     </div>
-  </div>
-  <div class="sort-row">
+      </div>
+      <div class="sort-row">
     <button class="sort-btn" id="sortDifficulty" type="button" aria-pressed="false">依申請難度排序</button>
     <button class="sort-btn" id="sortAmount" type="button" aria-pressed="false">依金額高低</button>
     <button class="sort-btn tracker-filter-btn" id="trackerFilter" type="button" aria-pressed="false">📌 只看追蹤中</button>
     <button class="sort-btn show-closed-btn" id="showClosedBtn" type="button" aria-pressed="false">⏸ 顯示已截止補助</button>
-  </div>
+      </div>
+    </div>
+  </details>
 </div>
 
 <div class="eligibility-banner" id="eligibilityBanner" style="display:none" role="status" aria-live="polite">

@@ -7,18 +7,21 @@ interface Props {
 const { personas } = Astro.props;
 ---
 
-<div class="persona-strip" role="group" aria-label="快速人物誌篩選">
-  <span class="persona-strip-label">我是：</span>
-  {personas.map(p => (
-    <button
-      class="persona-btn"
-      data-persona={p.key}
-      type="button"
-      aria-pressed="false"
-      aria-label={`${p.label} — 只看 ${p.label} 相關補助`}
-    >
-      <span class="persona-icon">{p.icon}</span>
-      <span class="persona-label">{p.label}</span>
-    </button>
-  ))}
-</div>
+<details class="persona-disclosure">
+  <summary>快速選擇身份（直接查看相關補助）</summary>
+  <div class="persona-strip" role="group" aria-label="快速人物誌篩選">
+    <span class="persona-strip-label">我是：</span>
+    {personas.map(p => (
+      <button
+        class="persona-btn"
+        data-persona={p.key}
+        type="button"
+        aria-pressed="false"
+        aria-label={`${p.label} — 只看 ${p.label} 相關補助`}
+      >
+        <span class="persona-icon">{p.icon}</span>
+        <span class="persona-label">{p.label}</span>
+      </button>
+    ))}
+  </div>
+</details>
