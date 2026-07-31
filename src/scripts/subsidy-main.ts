@@ -41,10 +41,10 @@
     let activeAgency = '';
     let activeUrgency = 0;
     const activeFilterSummaryText = document.getElementById('activeFilterSummaryText');
-    const clearFiltersSummaryBtn = document.getElementById('clearFiltersSummaryBtn') as HTMLButtonElement | null;
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn') as HTMLButtonElement | null;
 
     function updateActiveFilterSummary(): void {
-      if (!activeFilterSummaryText || !clearFiltersSummaryBtn) return;
+      if (!activeFilterSummaryText || !clearFiltersBtn) return;
       const activeLabels: string[] = [];
       if (searchQuery) activeLabels.push(`搜尋：${searchQuery}`);
       if (isQuizActive) activeLabels.push('配對結果');
@@ -63,11 +63,11 @@
 
       if (activeLabels.length === 0) {
         activeFilterSummaryText.textContent = '目前未套用進階篩選';
-        clearFiltersSummaryBtn.hidden = true;
+        clearFiltersBtn.hidden = true;
         return;
       }
       activeFilterSummaryText.textContent = `已套用 ${activeLabels.length} 項條件：${activeLabels.join('、')}`;
-      clearFiltersSummaryBtn.hidden = false;
+      clearFiltersBtn.hidden = false;
     }
 
     // ── Fuzzy search utilities ────────────────────────────────────────────────
@@ -1868,7 +1868,6 @@
     });
 
     // ── Empty-state CTA buttons ────────────────────────────────────────────────
-    const clearFiltersBtn = document.getElementById('clearFiltersBtn') as HTMLButtonElement | null;
     const startQuizBtn = document.getElementById('startQuizBtn') as HTMLButtonElement | null;
 
     clearFiltersBtn?.addEventListener('click', () => {
@@ -1917,8 +1916,6 @@
       updateFilterUrl();
       updateDisplay();
     });
-
-    clearFiltersSummaryBtn?.addEventListener('click', () => clearFiltersBtn?.click());
 
     startQuizBtn?.addEventListener('click', () => {
       const quizSection = document.querySelector<HTMLElement>('.quiz-section');
