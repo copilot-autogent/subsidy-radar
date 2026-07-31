@@ -48,7 +48,10 @@
       const activeLabels: string[] = [];
       if (searchQuery) activeLabels.push(`搜尋：${searchQuery}`);
       if (isQuizActive) activeLabels.push('配對結果');
-      if (activeSituation) activeLabels.push('身份');
+      if (activeSituation) {
+        const personaLabel = document.querySelector<HTMLElement>('.persona-btn.active .persona-label')?.textContent?.trim();
+        activeLabels.push(personaLabel ? `身份：${personaLabel}` : '身份');
+      }
       if (activeCategory !== '全部') activeLabels.push(activeCategory);
       if (activeDifficulty) activeLabels.push(`難度：${activeDifficulty}`);
       if (activeUrgency) activeLabels.push(`期限：${activeUrgency}天內`);

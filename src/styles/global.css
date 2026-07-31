@@ -1936,6 +1936,8 @@ main {
 }
 
 .quiz-section > summary {
+  display: flex;
+  align-items: center;
   list-style: none;
   cursor: pointer;
 }
