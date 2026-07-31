@@ -329,7 +329,7 @@
     "amount": "月平均投保薪資 60%，最長 6 個月；積極求職加發 10%（最高 70%）",
     "deadline": "離職後2年內申請，隨時可申請",
     "deadlineStatus": "ongoing",
-    "applicationUrl": "https://www.bli.gov.tw/0000100.html",
+    "applicationUrl": "https://www.bli.gov.tw/0005072.html",
     "tags": [
       "失業",
       "就業保險",
@@ -342,7 +342,7 @@
     ],
     "isYouthHighlight": false,
     "difficulty": "medium",
-    "updatedAt": "2026-05-14",
+    "updatedAt": "2026-06-11",
     "steps": [
       "非自願離職後 14 天內攜帶離職證明至公立就業服務站辦理",
       "填寫「失業認定及給付申請書」，提供勞保資料、身分證、存摺",
@@ -437,7 +437,7 @@
     "amount": "每月投保薪資 60%，每人最長 6 個月；雙薪家庭各申請合計可達 12 個月",
     "deadline": "全年常態受理（育嬰假期間隨時申請）",
     "deadlineStatus": "ongoing",
-    "applicationUrl": "https://www.bli.gov.tw/0005521.html",
+    "applicationUrl": "https://www.bli.gov.tw/0015728.html",
     "tags": [
       "育嬰",
       "育兒",
@@ -449,7 +449,7 @@
     ],
     "isYouthHighlight": false,
     "difficulty": "easy",
-    "updatedAt": "2026-05-16",
+    "updatedAt": "2026-06-11",
     "steps": [
       "向雇主提出「育嬰留職停薪申請書」（至少提前 10 天通知）",
       "留停期間至勞保局官網「e化服務」線上申請津貼",

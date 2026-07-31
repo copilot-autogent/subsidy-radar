@@ -12,7 +12,7 @@ This document tracks the verification status of application steps for each subsi
 
 | Subsidy ID | Status | Last Verified | Source URL | Notes |
 |------------|--------|---------------|------------|-------|
-| youth-job-support | 🔄 | Never | https://special.taiwanjobs.gov.tw/internet/2025/YNGSRH/index.html | Steps authored from general knowledge. Needs manual verification against current Taiwan Jobs site. |
+| youth-job-support | 🔄 | Never | https://special.taiwanjobs.gov.tw/internet/2026/YNGSRH/index.html | Steps authored from general knowledge. Needs manual verification against current Taiwan Jobs site. |
 | youth-vocational-training | 🔄 | Never | https://kys.wda.gov.tw/News_Content.aspx?n=70&s=2548 | Steps authored from general knowledge. Needs verification. |
 | micro-phoenix-loan | 🔄 | Never | https://beboss.wda.gov.tw/Default.aspx | Steps authored from general knowledge. Verify 18-hour course requirement. |
 | rent-subsidy | 🔄 | Never | https://has.nlma.gov.tw/house300e/ | Steps authored from general knowledge. Verify 115年 application flow. |
@@ -56,5 +56,5 @@ Many Taiwan government subsidy sites:
 
 1. **Priority**: Verify youth-focused subsidies first (youth-job-support, youth-vocational-training, youth-home-loan)
 2. **Batch review**: Group by agency (勞動部, 內政部, 衛福部) for efficient verification
-3. **Annual refresh**: Schedule verification every September (new fiscal year 115→116)
+3. **Annual refresh**: Schedule verification every September to catch annual program updates (115→116)
 4. **User feedback**: Track user reports of "steps don't match current process"
