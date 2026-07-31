@@ -2536,6 +2536,8 @@
       activeCounty = '';
       activeAgency = '';
       activeUrgency = 0;
+      const quizDisclosure = document.querySelector<HTMLDetailsElement>('.quiz-section');
+      if (quizDisclosure) quizDisclosure.open = false;
       // Reset UI
       searchInput.value = '';
       if (countySelect) countySelect.value = '';
