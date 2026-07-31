@@ -1940,13 +1940,25 @@ main {
   cursor: pointer;
 }
 
-.quiz-section > summary .quiz-title {
+.quiz-heading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.quiz-section > summary.quiz-title {
   margin-bottom: 0;
   padding: 0.9rem 1rem;
   text-align: left;
 }
 
-.quiz-section[open] > summary .quiz-title {
+.quiz-section[open] > summary.quiz-title {
   margin-bottom: 1.5rem;
 }
 
