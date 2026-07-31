@@ -128,8 +128,8 @@ function getCatId(cat: string): string | undefined {
     <ul id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="補助建議清單" hidden></ul>
   </div>
   <div id="fuzzyHint" class="fuzzy-hint" hidden role="status" aria-live="polite" aria-atomic="true"></div>
-  <div class="active-filter-summary" id="activeFilterSummary" role="status" aria-live="polite">
-    <span id="activeFilterSummaryText">目前未套用進階篩選</span>
+  <div class="active-filter-summary" id="activeFilterSummary">
+    <span id="activeFilterSummaryText" role="status" aria-live="polite">目前未套用進階篩選</span>
     <button id="clearFiltersBtn" class="clear-filters-summary-btn" type="button" hidden>清除篩選</button>
   </div>
   <details class="advanced-filters" id="advancedFilters">
