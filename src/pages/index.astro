@@ -181,12 +181,6 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
 
   <HeroSection youthCount={youthCount} />
 
-  <QuizSection />
-
-  <QuizResultPanels />
-
-  <PersonaStrip personas={personas} />
-
   <FilterBar
     categories={categories}
     categoryCounts={categoryCounts}
@@ -224,6 +218,12 @@ const jsonLd = jsonLdRaw.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').repla
     agencies={agencies}
     agencyCounts={agencyCounts}
   />
+
+  <QuizSection />
+
+  <QuizResultPanels />
+
+  <PersonaStrip personas={personas} />
 
   <!-- ── Quiz Match Mode Banner ── -->
   <div class="match-mode-banner" id="matchModeBanner" style="display:none" role="status" aria-live="polite" data-testid="match-mode-banner">

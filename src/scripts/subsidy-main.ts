@@ -40,6 +40,32 @@
     let activeCounty = '';
     let activeAgency = '';
     let activeUrgency = 0;
+    const activeFilterSummaryText = document.getElementById('activeFilterSummaryText');
+    const clearFiltersSummaryBtn = document.getElementById('clearFiltersSummaryBtn') as HTMLButtonElement | null;
+
+    function updateActiveFilterSummary(): void {
+      if (!activeFilterSummaryText || !clearFiltersSummaryBtn) return;
+      const activeLabels: string[] = [];
+      if (searchQuery) activeLabels.push(`搜尋：${searchQuery}`);
+      if (isQuizActive) activeLabels.push('配對結果');
+      if (activeSituation) activeLabels.push('身份');
+      if (activeCategory !== '全部') activeLabels.push(activeCategory);
+      if (activeDifficulty) activeLabels.push(`難度：${activeDifficulty}`);
+      if (activeUrgency) activeLabels.push(`期限：${activeUrgency}天內`);
+      if (activeCounty) activeLabels.push(activeCounty);
+      if (activeAgency) activeLabels.push(activeAgency);
+      if (sortByDifficulty || sortAmountState) activeLabels.push('排序');
+      if (showTrackedOnly) activeLabels.push('追蹤中');
+      if (showClosedSubsidies) activeLabels.push('已截止');
+
+      if (activeLabels.length === 0) {
+        activeFilterSummaryText.textContent = '目前未套用進階篩選';
+        clearFiltersSummaryBtn.hidden = true;
+        return;
+      }
+      activeFilterSummaryText.textContent = `已套用 ${activeLabels.length} 項條件：${activeLabels.join('、')}`;
+      clearFiltersSummaryBtn.hidden = false;
+    }
 
     // ── Fuzzy search utilities ────────────────────────────────────────────────
     /** Minimum Jaccard bigram similarity to include a card in fuzzy results */
@@ -324,6 +350,7 @@
       params.delete('q12');
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
+      updateActiveFilterSummary();
     }
 
     function updateCountyUrl() {
@@ -335,6 +362,7 @@
       }
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
+      updateActiveFilterSummary();
     }
 
     function updateFilterUrl() {
@@ -370,6 +398,7 @@
       }
       const qs = params.toString();
       history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`);
+      updateActiveFilterSummary();
 
       // Keep calendar view link in sync with active filters
       const calViewLink = document.getElementById('calendarViewLink') as HTMLAnchorElement | null;
@@ -1571,6 +1600,7 @@
       }
       updateEligibleTotalBanner();
       updateCsvExportBtn();
+      updateActiveFilterSummary();
     }
 
     // ── Event listeners ──────────────────────────────────────────────────────
@@ -1673,6 +1703,8 @@
 
     personaBtns.forEach(btn => {
       btn.addEventListener('click', () => {
+        const personaDisclosure = btn.closest<HTMLDetailsElement>('.persona-disclosure');
+        if (personaDisclosure) personaDisclosure.open = true;
         const key = btn.dataset.persona ?? '';
         const sit = PERSONA_SITUATION_MAP[key] ?? key;
         if (activeSituation === sit) {
@@ -1837,6 +1869,7 @@
     const startQuizBtn = document.getElementById('startQuizBtn') as HTMLButtonElement | null;
 
     clearFiltersBtn?.addEventListener('click', () => {
+      if (isQuizActive || Object.keys(quizAnswers).length > 0) quizResetBtn.click();
       searchInput.value = '';
       searchQuery = '';
       activeCategory = '全部';
@@ -1847,6 +1880,10 @@
       activeAgency = '';
       agencyChips.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
       showTrackedOnly = false;
+      showClosedSubsidies = false;
+      showClosedBtn?.classList.remove('active');
+      showClosedBtn?.setAttribute('aria-pressed', 'false');
+      if (showClosedBtn) showClosedBtn.textContent = '⏸ 顯示已截止補助';
       isQuizActive = false;
       sortByDifficulty = false;
       sortAmountState = 0;
@@ -1878,12 +1915,15 @@
       updateDisplay();
     });
 
+    clearFiltersSummaryBtn?.addEventListener('click', () => clearFiltersBtn?.click());
+
     startQuizBtn?.addEventListener('click', () => {
       const quizSection = document.querySelector<HTMLElement>('.quiz-section');
       if (!quizSection) {
         console.warn('[startQuizBtn] .quiz-section not found');
         return;
       }
+      if (quizSection instanceof HTMLDetailsElement) quizSection.open = true;
       quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
@@ -2223,6 +2263,10 @@
     // ── Init from query params ────────────────────────────────────────────────
     function initFromQueryParams() {
       const params = new URLSearchParams(window.location.search);
+      const quizSection = document.querySelector<HTMLDetailsElement>('.quiz-section');
+      if ([...Array(12)].some((_, i) => params.has(`q${i + 1}`)) && quizSection) {
+        quizSection.open = true;
+      }
       const q1 = params.get('q1') ?? '';
       const q2 = params.get('q2') ?? '';
       const q3 = params.get('q3') ?? '';
@@ -2473,6 +2517,7 @@
         }
         updateDisplay();
       }
+      updateActiveFilterSummary();
     }
 
     // ── popstate: sync filter state on browser back/forward ──────────────────
